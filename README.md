@@ -1,6 +1,7 @@
 # TODO: choose a name for your project
 
 ## Presubmit Status
+
 ![Markdown Presubmit](https://github.com/googleinterns/step173-2020/workflows/Markdown%20Presubmit/badge.svg)
 
 ![HTML Presubmit](https://github.com/googleinterns/step173-2020/workflows/HTML%20Presubmit/badge.svg)
