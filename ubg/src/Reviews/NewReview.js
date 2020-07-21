@@ -7,14 +7,7 @@ class NewReview extends React.Component {
             rating: '',
             text: '',
         };
-        this.handleChange = this.handleChange.bind(this);
         this.addReview = this.addReview.bind(this);
-    }
-
-    handleChange(event) {
-        this.setState({ 
-            text: event.target.value
-        });
     }
 
     addReview(event) {
