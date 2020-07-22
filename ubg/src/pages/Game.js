@@ -1,14 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import AllReviews from '../Reviews/AllReviews';
 import { useParams, useHistory } from 'react-router-dom';
 import { useFirestore, AuthCheck } from 'reactfire';
-import Navbar from '../common/Navbar'
+import Navbar from '../common/Navbar';
 
 export default function Game() {
 
     const { gameId } = useParams();
     const history = useHistory();
-    const [roomId, setRoomId] = useState('')
+    const [roomId, setRoomId] = useState('');
 
     const roomsCollection = useFirestore().collection('rooms');
 

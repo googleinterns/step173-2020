@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useFirestore, useFirestoreDocData, useUser, useFirestoreCollectionData } from 'reactfire';
 
 export default function Room() {
 
-    const [inLobby, setInLobby] = useState(false)
+    const [inLobby, setInLobby] = useState(false);
     const {uid, displayName, email} = useUser();
     const { roomId } = useParams();
     const room = useFirestore().collection('rooms').doc(roomId);
@@ -12,12 +12,12 @@ export default function Room() {
     const usersCollection = room.collection('users');
     const usersData = useFirestoreCollectionData(usersCollection);
 
-    function joinRoom(){
+    function joinRoom() {
         usersCollection.doc(uid).set({displayName, email});
         setInLobby(true);
     }
 
-    function leaveRoom(){
+    function leaveRoom() {
         usersCollection.doc(uid).delete();
         setInLobby(false);
     }
