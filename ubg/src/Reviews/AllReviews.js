@@ -32,8 +32,8 @@ class AllReviews extends React.Component {
                     <Typography variant="h3">
                         Reviews
                     </Typography>
-                    <NewReview name={this.state.user} handleAddReview={this.handleAddReview}/>
-                    <Reviews reviews={this.state.reviews} bggReviews={this.bggReviews}/>
+                    <NewReview name={this.state.user} handleAddReview={this.handleAddReview} />
+                    <Reviews reviews={this.state.reviews} bggReviews={this.bggReviews} />
                 </Box>
             </div>
         );
