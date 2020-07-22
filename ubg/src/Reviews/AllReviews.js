@@ -1,7 +1,7 @@
 import React from 'react';
 import NewReview from './NewReview';
-import Reviews from './Reviews';
 import Box from '@material-ui/core/Box';
+import Reviews from './Reviews';
 import Typography from '@material-ui/core/Typography';
 
 class AllReviews extends React.Component {
