@@ -1,25 +1,42 @@
-import React from 'react'
+import React, { useState } from 'react'
 import AllReviews from '../Reviews/AllReviews';
 import { useParams, useHistory } from 'react-router-dom';
-import { useFirestore } from 'reactfire';
+import { useFirestore, AuthCheck } from 'reactfire';
+import Navbar from '../common/Navbar'
 
 export default function Game() {
 
     const { gameId } = useParams();
     const history = useHistory();
+    const [roomId, setRoomId] = useState('')
 
     const roomsCollection = useFirestore().collection('rooms');
 
     async function createRoom() {
         const newRoom = await roomsCollection.doc();
-        newRoom.set({users: []});
-        history.push(`/${gameId}/${newRoom.id}`);
+        newRoom.set({gameId});
+        history.push(`/gameRoom/${newRoom.id}`);
+    }
+
+    function joinRoom() {
+        history.push(`/gameRoom/${roomId}`);
     }
 
     return (
         <div>
+            <Navbar/>          
             Game {gameId}
-            <button onClick={createRoom}>Create Room</button>
+            <AuthCheck>
+                <br />
+                <button onClick={createRoom}>Create Room</button>
+                <br />
+                <input 
+                    value={roomId} 
+                    onChange={(e) => { setRoomId(e.target.value) }} 
+                    type="text"
+                />
+                <button onClick={joinRoom}>Join Room</button>
+            </AuthCheck>
             <AllReviews />
         </div>
     )

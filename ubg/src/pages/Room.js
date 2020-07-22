@@ -1,30 +1,43 @@
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom';
-import { useFirestore, useFirestoreDocData } from 'reactfire';
-import firebase from 'firebase';
+import { useFirestore, useFirestoreDocData, useUser, useFirestoreCollectionData } from 'reactfire';
 
 export default function Room() {
 
-    const [user, setUser] = useState("Daniel")
-    const { gameId, roomId } = useParams();
+    const [inLobby, setInLobby] = useState(false)
+    const {uid, displayName, email} = useUser();
+    const { roomId } = useParams();
     const room = useFirestore().collection('rooms').doc(roomId);
     const roomData = useFirestoreDocData(room);
-    const fieldValue = firebase.firestore.FieldValue;
+    const usersCollection = room.collection('users');
+    const usersData = useFirestoreCollectionData(usersCollection);
 
     function joinRoom(){
-        room.update({users: fieldValue.arrayUnion(user)})
+        usersCollection.doc(uid).set({displayName, email});
+        setInLobby(true);
+    }
+
+    function leaveRoom(){
+        usersCollection.doc(uid).delete();
+        setInLobby(false);
     }
 
     return (
         <div>
-            Room {roomId} for game {gameId}
+            Room {roomId} for game {roomData.gameId}
             <br />
-            {roomData.users.map(user => {
-                return (<p>{user}</p>)
-            })}
+            {   
+                usersData.map(user => {
+                return (<p key={user.email}>{user.displayName}</p>)
+                })
+            }
             <br />
-            <input type="text" value={user} onChange={(e) => { setUser(e.target.value) }} />
-            <button onClick={joinRoom}>Join</button>
+            { 
+                inLobby ? 
+                <button onClick={leaveRoom}>Leave Room</button> 
+                :
+                <button onClick={joinRoom}>Join Room</button>
+            }
         </div>
     )
 }
