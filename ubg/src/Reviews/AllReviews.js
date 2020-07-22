@@ -1,6 +1,8 @@
 import React from 'react';
 import NewReview from './NewReview';
+import Box from '@material-ui/core/Box';
 import Reviews from './Reviews';
+import Typography from '@material-ui/core/Typography';
 
 class AllReviews extends React.Component {
     constructor(props) {
@@ -21,13 +23,18 @@ class AllReviews extends React.Component {
         this.setState({
             reviews: reviews
         });
-      }
+    }
 
     render() {
         return (
             <div className='reviews'>
-                <NewReview name={this.state.user} handleAddReview={this.handleAddReview}/>
-                <Reviews reviews={this.state.reviews}/>
+                <Box container="true" justify="center" alignItems="center" m={10}>
+                    <Typography variant="h3">
+                        Reviews
+                    </Typography>
+                    <NewReview name={this.state.user} handleAddReview={this.handleAddReview} />
+                    <Reviews reviews={this.state.reviews} bggReviews={this.bggReviews} />
+                </Box>
             </div>
         );
     }

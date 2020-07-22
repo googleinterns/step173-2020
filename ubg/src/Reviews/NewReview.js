@@ -1,4 +1,6 @@
 import React from 'react';
+import { Box, Button, InputLabel, TextField } from '@material-ui/core/';
+import Rating from '@material-ui/lab/Rating';
 
 class NewReview extends React.Component {
     constructor(props) {
@@ -12,7 +14,6 @@ class NewReview extends React.Component {
 
     addReview(event) {
         event.preventDefault();
-
         // Get the values of the form
         const name = this.props.name;
         const text = event.target.elements.text.value.trim();
@@ -28,30 +29,34 @@ class NewReview extends React.Component {
         }
       
         // Clear input fields
-        event.target.elements.text.value = "";
-        event.target.elements.rating.value = "";
-      }      
+        event.target.elements.text.value = '';
+        event.target.elements.rating.defaultValue = '0';
+    }
 
     render() {
         return(
             <div>
-                <form onSubmit={this.addReview}>
-                    <h3>Reviews </h3>
-                    <br />
-                    <label>Rating: </label>
-                    <select name='rating'>
-                        <option value=''></option>
-                        <option value='1'>1</option>
-                        <option value='2'>2</option>
-                        <option value='3'>3</option>
-                        <option value='4'>4</option>
-                        <option value='5'>5</option>
-                    </select>
-                    <br />
-                    <textarea className='textarea' name='text' placeholder='Add a review'></textarea>
-                    <br />
-                    <button className='button is-primary'>Submit</button>
-                </form>
+                <br />
+                <Box>
+                    <form onSubmit={this.addReview}>
+                        <Box component="div" mb={3} borderColor="transparent">
+                            <InputLabel name="reviewText" label="Rating: " />
+                            <Rating name="rating" defaultValue={0} max={10} />
+                        </Box>
+                        <TextField
+                            id="outlined-multiline-static"
+                            label="Write a Review"
+                            name='text'
+                            multiline
+                            rows={5}
+                            fullWidth={true}
+                            variant="outlined"
+                        />
+                        <br />
+                        <br />
+                        <Button variant="contained" color="primary" type="submit">Submit</Button>
+                    </form>
+                </Box>
             </div>
         );
     }
