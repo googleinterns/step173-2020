@@ -39,7 +39,7 @@ function AllReviews(props) {
     const [reviews, setReviews] = useState(populateReviews());
 
     const handleAddReview = (review) => {
-        const tempReviews = reviews;
+        const tempReviews = [...reviews];
         tempReviews.push(review);
         setReviews(tempReviews);
         reviewsRef.add(review);
@@ -63,7 +63,7 @@ function AllReviews(props) {
                 >
                     <NewReview gameId={props.gameId} user={user} handleAddReview={handleAddReview} />
                 </AuthCheck>
-                <Reviews reviews={reviews} />
+                <Reviews reviews={reviews} populateReviews={populateReviews}/>
             </Box>
         </div>
     );
