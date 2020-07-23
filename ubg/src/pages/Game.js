@@ -37,7 +37,7 @@ export default function Game() {
                 />
                 <button onClick={joinRoom}>Join Room</button>
             </AuthCheck>
-            <AllReviews />
+            <AllReviews gameId={gameId}/>
         </div>
     )
 }

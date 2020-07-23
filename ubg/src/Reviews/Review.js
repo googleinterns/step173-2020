@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
 const Review = props => {
   const classes = useStyles();
   const ratingVal = parseInt(props.review.rating, 10);
+  console.log({ratingVal});
 
   return (
     <div>
