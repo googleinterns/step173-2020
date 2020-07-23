@@ -28,7 +28,7 @@ class AllReviews extends React.Component {
     render() {
         return (
             <div className='reviews'>
-                <Box container="true" justify="center" alignItems="center" m={10}>
+                <Box container="true" justify="center" alignItems="center">
                     <Typography variant="h3">
                         Reviews
                     </Typography>

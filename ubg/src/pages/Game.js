@@ -3,6 +3,11 @@ import AllReviews from '../Reviews/AllReviews';
 import { useParams, useHistory } from 'react-router-dom';
 import { useFirestore, AuthCheck } from 'reactfire';
 import Navbar from '../common/Navbar';
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import CardMedia from '@material-ui/core/CardMedia';
+import Container from '@material-ui/core/Container';
+import { Typography } from '@material-ui/core';
 
 export default function Game() {
 
@@ -24,20 +29,42 @@ export default function Game() {
 
     return (
         <div>
-            <Navbar/>          
-            Game {gameId}
-            <AuthCheck>
+            <Navbar/>
+            <Box container="true" justify="center" alignItems="center" m={10}>
+                <Container maxWidth="sm">
+                    <Grid container spacing={5}>
+                        <Grid item>
+                            <CardMedia
+                                component="img"
+                                image="https://cf.geekdo-images.com/itemrep/img/weqPptR3b4rQSTRLFOWQqsu6EOU=/fit-in/246x300/pic5241325.png"
+                                title="Contemplative Reptile"
+                            />
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="h2">
+                                Monopoly
+                            </Typography>
+                            <Typography variant="body1">
+                                This is a description of the game.
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                </Container>
+                <AuthCheck>
+                    <br />
+                    <button onClick={createRoom}>Create Room</button>
+                    <br />
+                    <input 
+                        value={roomId} 
+                        onChange={(e) => { setRoomId(e.target.value) }} 
+                        type="text"
+                    />
+                    <button onClick={joinRoom}>Join Room</button>
+                </AuthCheck>
                 <br />
-                <button onClick={createRoom}>Create Room</button>
                 <br />
-                <input 
-                    value={roomId} 
-                    onChange={(e) => { setRoomId(e.target.value) }} 
-                    type="text"
-                />
-                <button onClick={joinRoom}>Join Room</button>
-            </AuthCheck>
-            <AllReviews />
+                <AllReviews />
+            </Box>          
         </div>
     )
 }
