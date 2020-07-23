@@ -17,7 +17,9 @@ import Star from '@material-ui/icons/Star';
 import Timer from '@material-ui/icons/Timer';
 import People from '@material-ui/icons/People';
 import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
 import Navbar from '../common/Navbar';
+import {db } from "../services/firebase";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,42 +38,57 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Home() {
-  const [minAge, setMinAge] = React.useState('1');
-  const [maxAge, setMaxAge] = React.useState('Max');
-  const [minPlayer, setMinPlayer] = React.useState('1');
-  const [maxPlayer, setMaxPlayer] = React.useState('8');
-  const [minTime, setMinTime] = React.useState('5min');
+  var ref = db.collection('games');
+  const [minAge, setMinAge] = React.useState(1);
+  const [minPlayer, setMinPlayer] = React.useState(1);
+  const [maxPlayer, setMaxPlayer] = React.useState('Max');
+  const [minTime, setMinTime] = React.useState(5);
   const [maxTime, setMaxTime] = React.useState('Max');
+  let handleFilter = () => {
+    console.log("23");
+    ref.where("minAge","<=",minAge)
+    .get()
+    .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+            console.log(doc.id, " => ", doc.data());
+        });
+    })
+    .catch(function(error) {
+        console.log("Error getting documents: ", error);
+    });
+}
+  // }
+
   return (
     <div>
       <Navbar/>
       <Box  boxShadow={1} m={10}>
-        <Filter label = "Minimum Age" value={minAge} menu={[5, 10, 16, 20, 35]} max={false} onChange={(v) => setMinAge(v)} />
-        <Filter label = "Maximum Age" value={maxAge} menu={[5, 10, 16, 20, 35]} max={true} onChange={(v) => setMaxAge(v)} />
+        <Filter label = "Minimum Age" value={minAge} menu={[8, 10, 14, 16, 21]} max={false} onChange={(v) => setMinAge(v)} />
         <Filter label = "Minimum Player" value={minPlayer} menu={[2, 3, 4, 5, 6, 7, 8]} max={false} onChange={(v) => setMinPlayer(v)}/>
         <Filter label = "Maximum Player" value={maxPlayer} menu={[1, 2, 3, 4, 5, 6, 7]} max={true} onChange={(v) => setMaxPlayer(v)} />
-        <Filter label = "Minimum Time" value={minTime} menu={["15min", "30min", "1h", "1h30min", "2h"]} max={false} onChange={(v) => setMinTime(v)} />
-        <Filter label = "Maximum Time" value={maxTime} menu={["5min", "15min", "30min", "1h", "1h30min", "2h"]} max={true} onChange={(v) => setMaxTime(v)} />
+        <Filter label = "Minimum Time" value={minTime} menu={[15, 30, 60, 90, 120]} append={'min'} max={false} onChange={(v) => setMinTime(v)} />
+        <Filter label = "Maximum Time" value={maxTime} menu={[15, 30, 60, 90, 120]} append={'min'} max={true} onChange={(v) => setMaxTime(v)} />
+        <Button variant="contained" onClick={() => handleFilter()}>Search</Button>
       </Box>
       <Box m={10}>
         <Grid container justify="center" alignItems="center" spacing={7}>
           <Grid item>
-            <ImgMediaCard />
+            <GameCard />
           </Grid>
           <Grid item >
-            <ImgMediaCard />
+            <GameCard />
           </Grid>
           <Grid item >
-            <ImgMediaCard />
+            <GameCard />
           </Grid>
           <Grid item >
-            <ImgMediaCard />
+            <GameCard />
           </Grid>
           <Grid item >
-            <ImgMediaCard />
+            <GameCard />
           </Grid>
           <Grid item >
-            <ImgMediaCard />
+            <GameCard />
           </Grid>
         </Grid>
       </Box>
@@ -82,6 +99,10 @@ export default function Home() {
 
 function Filter(props) {
   const classes = useStyles();
+  let append = '';
+  if (props.append) {
+    append = props.append;
+  }
   return (
     <FormControl className={classes.formControl}>
       <InputLabel shrink id="demo-simple-select-placeholder-label-label">
@@ -95,15 +116,15 @@ function Filter(props) {
         displayEmpty
         className={classes.selectEmpty}
       >
-        {props.max === true? null : <MenuItem value={props.value}>{props.value}</MenuItem> }
-        {props.menu.map((item)=><MenuItem value={item}>{item}</MenuItem>)}
-        {props.max === true? <MenuItem value={props.value}>{props.value}</MenuItem>: null }
+        {props.max === true ? null : <MenuItem value={props.value}>{props.value}{append}</MenuItem> }
+        {props.menu.map((item)=><MenuItem value={item}>{item}{append}</MenuItem>)}
+        {props.max === true ? <MenuItem value={props.value}>{props.value}</MenuItem>: null }
       </Select>
     </FormControl>
   );
 }
 
-function ImgMediaCard() {
+function GameCard() {
   const classes = useStyles();
   return (
     <Card className={classes.card}>
