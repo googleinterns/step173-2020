@@ -7,14 +7,14 @@ function NewReview(props) {
         event.preventDefault();
         
         // Get the values of the form
-        const gameId = props.gameId;
-        const name = props.user.displayName;
+        //const gameId = props.gameId;
+        const name = "Shandy Kim";//props.user.displayName;
         const rating = event.target.elements.rating.value;
         const text = event.target.elements.text.value.trim();
         const timestamp = Date.now();
-        const userId = props.user.id;
+        const userId = "123";
       
-        const reviewObject = { gameId, name, rating, text, timestamp, userId };
+        const reviewObject = { name, rating, text, timestamp, userId };
 
         // force user to select a rating before submitting review
         if (rating && rating !== null) {
