@@ -44,13 +44,25 @@ export default function Home() {
   const [maxPlayer, setMaxPlayer] = React.useState('Max');
   const [minTime, setMinTime] = React.useState(5);
   const [maxTime, setMaxTime] = React.useState('Max');
+  const [games, setGames] = React.useState([]);
   let handleFilter = () => {
+    let maxP = maxPlayer;
+    if (maxP === 'Max') {
+      maxP = Number.MAX_SAFE_INTEGER;
+    }
+    let maxT = maxTime;
+    if (maxT === 'Max') {
+      maxT = Number.MAX_SAFE_INTEGER;
+    }
     console.log("23");
     ref.where("minAge","<=",minAge)
     .get()
     .then(function(querySnapshot) {
         querySnapshot.forEach(function(doc) {
-            console.log(doc.id, " => ", doc.data());
+          if (doc.data()['minPlayer'] <= maxP && minPlayer <= doc.data()['maxPlayer'] 
+          && doc.data()['minPlaytime'] <= maxT && minTime <= doc.data()['maxPlaytime']) {
+            console.log(doc.data());
+          }
         });
     })
     .catch(function(error) {
@@ -117,8 +129,8 @@ function Filter(props) {
         className={classes.selectEmpty}
       >
         {props.max === true ? null : <MenuItem value={props.value}>{props.value}{append}</MenuItem> }
-        {props.menu.map((item)=><MenuItem value={item}>{item}{append}</MenuItem>)}
-        {props.max === true ? <MenuItem value={props.value}>{props.value}</MenuItem>: null }
+        {props.menu.map((item)=><MenuItem value={item}>{item}</MenuItem>)}
+        {props.max === true ? <MenuItem value={props.value}>{props.value}{append}</MenuItem>: null }
       </Select>
     </FormControl>
   );
