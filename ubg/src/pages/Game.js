@@ -1,43 +1,44 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import AllReviews from '../Reviews/AllReviews';
-import { useParams, useHistory } from 'react-router-dom';
-import { useFirestore, AuthCheck } from 'reactfire';
+import {useParams, useHistory} from 'react-router-dom';
+import {useFirestore, AuthCheck} from 'reactfire';
 import Navbar from '../common/Navbar';
 
 export default function Game() {
+  const {gameId} = useParams();
+  const history = useHistory();
+  const [roomId, setRoomId] = useState('');
 
-    const { gameId } = useParams();
-    const history = useHistory();
-    const [roomId, setRoomId] = useState('');
+  const roomsCollection = useFirestore().collection('rooms');
 
-    const roomsCollection = useFirestore().collection('rooms');
+  async function createRoom() {
+    const newRoom = await roomsCollection.doc();
+    newRoom.set({gameId});
+    history.push(`/gameRoom/${newRoom.id}`);
+  }
 
-    async function createRoom() {
-        const newRoom = await roomsCollection.doc();
-        newRoom.set({gameId});
-        history.push(`/gameRoom/${newRoom.id}`);
-    }
+  function joinRoom() {
+    history.push(`/gameRoom/${roomId}`);
+  }
 
-    function joinRoom() {
-        history.push(`/gameRoom/${roomId}`);
-    }
-
-    return (
-        <div>
-            <Navbar/>          
+  return (
+    <div>
+      <Navbar/>
             Game {gameId}
-            <AuthCheck>
-                <br />
-                <button onClick={createRoom}>Create Room</button>
-                <br />
-                <input 
-                    value={roomId} 
-                    onChange={(e) => { setRoomId(e.target.value) }} 
-                    type="text"
-                />
-                <button onClick={joinRoom}>Join Room</button>
-            </AuthCheck>
-            <AllReviews />
-        </div>
-    )
+      <AuthCheck>
+        <br />
+        <button onClick={createRoom}>Create Room</button>
+        <br />
+        <input
+          value={roomId}
+          onChange={(e) => {
+            setRoomId(e.target.value);
+          }}
+          type="text"
+        />
+        <button onClick={joinRoom}>Join Room</button>
+      </AuthCheck>
+      <AllReviews />
+    </div>
+  );
 }
