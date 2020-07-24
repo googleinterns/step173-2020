@@ -1,4 +1,4 @@
-import React, { useEffect,useCallback,useRef  } from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
@@ -9,7 +9,6 @@ import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
-// import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import Star from '@material-ui/icons/Star';
 import Timer from '@material-ui/icons/Timer';
@@ -45,9 +44,6 @@ const useStyles = makeStyles((theme) => ({
 export default function Home() {
   const classes = useStyles();
   let ref = useFirestore().collection('games');
-  const allGames = [];
-  // let initialize = false;
-  // let initialize = useRef(false);
   const [minAge, setMinAge] = React.useState(1);
   const [minPlayer, setMinPlayer] = React.useState(1);
   const [maxPlayer, setMaxPlayer] = React.useState('8+');
@@ -55,56 +51,46 @@ export default function Home() {
   const [maxTime, setMaxTime] = React.useState('240+');
   const [games, setGames] = React.useState([]);
   let handleFilter = () => {
-    // setGames([]);
-    console.log(allGames);
     let newGames = [];
-    let maxP = maxPlayer;
-    if (maxP.slice(maxP.length - 1) === '+') {
+    let maxP = maxPlayer; 
+    if (typeof maxP === 'string') {
       maxP = Number.MAX_SAFE_INTEGER;
     }
     let maxT = maxTime;
-    if (maxT.slice(maxT.length - 1) === '+') {
+    if (typeof maxT === 'string') {
       maxT = Number.MAX_SAFE_INTEGER;
     }
-        allGames.forEach(function(doc) {
+    ref.where('minAge','<=',minAge)
+    .get()
+    .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
           if (doc.data()['minPlayer'] <= maxP && minPlayer <= doc.data()['maxPlayer'] 
           && doc.data()['minPlaytime'] <= maxT && minTime <= doc.data()['maxPlaytime']) {
-            // console.log(doc.data());
             newGames.push(doc.data());
           }
         });
         setGames(newGames);
+    })
+    .catch(function(error) {
+        console.log("Error getting documents: ", error);
+    });
   }
-  // const loadOnce = useCallback(() => {
-  //   console.log("4");
-  //   ref
-  //   .get()
-  //   .then(function(querySnapshot) {
-  //       querySnapshot.forEach(function(doc) {
-  //           allGames.push(doc.data());
-  //       });
-  //       setGames(allGames);
-  //   })
-  //   .catch(function(error) {
-  //       console.log("Error getting documents: ", error);
-  //   });
-  // }, [ref, allGames]
-  // ); 
-  // useEffect(() => {
-  //     console.log("4");
-  //   ref
-  //   .get()
-  //   .then(function(querySnapshot) {
-  //       querySnapshot.forEach(function(doc) {
-  //           allGames.push(doc.data());
-  //       });
-  //       setGames(allGames);
-  //   })
-  //   .catch(function(error) {
-  //       console.log("Error getting documents: ", error);
-  //   });
+  useEffect(() => {
+    console.log("4");
+    let newGames = [];
+    ref
+    .get()
+    .then(function(querySnapshot) {
+      querySnapshot.forEach(function(doc) {
+        newGames.push(doc.data());
+      });
+      setGames(newGames);
+    })
+    .catch(function(error) {
+      console.log("Error getting documents: ", error);
+    });
   
-  // }, []);
+  }, []);
 
   return (
     <div>
