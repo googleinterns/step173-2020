@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
-  }
+  },
 }));
 
 export default function Home() {
@@ -45,13 +45,13 @@ export default function Home() {
   return (
     <div>
       <Navbar/>
-      <Box  boxShadow={1} m={10}>
+      <Box boxShadow={1} m={10}>
         <Filter label = "Minimum Age" value={minAge} menu={[5, 10, 16, 20, 35]} max={false} onChange={(v) => setMinAge(v)} />
         <Filter label = "Maximum Age" value={maxAge} menu={[5, 10, 16, 20, 35]} max={true} onChange={(v) => setMaxAge(v)} />
         <Filter label = "Minimum Player" value={minPlayer} menu={[2, 3, 4, 5, 6, 7, 8]} max={false} onChange={(v) => setMinPlayer(v)}/>
         <Filter label = "Maximum Player" value={maxPlayer} menu={[1, 2, 3, 4, 5, 6, 7]} max={true} onChange={(v) => setMaxPlayer(v)} />
-        <Filter label = "Minimum Time" value={minTime} menu={["15min", "30min", "1h", "1h30min", "2h"]} max={false} onChange={(v) => setMinTime(v)} />
-        <Filter label = "Maximum Time" value={maxTime} menu={["5min", "15min", "30min", "1h", "1h30min", "2h"]} max={true} onChange={(v) => setMaxTime(v)} />
+        <Filter label = "Minimum Time" value={minTime} menu={['15min', '30min', '1h', '1h30min', '2h']} max={false} onChange={(v) => setMinTime(v)} />
+        <Filter label = "Maximum Time" value={maxTime} menu={['5min', '15min', '30min', '1h', '1h30min', '2h']} max={true} onChange={(v) => setMaxTime(v)} />
       </Box>
       <Box m={10}>
         <Grid container justify="center" alignItems="center" spacing={7}>
@@ -91,7 +91,7 @@ function Filter(props) {
         labelId="demo-simple-select-placeholder-label-label"
         id="demo-simple-select-placeholder-label"
         value={props.value}
-        onChange={e => props.onChange(e.target.value)}
+        onChange={(e) => props.onChange(e.target.value)}
         displayEmpty
         className={classes.selectEmpty}
       >
