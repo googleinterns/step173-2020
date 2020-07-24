@@ -20,6 +20,9 @@ import People from '@material-ui/icons/People';
 
 
 const useStyles = makeStyles((theme) => ({
+    fonts: {
+        fontWeight: "bold"
+    },
     roomJoin: {
         marginTop: theme.spacing(1),
     },
@@ -101,6 +104,7 @@ function Spacer() {
 }
 
 function Description(props) {
+    const classes = useStyles();
     return (
         <Grid container spacing={5}>
             <Grid item>
@@ -116,7 +120,7 @@ function Description(props) {
             </Grid>
             <Grid item>
                 <Container>
-                    <Typography variant="h2">
+                    <Typography variant="h2" className={classes.fonts}>
                         Monopoly
                     </Typography>
                     <br />
@@ -143,16 +147,20 @@ function Description(props) {
 
 function Rules(props) {
     return (
-        <Grid container>
+        <div>
+            <Grid container>
+                <Grid item>
+                    <Typography variant="h4">
+                        Rules
+                    </Typography>
+                </Grid>
+            </Grid>
+            <br />
             <Grid item>
-                <Typography variant="h4">
-                    Rules
-                </Typography>
-                <br />
                 <Typography variant="body1">
                     get money, buy property, ruin friendships
                 </Typography>
             </Grid>
-        </Grid>
+        </div>
     );
 }
