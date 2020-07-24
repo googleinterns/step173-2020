@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import AllReviews from '../Reviews/AllReviews';
 import { makeStyles } from '@material-ui/core/styles';
 import { useParams, useHistory } from 'react-router-dom';
@@ -8,7 +8,6 @@ import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
-//import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
@@ -16,6 +15,7 @@ import Icon from '@material-ui/core/Icon';
 import Timer from '@material-ui/icons/Timer';
 import Star from '@material-ui/icons/Star';
 import People from '@material-ui/icons/People';
+import TextField from '@material-ui/core/TextField';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -27,17 +27,18 @@ const useStyles = makeStyles((theme) => ({
     },
     image: {
         display: "block",
-        margin: "auto"
+        margin: "auto",
+        maxWidth: "100%"
     },
-    description: {
-        alignContent: "center",
+    section: {
+        display: "flex",
+        justifyContent: "center",
         alignItems: "center"
     }
 }));
 
 export default function Game() {
-
-    const { gameId } = useParams();
+    const {gameId} = useParams();
     const history = useHistory();
     const [roomId, setRoomId] = useState('');
 
@@ -55,10 +56,6 @@ export default function Game() {
     }
 
     const classes = useStyles();
-    console.log(games);
-    if (games.exists) {
-        return <p>Not a valid game!</p>
-    }
 
     return (
         <div>
@@ -77,13 +74,14 @@ export default function Game() {
                 <AuthCheck>
                     <Grid container spacing={3}>
                         <Grid item className={classes.roomJoin}>
-                            <input
+                            <TextField
                                 value={roomId}
                                 onChange={(e) => { setRoomId(e.target.value) }}
                                 type="text"
+                                variant="outlined"
                             />
                         </Grid>
-                        <Grid item>
+                        <Grid item className={classes.section}>
                             <Button variant="contained" color="primary" onClick={joinRoom} m={5}>Join Room</Button>
                         </Grid>
                     </Grid>
@@ -110,6 +108,8 @@ function Spacer() {
 function Description(props) {
     const classes = useStyles();
     let description = 'Game is not available'
+    let playTime = props.games.minPlaytime + '-' + props.games.maxPlaytime;
+    let players = props.games.minPlayer + '-' + props.games.maxPlayer;
     if (props.games.description !== undefined) {
         description = props.games.description.replace(/&#10;&#10;/g, ' ')
         .replace(/&quot;/g, '"')
@@ -118,13 +118,15 @@ function Description(props) {
         .replace(/&amp;/g, ' ')
         .replace(/&mdash;/g, '-');
     }
-    let playTime = props.games.minPlaytime + '-' + props.games.maxPlaytime;
     if (props.games.minPlaytime === props.games.maxPlaytime) {
         playTime = props.games.minPlaytime;
     }
+    if (props.games.minPlayer === props.games.maxPlayer) {
+        players = props.games.minPlayer;
+    }
     return (
-        <Grid container spacing={5} className={classes.description}>
-            <Grid item className={classes.description}>
+        <Grid container spacing={5} className={classes.section}>
+            <Grid item className={classes.section}>
                 <Card>
                     <CardMedia
                         component="img"
@@ -134,32 +136,36 @@ function Description(props) {
                     />
                 </Card>
             </Grid>
-            <Grid item xs={10} className={classes.description}>
-                <Typography variant="h2" className={classes.fonts}>
-                    {props.games.Name}
-                </Typography>
+            <Grid item xs={10} className={classes.section}>
+                <Grid item>
+                    <Typography variant="h2" className={classes.fonts}>
+                        {props.games.Name}
+                    </Typography>
+                    <br />
+                    <Typography variant="body1">
+                        {description}
+                    </Typography>
+                    <br />
+                    <Typography variant="body2" color="textSecondary" component="p">
+                        <Icon aria-label="share">
+                            <Star />{Math.round(props.games.rating)}/10
+                        </Icon>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <Icon aria-label="share">
+                            <Timer />{playTime}
+                        </Icon>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <Icon aria-label="share">
+                            <People />{players}
+                        </Icon>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <AuthCheck>
+                            <Button variant="contained" color="primary" onClick={props.createRoom}>Create Room</Button>
+                        </AuthCheck>
+                    </Typography>
+                </Grid>
                 <br />
-                <Typography variant="body1">
-                    {description}
-                </Typography>
-                <br />
-                <Typography variant="body2" color="textSecondary" component="p">
-                    <Icon aria-label="share">
-                        <Star />{Math.round(props.games.rating)}/10
-                    </Icon>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <Icon aria-label="share">
-                        <Timer />{playTime}
-                    </Icon>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <Icon aria-label="share">
-                        <People />{props.games.minPlayer}-{props.games.maxPlayer}
-                    </Icon>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <AuthCheck>
-                        <Button variant="contained" color="primary" onClick={props.createRoom}>Create Room</Button>
-                    </AuthCheck>
-                </Typography>
+
             </Grid>
         </Grid>
     );
