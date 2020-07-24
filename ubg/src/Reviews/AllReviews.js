@@ -29,7 +29,7 @@ class AllReviews extends React.Component {
         return (
             <div className='reviews'>
                 <Box container="true" justify="center" alignItems="center">
-                    <Typography variant="h3">
+                    <Typography variant="h4">
                         Reviews
                     </Typography>
                     <NewReview name={this.state.user} handleAddReview={this.handleAddReview} />
