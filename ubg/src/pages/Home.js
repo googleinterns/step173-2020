@@ -46,7 +46,7 @@ let initialize = false;
 export default function Home() {
   const classes = useStyles();
   let ref = useFirestore().collection('games');
-  const [minAge, setMinAge] = React.useState(1);
+  const [minAge, setMinAge] = React.useState(21);
   const [minPlayer, setMinPlayer] = React.useState(1);
   const [maxPlayer, setMaxPlayer] = React.useState('8+');
   const [minTime, setMinTime] = React.useState(5);
@@ -79,6 +79,7 @@ export default function Home() {
     });
   }
   useEffect(() => {
+    // using a hack to make useEffect act as onLoad()
     if (initialize === false){
       console.log("4");
       let newGames = [];
@@ -101,11 +102,11 @@ export default function Home() {
     <div>
       <Navbar/>
       <Box  boxShadow={1} m={10}>
-        <Filter label = "Minimum Age" value={minAge} menu={[8, 10, 14, 16, 21]} max={false} onChange={(v) => setMinAge(v)} />
-        <Filter label = "Minimum Player" value={minPlayer} menu={[2, 3, 4, 5, 6, 7, 8]} max={false} onChange={(v) => setMinPlayer(v)}/>
-        <Filter label = "Maximum Player" value={maxPlayer} menu={[1, 2, 3, 4, 5, 6, 7]} max={true} onChange={(v) => setMaxPlayer(v)} />
-        <Filter label = "Minimum Time" value={minTime} menu={[15, 30, 60, 90, 120]} append={'min'} max={false} onChange={(v) => setMinTime(v)} />
-        <Filter label = "Maximum Time" value={maxTime} menu={[15, 30, 60, 90, 120]} append={'min'} max={true} onChange={(v) => setMaxTime(v)} />
+        <Filter label = "Minimum Age" value={minAge} menu={[8, 10, 14, 16, 21]} onChange={(v) => setMinAge(v)} />
+        <Filter label = "Minimum Player" value={minPlayer} menu={[1, 2, 3, 4, 5, 6, 7, 8]} onChange={(v) => setMinPlayer(v)}/>
+        <Filter label = "Maximum Player" value={maxPlayer} menu={[1, 2, 3, 4, 5, 6, 7, '8+']} onChange={(v) => setMaxPlayer(v)} />
+        <Filter label = "Minimum Time" value={minTime} menu={[5, 15, 30, 60, 90, 120]} append={'min'} onChange={(v) => setMinTime(v)} />
+        <Filter label = "Maximum Time" value={maxTime} menu={[15, 30, 60, 90, 120, '240+']} append={'min'} onChange={(v) => setMaxTime(v)} />
         <Button className={classes.button} variant="contained" onClick={() => handleFilter()}>Search</Button>
       </Box>
       <Box ml={10}>
@@ -142,36 +143,7 @@ function Filter(props) {
         displayEmpty
         className={classes.selectEmpty}
       >
-        {props.max === true ? null : <MenuItem key={props.value} value={props.value}>{props.value}{append}</MenuItem> }
         {props.menu.map((item) => <MenuItem key={item} value={item}>{item}{append}</MenuItem>)}
-        {props.max === true ? <MenuItem key={props.value} value={props.value}>{props.value}{append}</MenuItem>: null }
-      </Select>
-    </FormControl>
-  );
-}
-
-function Sort(props) {
-  const classes = useStyles();
-  let append = '';
-  if (props.append) {
-    append = props.append;
-  }
-  return (
-    <FormControl className={classes.formControl}>
-      <InputLabel shrink id="demo-simple-select-placeholder-label-label">
-        {props.label}
-      </InputLabel>
-      <Select
-        labelId="demo-simple-select-placeholder-label-label"
-        id="demo-simple-select-placeholder-label"
-        value={props.value}
-        onChange={e => props.onChange(e.target.value)}
-        displayEmpty
-        className={classes.selectEmpty}
-      >
-        {props.max === true ? null : <MenuItem key={props.value} value={props.value}>{props.value}{append}</MenuItem> }
-        {props.menu.map((item) => <MenuItem key={item} value={item}>{item}{append}</MenuItem>)}
-        {props.max === true ? <MenuItem key={props.value} value={props.value}>{props.value}{append}</MenuItem>: null }
       </Select>
     </FormControl>
   );
