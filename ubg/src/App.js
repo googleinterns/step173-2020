@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, {Suspense} from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -6,8 +6,8 @@ import {
 } from "react-router-dom";
 import Home from './Search/Home';
 import Game from './pages/Game';
-import Room from './pages/Room'
-import { FirebaseAppProvider } from 'reactfire';
+import Room from './pages/Room';
+import {FirebaseAppProvider} from 'reactfire';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -17,26 +17,26 @@ const firebaseConfig = {
   storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.REACT_APP_FIREBASE_APP_ID,
-  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
-}
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
+};
 
 function App() {
   return (
     <FirebaseAppProvider firebaseConfig={firebaseConfig}>
       <Suspense fallback={<p>loading...</p>}>
-      <Router>
-        <Switch>
-          <Route exact path="/">
-            <Home/>
-          </Route>
-          <Route exact path="/:gameId">
-            <Game/>
-          </Route>
-          <Route exact path="/gameRoom/:roomId">
-            <Room/>
-          </Route>
-        </Switch>
-      </Router>
+        <Router>
+          <Switch>
+            <Route exact path="/">
+              <Home/>
+            </Route>
+            <Route exact path="/:gameId">
+              <Game/>
+            </Route>
+            <Route exact path="/gameRoom/:roomId">
+              <Room/>
+            </Route>
+          </Switch>
+        </Router>
       </Suspense>
     </FirebaseAppProvider>
   );

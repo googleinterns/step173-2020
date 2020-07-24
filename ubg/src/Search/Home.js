@@ -40,6 +40,14 @@ export default function Home() {
     if (typeof maxT === 'string') {
       maxT = Number.MAX_SAFE_INTEGER;
     }
+    if (minPlayer > maxP) {
+      setMaxPlayer(minPlayer);
+      maxP = minPlayer;
+    }
+    if (minTime > maxT) {
+      setMaxTime(minTime);
+      maxT = minTime;
+    }
     ref.orderBy('rating', "desc")
     .get()
     .then(function(querySnapshot) {
@@ -59,7 +67,7 @@ export default function Home() {
   useEffect(() => {
     // using a hack to make useEffect act as onLoad()
     if (initialize === false){
-      console.log("4");
+      // console.log("4");
       let newGames = [];
       ref.orderBy('rating', "desc")
       .get()
