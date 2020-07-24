@@ -2,18 +2,17 @@ import React, { useState } from 'react';
 import AllReviews from '../Reviews/AllReviews';
 import { makeStyles } from '@material-ui/core/styles';
 import { useParams, useHistory } from 'react-router-dom';
-import { useFirestore, AuthCheck } from 'reactfire';
+import { useFirestore, AuthCheck, useFirestoreDocData } from 'reactfire';
 import Navbar from '../common/Navbar';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import Container from '@material-ui/core/Container';
+//import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
+import Icon from '@material-ui/core/Icon';
 import Timer from '@material-ui/icons/Timer';
 import Star from '@material-ui/icons/Star';
 import People from '@material-ui/icons/People';
@@ -26,6 +25,14 @@ const useStyles = makeStyles((theme) => ({
     roomJoin: {
         marginTop: theme.spacing(1),
     },
+    image: {
+        display: "block",
+        margin: "auto"
+    },
+    description: {
+        alignContent: "center",
+        alignItems: "center"
+    }
 }));
 
 export default function Game() {
@@ -35,10 +42,11 @@ export default function Game() {
     const [roomId, setRoomId] = useState('');
 
     const roomsCollection = useFirestore().collection('rooms');
+    const games = useFirestoreDocData(useFirestore().collection('games').doc(gameId));
 
     async function createRoom() {
         const newRoom = await roomsCollection.doc();
-        newRoom.set({gameId});
+        newRoom.set({ gameId });
         history.push(`/gameRoom/${newRoom.id}`);
     }
 
@@ -47,12 +55,16 @@ export default function Game() {
     }
 
     const classes = useStyles();
+    console.log(games);
+    if (games.exists) {
+        return <p>Not a valid game!</p>
+    }
 
     return (
         <div>
-            <Navbar/>
+            <Navbar joinRoom={joinRoom} roomId={roomId} setRoomId={setRoomId}/>
             <Box container="true" justify="center" alignItems="center" m={10}>
-                <Description />
+                <Description games={games} createRoom={createRoom} />
                 <Spacer />
                 <Grid container spacing={5}>
                     <Grid item>
@@ -64,18 +76,10 @@ export default function Game() {
                 <br />
                 <AuthCheck>
                     <Grid container spacing={3}>
-                        <Grid item>
-                            <Button variant="contained" color="primary" onClick={createRoom}>Create Room</Button>
-                        </Grid>
-                        <Grid item>
-                            <Typography variant="h6">
-                                OR
-                            </Typography>
-                        </Grid>
                         <Grid item className={classes.roomJoin}>
-                            <input 
-                                value={roomId} 
-                                onChange={(e) => { setRoomId(e.target.value) }} 
+                            <input
+                                value={roomId}
+                                onChange={(e) => { setRoomId(e.target.value) }}
                                 type="text"
                             />
                         </Grid>
@@ -88,7 +92,7 @@ export default function Game() {
                 <Rules />
                 <Spacer />
                 <AllReviews />
-            </Box>          
+            </Box>
         </div>
     )
 }
@@ -105,41 +109,57 @@ function Spacer() {
 
 function Description(props) {
     const classes = useStyles();
+    let description = 'Game is not available'
+    if (props.games.description !== undefined) {
+        description = props.games.description.replace(/&#10;&#10;/g, ' ')
+        .replace(/&quot;/g, '"')
+        .replace(/&ndash;/g, '-')
+        .replace(/&#10;/g, ' ')
+        .replace(/&amp;/g, ' ')
+        .replace(/&mdash;/g, '-');
+    }
+    let playTime = props.games.minPlaytime + '-' + props.games.maxPlaytime;
+    if (props.games.minPlaytime === props.games.maxPlaytime) {
+        playTime = props.games.minPlaytime;
+    }
     return (
-        <Grid container spacing={5}>
-            <Grid item>
+        <Grid container spacing={5} className={classes.description}>
+            <Grid item className={classes.description}>
                 <Card>
-                    <CardActionArea >
-                        <CardMedia
-                            component="img"
-                            image="https://www.kroger.com/product/images/large/front/0063050951263"
-                            title="Contemplative Reptile"
-                        />
-                    </CardActionArea>
+                    <CardMedia
+                        component="img"
+                        image={props.games.thumbnail}
+                        title={props.games.Name}
+                        className={classes.image}
+                    />
                 </Card>
             </Grid>
-            <Grid item>
-                <Container>
-                    <Typography variant="h2" className={classes.fonts}>
-                        Monopoly
-                    </Typography>
-                    <br />
-                    <Typography variant="body1">
-                        Buy properties, trade for sets, build houses, and run everyone else out of the game.
-                    </Typography>
-                    <br />
-                    <Typography variant="body2" color="textSecondary" component="p">
-                        <IconButton aria-label="share">
-                            <Star /> 8/10
-                        </IconButton>
-                        <IconButton aria-label="share">
-                            <Timer /> 1h-2h
-                        </IconButton>
-                        <IconButton aria-label="share">
-                            <People /> 2-5
-                        </IconButton>
-                    </Typography>
-                </Container>
+            <Grid item xs={10} className={classes.description}>
+                <Typography variant="h2" className={classes.fonts}>
+                    {props.games.Name}
+                </Typography>
+                <br />
+                <Typography variant="body1">
+                    {description}
+                </Typography>
+                <br />
+                <Typography variant="body2" color="textSecondary" component="p">
+                    <Icon aria-label="share">
+                        <Star />{Math.round(props.games.rating)}/10
+                    </Icon>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <Icon aria-label="share">
+                        <Timer />{playTime}
+                    </Icon>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <Icon aria-label="share">
+                        <People />{props.games.minPlayer}-{props.games.maxPlayer}
+                    </Icon>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <AuthCheck>
+                        <Button variant="contained" color="primary" onClick={props.createRoom}>Create Room</Button>
+                    </AuthCheck>
+                </Typography>
             </Grid>
         </Grid>
     );
@@ -158,7 +178,7 @@ function Rules(props) {
             <br />
             <Grid item>
                 <Typography variant="body1">
-                    get money, buy property, ruin friendships
+                    {props.rules}
                 </Typography>
             </Grid>
         </div>
