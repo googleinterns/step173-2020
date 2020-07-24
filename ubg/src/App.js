@@ -4,7 +4,7 @@ import {
   Switch,
   Route
 } from "react-router-dom";
-import Home from './pages/Home';
+import Home from './Search/Home';
 import Game from './pages/Game';
 import Room from './pages/Room'
 import { FirebaseAppProvider } from 'reactfire';

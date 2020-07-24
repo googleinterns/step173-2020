@@ -1,23 +1,11 @@
 import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
 import Box from '@material-ui/core/Box';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Typography from '@material-ui/core/Typography';
-import Star from '@material-ui/icons/Star';
-import Timer from '@material-ui/icons/Timer';
-import People from '@material-ui/icons/People';
-import Face from '@material-ui/icons/Face';
-import SignalCellular3Bar from '@material-ui/icons/SignalCellular3Bar';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Navbar from '../common/Navbar';
+import GameCard from './GameCard';
+import Filter from './Filter';
 import { useFirestore}  from 'reactfire';
 
 const useStyles = makeStyles((theme) => ({
@@ -28,16 +16,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1.5),
     marginRight: theme.spacing(3),
     float: "right",
-  },
-  card: {
-    width: 370,
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 130,
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
   }
 }));
 
@@ -124,76 +102,3 @@ export default function Home() {
   );
 }
 
-function Filter(props) {
-  const classes = useStyles();
-  let append = '';
-  if (props.append) {
-    append = props.append;
-  }
-  return (
-    <FormControl className={classes.formControl}>
-      <InputLabel shrink id="demo-simple-select-placeholder-label-label">
-        {props.label}
-      </InputLabel>
-      <Select
-        labelId="demo-simple-select-placeholder-label-label"
-        id="demo-simple-select-placeholder-label"
-        value={props.value}
-        onChange={e => props.onChange(e.target.value)}
-        displayEmpty
-        className={classes.selectEmpty}
-      >
-        {props.menu.map((item) => <MenuItem key={item} value={item}>{item}{append}</MenuItem>)}
-      </Select>
-    </FormControl>
-  );
-}
-
-function GameCard(props) {
-  const classes = useStyles();
- let name = props.name;
-  if (props.name.length > 27) {
-    name = name.substring(0, 27) + "...";
-  }
-  const rating = (props.rating).toFixed(2);
-  const weight = (props.weight).toFixed(2);
-  return (
-    <Card className={classes.card}>
-      <CardActionArea>
-        <CardMedia
-          component="img"
-          alt="Contemplative Reptile"
-          height="300"
-          image={props.image}
-          title="Random Image"
-        />
-        <CardContent>
-          <Typography gutterBottom variant="h5" component="h2">
-            {name}  
-          </Typography>
-            <Grid container alignItems="center" >
-              <Grid item xs={5}>
-                <Star /> {rating}/10
-              </Grid>
-              <Grid item xs={3}>
-                <Face /> {props.minAge}+
-              </Grid>
-              <Grid item xs={4}>
-                <People /> 
-                {props.minPlayer !== props.maxPlayer ? <span>{props.minPlayer}-</span> : null }
-                {props.maxPlayer}
-              </Grid>
-              <br />
-              <Grid item xs={6}><Timer /> 
-                {props.minTime !== props.maxTime ? <span>{props.minTime}-</span> : null }
-                {props.maxTime}min
-              </Grid>
-              <Grid item xs={6}>
-                <SignalCellular3Bar /> {weight}/10
-              </Grid>
-            </Grid>
-        </CardContent>
-      </CardActionArea>
-    </Card>
-  );
-}

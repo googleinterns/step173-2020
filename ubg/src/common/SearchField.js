@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
   
-  export default function Search() {
+  export default function SearchField() {
     const classes = useStyles();
     return (
       <div className={classes.search}>
