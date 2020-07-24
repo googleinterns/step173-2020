@@ -41,6 +41,8 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+let initialize = false;
+
 export default function Home() {
   const classes = useStyles();
   let ref = useFirestore().collection('games');
@@ -60,12 +62,13 @@ export default function Home() {
     if (typeof maxT === 'string') {
       maxT = Number.MAX_SAFE_INTEGER;
     }
-    ref.where('minAge','<=',minAge)
+    ref.orderBy('rating', "desc")
     .get()
     .then(function(querySnapshot) {
         querySnapshot.forEach(function(doc) {
           if (doc.data()['minPlayer'] <= maxP && minPlayer <= doc.data()['maxPlayer'] 
-          && doc.data()['minPlaytime'] <= maxT && minTime <= doc.data()['maxPlaytime']) {
+          && doc.data()['minPlaytime'] <= maxT && minTime <= doc.data()['maxPlaytime']
+          && doc.data()['minAge'] <= minAge) {
             newGames.push(doc.data());
           }
         });
@@ -76,21 +79,23 @@ export default function Home() {
     });
   }
   useEffect(() => {
-    console.log("4");
-    let newGames = [];
-    ref
-    .get()
-    .then(function(querySnapshot) {
-      querySnapshot.forEach(function(doc) {
-        newGames.push(doc.data());
+    if (initialize === false){
+      console.log("4");
+      let newGames = [];
+      ref.orderBy('rating', "desc")
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          newGames.push(doc.data());
+        });
+        setGames(newGames);
+        initialize = true;
+      })
+      .catch(function(error) {
+        console.log("Error getting documents: ", error);
       });
-      setGames(newGames);
-    })
-    .catch(function(error) {
-      console.log("Error getting documents: ", error);
-    });
-  
-  }, []);
+    }
+  }, [ref]);
 
   return (
     <div>
@@ -118,8 +123,34 @@ export default function Home() {
   );
 }
 
-
 function Filter(props) {
+  const classes = useStyles();
+  let append = '';
+  if (props.append) {
+    append = props.append;
+  }
+  return (
+    <FormControl className={classes.formControl}>
+      <InputLabel shrink id="demo-simple-select-placeholder-label-label">
+        {props.label}
+      </InputLabel>
+      <Select
+        labelId="demo-simple-select-placeholder-label-label"
+        id="demo-simple-select-placeholder-label"
+        value={props.value}
+        onChange={e => props.onChange(e.target.value)}
+        displayEmpty
+        className={classes.selectEmpty}
+      >
+        {props.max === true ? null : <MenuItem key={props.value} value={props.value}>{props.value}{append}</MenuItem> }
+        {props.menu.map((item) => <MenuItem key={item} value={item}>{item}{append}</MenuItem>)}
+        {props.max === true ? <MenuItem key={props.value} value={props.value}>{props.value}{append}</MenuItem>: null }
+      </Select>
+    </FormControl>
+  );
+}
+
+function Sort(props) {
   const classes = useStyles();
   let append = '';
   if (props.append) {
