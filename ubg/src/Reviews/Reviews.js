@@ -2,10 +2,9 @@ import React from 'react';
 import Review from './Review';
 import List from '@material-ui/core/List';
 
-class Reviews extends React.Component {
+export default class Reviews extends React.Component {
 
     renderReview(review) {
-        console.log("HIIIIIII");
         return <Review review={review} />;
     }
 
@@ -22,5 +21,3 @@ class Reviews extends React.Component {
         );
     }
 }
-
-export default Reviews;

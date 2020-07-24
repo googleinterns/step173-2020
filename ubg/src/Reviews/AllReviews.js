@@ -1,5 +1,5 @@
 import firebase from 'firebase/app';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@material-ui/core/Box';
 import Reviews from './Reviews';
 import Typography from '@material-ui/core/Typography';
@@ -8,6 +8,8 @@ import NewReview from './NewReview';
 import { AuthCheck, useAuth, useUser } from 'reactfire';
 import Button from '@material-ui/core/Button';
 
+let initialize = false;
+
 function AllReviews(props) {
     const reviewsRef = useFirestore()
         .collection('gameReviews')
@@ -15,35 +17,42 @@ function AllReviews(props) {
         .collection('reviews');
     const auth = useAuth();
     const user = useUser();
+    const [reviews, setReviews] = useState([]);
 
     async function signIn () {
         await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
     };
 
-    const populateReviews = () => {
-        const tempReviews = [];
-        reviewsRef.get().then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-              tempReviews.push({
-                name: doc.data().name,
-                rating: doc.data().rating,
-                text: doc.data().text,
-                timestamp: doc.data().timestamp,
-                userId: doc.data().userId
-              });
-            });
-        });
-        return tempReviews;
-    }
-
-    const [reviews, setReviews] = useState(populateReviews());
-
     const handleAddReview = (review) => {
         const tempReviews = [...reviews];
-        tempReviews.push(review);
+        tempReviews.unshift(review);
         setReviews(tempReviews);
         reviewsRef.add(review);
     }
+
+    useEffect(() => {
+        if (initialize === false) {
+            const tempReviews = [];
+            reviewsRef.orderBy('timestamp', 'desc')
+            .get()
+            .then(function(querySnapshot) {
+                querySnapshot.forEach(doc => {
+                  tempReviews.push({
+                    name: doc.data().name,
+                    rating: doc.data().rating,
+                    text: doc.data().text,
+                    timestamp: doc.data().timestamp,
+                    userId: doc.data().userId
+                  });
+                });
+                setReviews(tempReviews);
+                initialize = true;
+            })
+            .catch(function (error) {
+                console.log('error: ', error);
+            });
+        }
+    }, [reviewsRef]);
 
     return (
         <div className='reviews'>
@@ -63,7 +72,7 @@ function AllReviews(props) {
                 >
                     <NewReview gameId={props.gameId} user={user} handleAddReview={handleAddReview} />
                 </AuthCheck>
-                <Reviews reviews={reviews} populateReviews={populateReviews}/>
+                <Reviews reviews={reviews} />
             </Box>
         </div>
     );
