@@ -125,7 +125,7 @@ function Description(props) {
         players = props.games.minPlayer;
     }
     return (
-        <Grid container spacing={5} className={classes.section}>
+        <Grid container spacing={5}>
             <Grid item className={classes.section}>
                 <Card>
                     <CardMedia
