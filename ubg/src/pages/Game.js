@@ -16,7 +16,7 @@ import Timer from '@material-ui/icons/Timer';
 import Star from '@material-ui/icons/Star';
 import People from '@material-ui/icons/People';
 import TextField from '@material-ui/core/TextField';
-
+import ReactPlayer from "react-player"
 
 const useStyles = makeStyles((theme) => ({
     fonts: {
@@ -26,9 +26,7 @@ const useStyles = makeStyles((theme) => ({
         marginTop: theme.spacing(1),
     },
     image: {
-        display: "block",
-        margin: "auto",
-        maxWidth: "100%"
+
     },
     section: {
         display: "flex",
@@ -87,7 +85,7 @@ export default function Game() {
                     </Grid>
                 </AuthCheck>
                 <Spacer />
-                <Rules />
+                <Rules games={games}/>
                 <Spacer />
                 <AllReviews />
             </Box>
@@ -126,11 +124,11 @@ function Description(props) {
     }
     return (
         <Grid container spacing={5}>
-            <Grid item className={classes.section}>
+            <Grid item xs={2} className={classes.section}>
                 <Card>
                     <CardMedia
                         component="img"
-                        image={props.games.thumbnail}
+                        image={props.games.image}
                         title={props.games.Name}
                         className={classes.image}
                     />
@@ -172,6 +170,7 @@ function Description(props) {
 }
 
 function Rules(props) {
+    console.log(props.videos)
     return (
         <div>
             <Grid container>
@@ -182,10 +181,16 @@ function Rules(props) {
                 </Grid>
             </Grid>
             <br />
-            <Grid item>
-                <Typography variant="body1">
-                    {props.rules}
-                </Typography>
+            <Grid container spacing={3}>
+                {props.games.videos.slice(0,3).map(video => {
+                    return (
+                        <Grid item>
+                            <ReactPlayer
+                                url={video.link} 
+                            />
+                        </Grid>
+                    );
+                })}
             </Grid>
         </div>
     );
