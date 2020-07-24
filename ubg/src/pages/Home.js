@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,useCallback,useRef  } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
@@ -9,7 +9,7 @@ import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
-import IconButton from '@material-ui/core/IconButton';
+// import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import Star from '@material-ui/icons/Star';
 import Timer from '@material-ui/icons/Timer';
@@ -25,12 +25,17 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
+  button: {
+    marginTop: theme.spacing(1.5),
+    marginRight: theme.spacing(3),
+    float: "right",
+  },
   card: {
     width: 370,
   },
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 120,
+    minWidth: 130,
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
@@ -38,29 +43,29 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Home() {
+  const classes = useStyles();
   let ref = useFirestore().collection('games');
   const allGames = [];
+  // let initialize = false;
+  // let initialize = useRef(false);
   const [minAge, setMinAge] = React.useState(1);
   const [minPlayer, setMinPlayer] = React.useState(1);
-  const [maxPlayer, setMaxPlayer] = React.useState('Max');
+  const [maxPlayer, setMaxPlayer] = React.useState('8+');
   const [minTime, setMinTime] = React.useState(5);
-  const [maxTime, setMaxTime] = React.useState('Max');
+  const [maxTime, setMaxTime] = React.useState('240+');
   const [games, setGames] = React.useState([]);
   let handleFilter = () => {
     // setGames([]);
+    console.log(allGames);
     let newGames = [];
     let maxP = maxPlayer;
-    if (maxP === 'Max') {
+    if (maxP.slice(maxP.length - 1) === '+') {
       maxP = Number.MAX_SAFE_INTEGER;
     }
     let maxT = maxTime;
-    if (maxT === 'Max') {
+    if (maxT.slice(maxT.length - 1) === '+') {
       maxT = Number.MAX_SAFE_INTEGER;
     }
-    // for ()
-    // ref.where("minAge","<=",minAge)
-    // .get()
-    // .then(function(querySnapshot) {
         allGames.forEach(function(doc) {
           if (doc.data()['minPlayer'] <= maxP && minPlayer <= doc.data()['maxPlayer'] 
           && doc.data()['minPlaytime'] <= maxT && minTime <= doc.data()['maxPlaytime']) {
@@ -69,29 +74,37 @@ export default function Home() {
           }
         });
         setGames(newGames);
-    // // console.log(newGames);
-    // })
-    // .catch(function(error) {
-    //     console.log("Error getting documents: ", error);
-    // });
   }
-  useEffect(() => {
-    ref
-    .get()
-    .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-          // if (doc.data()['minPlayer'] <= maxP && minPlayer <= doc.data()['maxPlayer'] 
-          // && doc.data()['minPlaytime'] <= maxT && minTime <= doc.data()['maxPlaytime']) {
-            allGames.push(doc.data());
-          // }
-        });
-        setGames(allGames);
-    // console.log(newGames);
-    })
-    .catch(function(error) {
-        console.log("Error getting documents: ", error);
-    });
-  }, []);
+  // const loadOnce = useCallback(() => {
+  //   console.log("4");
+  //   ref
+  //   .get()
+  //   .then(function(querySnapshot) {
+  //       querySnapshot.forEach(function(doc) {
+  //           allGames.push(doc.data());
+  //       });
+  //       setGames(allGames);
+  //   })
+  //   .catch(function(error) {
+  //       console.log("Error getting documents: ", error);
+  //   });
+  // }, [ref, allGames]
+  // ); 
+  // useEffect(() => {
+  //     console.log("4");
+  //   ref
+  //   .get()
+  //   .then(function(querySnapshot) {
+  //       querySnapshot.forEach(function(doc) {
+  //           allGames.push(doc.data());
+  //       });
+  //       setGames(allGames);
+  //   })
+  //   .catch(function(error) {
+  //       console.log("Error getting documents: ", error);
+  //   });
+  
+  // }, []);
 
   return (
     <div>
@@ -102,14 +115,14 @@ export default function Home() {
         <Filter label = "Maximum Player" value={maxPlayer} menu={[1, 2, 3, 4, 5, 6, 7]} max={true} onChange={(v) => setMaxPlayer(v)} />
         <Filter label = "Minimum Time" value={minTime} menu={[15, 30, 60, 90, 120]} append={'min'} max={false} onChange={(v) => setMinTime(v)} />
         <Filter label = "Maximum Time" value={maxTime} menu={[15, 30, 60, 90, 120]} append={'min'} max={true} onChange={(v) => setMaxTime(v)} />
-        <Button variant="contained" onClick={() => handleFilter()}>Search</Button>
+        <Button className={classes.button} variant="contained" onClick={() => handleFilter()}>Search</Button>
       </Box>
-      <Box m={10}>
+      <Box ml={10}>
         <Grid container justify="flex-start" alignItems="center" spacing={4}>
         {games.map((item) => 
-          <Grid item>
-            <GameCard image={item['image']} name={item['Name']} year={item['year']} minTime={item['minPlaytime']} 
-            maxTime={item['maxPlaytime']} minPlayer={item['minPlayer']} maxPlayer={item['maxPlayer']} rating={item['rateing']} 
+          <Grid key={item['id']} item>
+            <GameCard id={item['id']}  image={item['image']} name={item['Name']} year={item['year']} minTime={item['minPlaytime']} 
+            maxTime={item['maxPlaytime']} minPlayer={item['minPlayer']} maxPlayer={item['maxPlayer']} rating={item['rating']} 
             minAge={item['minAge']} weight={item['weight']} />
           </Grid>
         )}
@@ -139,9 +152,9 @@ function Filter(props) {
         displayEmpty
         className={classes.selectEmpty}
       >
-        {props.max === true ? null : <MenuItem value={props.value}>{props.value}{append}</MenuItem> }
-        {props.menu.map((item) => <MenuItem value={item}>{item}</MenuItem>)}
-        {props.max === true ? <MenuItem value={props.value}>{props.value}{append}</MenuItem>: null }
+        {props.max === true ? null : <MenuItem key={props.value} value={props.value}>{props.value}{append}</MenuItem> }
+        {props.menu.map((item) => <MenuItem key={item} value={item}>{item}{append}</MenuItem>)}
+        {props.max === true ? <MenuItem key={props.value} value={props.value}>{props.value}{append}</MenuItem>: null }
       </Select>
     </FormControl>
   );
@@ -153,6 +166,8 @@ function GameCard(props) {
   if (props.name.length > 27) {
     name = name.substring(0, 27) + "...";
   }
+  const rating = (props.rating).toFixed(2);
+  const weight = (props.weight).toFixed(2);
   return (
     <Card className={classes.card}>
       <CardActionArea>
@@ -167,24 +182,27 @@ function GameCard(props) {
           <Typography gutterBottom variant="h5" component="h2">
             {name}  
           </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
-            <IconButton aria-label="share">
-              <Star /> {props.rating}/10
-            </IconButton>
-            <IconButton aria-label="share">
-              <Face /> {props.minAge}+
-            </IconButton>
-            <IconButton aria-label="share">
-              <People /> {props.minPlayer}-{props.maxPlayer}
-            </IconButton>
-            <br />
-            <IconButton aria-label="share">
-              <Timer /> {props.minTime}-{props.maxTime}min
-            </IconButton>
-            <IconButton aria-label="share">
-              <SignalCellular3Bar /> {props.weight}/10
-            </IconButton>
-          </Typography>
+            <Grid container alignItems="center" >
+              <Grid item xs={5}>
+                <Star /> {rating}/10
+              </Grid>
+              <Grid item xs={3}>
+                <Face /> {props.minAge}+
+              </Grid>
+              <Grid item xs={4}>
+                <People /> 
+                {props.minPlayer !== props.maxPlayer ? <span>{props.minPlayer}-</span> : null }
+                {props.maxPlayer}
+              </Grid>
+              <br />
+              <Grid item xs={6}><Timer /> 
+                {props.minTime !== props.maxTime ? <span>{props.minTime}-</span> : null }
+                {props.maxTime}min
+              </Grid>
+              <Grid item xs={6}>
+                <SignalCellular3Bar /> {weight}/10
+              </Grid>
+            </Grid>
         </CardContent>
       </CardActionArea>
     </Card>
