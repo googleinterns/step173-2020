@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AllReviews from '../Reviews/AllReviews';
+import AllReviews from '../reviews/AllReviews';
 import { useParams, useHistory } from 'react-router-dom';
 import { useFirestore, AuthCheck } from 'reactfire';
 import Navbar from '../common/Navbar';
