@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
@@ -11,6 +11,7 @@ import People from '@material-ui/icons/People';
 import Face from '@material-ui/icons/Face';
 import SignalCellular3Bar from '@material-ui/icons/SignalCellular3Bar';
 import Grid from '@material-ui/core/Grid';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -32,14 +33,15 @@ const useStyles = makeStyles((theme) => ({
  * @param {number} weight difficulty of game out of 10
  * @return {ReactElement} GameCard with basic information of game
  */
-export default function GameCard({id, image, name, year, minTime, maxTime, minPlayer, maxPlayer, rating, minAge, weight}) {
+export default function GameCard({id, image, name, year, minTime, maxTime, 
+  minPlayer, maxPlayer, rating, minAge, weight}) {
   const classes = useStyles();
   let gameName = name;
   if (name.length > 27) {
-    gameName = name.substring(0, 27) + "...";
+    gameName = name.substring(0, 27) + '...';
   }
-  rating = (rating).toFixed(2);
-  weight = (weight).toFixed(2);
+  rating = rating.toFixed(2);
+  weight = weight.toFixed(2);
   return (
     <Card className={classes.card}>
       <CardActionArea>
@@ -52,31 +54,45 @@ export default function GameCard({id, image, name, year, minTime, maxTime, minPl
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
-            {gameName}  
+            {gameName}
           </Typography>
-            <Grid container alignItems="center" >
-              <Grid item xs={5}>
-                <Star /> {rating}/10
-              </Grid>
-              <Grid item xs={3}>
-                <Face /> {minAge}+
-              </Grid>
-              <Grid item xs={4}>
-                <People /> 
-                {minPlayer !== maxPlayer ? <span>{minPlayer}-</span> : null }
-                {maxPlayer}
-              </Grid>
-              <br />
-              <Grid item xs={6}><Timer /> 
-                {minTime !== maxTime ? <span>{minTime}-</span> : null }
-                {maxTime}min
-              </Grid>
-              <Grid item xs={6}>
-                <SignalCellular3Bar /> {weight}/10
-              </Grid>
+          <Grid container alignItems="center" >
+            <Grid item xs={5}>
+              <Star /> {rating}/10
             </Grid>
+            <Grid item xs={3}>
+              <Face /> {minAge}+
+            </Grid>
+            <Grid item xs={4}>
+              <People />
+              {minPlayer !== maxPlayer ? <span>{minPlayer}-</span> : null }
+              {maxPlayer}
+            </Grid>
+            <br />
+            <Grid item xs={6}><Timer />
+              {minTime !== maxTime ? <span>{minTime}-</span> : null }
+              {maxTime}min
+            </Grid>
+            <Grid item xs={6}>
+              <SignalCellular3Bar /> {weight}/10
+            </Grid>
+          </Grid>
         </CardContent>
       </CardActionArea>
     </Card>
   );
 }
+
+GameCard.propTypes = {
+  id: PropTypes.number,
+  image: PropTypes.string,
+  name: PropTypes.string,
+  year: PropTypes.number,
+  minTime: PropTypes.number,
+  maxTime: PropTypes.number,
+  minPlayer: PropTypes.number,
+  maxPlayer: PropTypes.number,
+  rating: PropTypes.number,
+  minAge: PropTypes.number,
+  weight: PropTypes.number,
+};

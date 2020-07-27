@@ -5,14 +5,14 @@ import SearchIcon from '@material-ui/icons/Search';
 
 const useStyles = makeStyles((theme) => ({
   search: {
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
+    'position': 'relative',
+    'borderRadius': theme.shape.borderRadius,
+    'backgroundColor': fade(theme.palette.common.white, 0.15),
     '&:hover': {
       backgroundColor: fade(theme.palette.common.white, 0.25),
     },
-    marginRight: 10,
-    width: '100%',
+    'marginRight': 10,
+    'width': '100%',
     [theme.breakpoints.up('sm')]: {
       marginLeft: theme.spacing(1),
       width: 'auto',
@@ -36,14 +36,14 @@ const useStyles = makeStyles((theme) => ({
     transition: theme.transitions.create('width'),
     width: '100%',
     [theme.breakpoints.up('sm')]: {
-      width: '12ch',
+      'width': '12ch',
       '&:focus': {
         width: '20ch',
       },
     },
   },
 }));
-  
+
 /**
  * @return {ReactElement} Search for games on Navbar
  */
@@ -55,12 +55,12 @@ export default function SearchField() {
         <SearchIcon />
       </div>
       <InputBase
-      placeholder="Search…"
-      classes={{
+        placeholder="Search…"
+        classes={{
           root: classes.inputRoot,
           input: classes.inputInput,
-      }}
-      inputProps={{'aria-label': 'search'}}
+        }}
+        inputProps={{'aria-label': 'search'}}
       />
     </div>
   );

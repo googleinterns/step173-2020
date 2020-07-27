@@ -23,7 +23,6 @@ const firebaseConfig = {
 /**
  * @return {ReactElement} UltimateBoardGame website
  */
-
 function App() {
   return (
     <FirebaseAppProvider firebaseConfig={firebaseConfig}>

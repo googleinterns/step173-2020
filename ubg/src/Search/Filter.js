@@ -4,6 +4,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -21,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
  * @param {object} menu All possible values of filter
  * @param {string} append string add on when displaying values
  * @param {object} onChange function when filter value is changed
- * @return {ReactElement} Filter component 
+ * @return {ReactElement} Filter component
  */
 export default function Filter({label, value, menu, append, onChange}) {
   const classes = useStyles();
@@ -47,3 +48,14 @@ export default function Filter({label, value, menu, append, onChange}) {
     </FormControl>
   );
 }
+
+Filter.propTypes = {
+  label: PropTypes.string,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number
+  ]),
+  menu: PropTypes.array,
+  append: PropTypes.string,
+  onChange: PropTypes.func,
+};
