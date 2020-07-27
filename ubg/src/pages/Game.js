@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import AllReviews from '../Reviews/AllReviews';
 import { makeStyles } from '@material-ui/core/styles';
 import { useParams, useHistory } from 'react-router-dom';
-import { useFirestore, AuthCheck, useFirestoreDocData } from 'reactfire';
+import { useFirestore, AuthCheck, useUser, useFirestoreDocData } from 'reactfire';
 import Navbar from '../common/Navbar';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
@@ -16,7 +16,7 @@ import Timer from '@material-ui/icons/Timer';
 import Star from '@material-ui/icons/Star';
 import People from '@material-ui/icons/People';
 import TextField from '@material-ui/core/TextField';
-import ReactPlayer from "react-player"
+import ReactPlayer from "react-player";
 
 const useStyles = makeStyles((theme) => ({
     fonts: {
@@ -35,20 +35,28 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+/**
+ * @return {ReactElement} Game details page
+ */
 export default function Game() {
+    const user = useUser();
     const {gameId} = useParams();
     const history = useHistory();
     const [roomId, setRoomId] = useState('');
-
     const roomsCollection = useFirestore().collection('rooms');
     const games = useFirestoreDocData(useFirestore().collection('games').doc(gameId));
 
+    /**
+     * Creates a room in firebase and adds the current user as host
+     */
     async function createRoom() {
         const newRoom = await roomsCollection.doc();
-        newRoom.set({ gameId });
+        newRoom.set({gameId, host: user.uid});
         history.push(`/gameRoom/${newRoom.id}`);
     }
-
+    /**
+     * Go to a rooms url with the room id
+     */
     function joinRoom() {
         history.push(`/gameRoom/${roomId}`);
     }
@@ -74,7 +82,9 @@ export default function Game() {
                         <Grid item className={classes.roomJoin}>
                             <TextField
                                 value={roomId}
-                                onChange={(e) => { setRoomId(e.target.value) }}
+                                onChange={(e) => {
+                                    setRoomId(e.target.value) 
+                                }}
                                 type="text"
                                 variant="outlined"
                             />
@@ -170,7 +180,6 @@ function Description(props) {
 }
 
 function Rules(props) {
-    console.log(props.videos)
     return (
         <div>
             <Grid container>
