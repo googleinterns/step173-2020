@@ -17,20 +17,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+/**
+ * @return {ReactElement} Navigation bar of website
+ */
 export default function Navbar() {
   const classes = useStyles();
   return (
     <AppBar position="static">
       <Toolbar>
-        <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+        <IconButton edge="start" className={classes.menuButton} color="inherit" 
+        aria-label="menu">
           <MenuIcon />
         </IconButton>
         <Typography variant="h6" className={classes.title}>
-            UltimateBoardGame
-          </Typography>
-          <SearchField />
-          <AuthButtons />
-        </Toolbar>
-      </AppBar>
-    );
-  }
+          UltimateBoardGame
+        </Typography>
+        <SearchField />
+        <AuthButtons />
+      </Toolbar>
+    </AppBar>
+  );
+}

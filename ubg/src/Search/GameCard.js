@@ -19,55 +19,64 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 /**
- * @param {json} props relevant information of game
+ * @param {number} id game unique id
+ * @param {string} image iamge link of game
+ * @param {string} name game name
+ * @param {number} year year published of game
+ * @param {number} minTime minimum time required
+ * @param {number} maxTime maximum time
+ * @param {number} minPlayer minimum player
+ * @param {number} maxPlayer maximum player
+ * @param {number} rating game rating out of 10
+ * @param {number} minAge minimum age to play game
+ * @param {number} weight difficulty of game out of 10
  * @return {ReactElement} GameCard with basic information of game
  */
-
-export default function GameCard(props) {
-    const classes = useStyles();
-    let name = props.name;
-    if (props.name.length > 27) {
-      name = name.substring(0, 27) + "...";
-    }
-    const rating = (props.rating).toFixed(2);
-    const weight = (props.weight).toFixed(2);
-    return (
-      <Card className={classes.card}>
-        <CardActionArea>
-          <CardMedia
-            component="img"
-            alt="Contemplative Reptile"
-            height="300"
-            image={props.image}
-            title="Random Image"
-          />
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="h2">
-              {name}  
-            </Typography>
-              <Grid container alignItems="center" >
-                <Grid item xs={5}>
-                  <Star /> {rating}/10
-                </Grid>
-                <Grid item xs={3}>
-                  <Face /> {props.minAge}+
-                </Grid>
-                <Grid item xs={4}>
-                  <People /> 
-                  {props.minPlayer !== props.maxPlayer ? <span>{props.minPlayer}-</span> : null }
-                  {props.maxPlayer}
-                </Grid>
-                <br />
-                <Grid item xs={6}><Timer /> 
-                  {props.minTime !== props.maxTime ? <span>{props.minTime}-</span> : null }
-                  {props.maxTime}min
-                </Grid>
-                <Grid item xs={6}>
-                  <SignalCellular3Bar /> {weight}/10
-                </Grid>
-              </Grid>
-          </CardContent>
-        </CardActionArea>
-      </Card>
-    );
+export default function GameCard({id, image, name, year, minTime, maxTime, minPlayer, maxPlayer, rating, minAge, weight}) {
+  const classes = useStyles();
+  let gameName = name;
+  if (name.length > 27) {
+    gameName = name.substring(0, 27) + "...";
   }
+  rating = (rating).toFixed(2);
+  weight = (weight).toFixed(2);
+  return (
+    <Card className={classes.card}>
+      <CardActionArea>
+        <CardMedia
+          component="img"
+          alt="Contemplative Reptile"
+          height="300"
+          image={image}
+          title="Random Image"
+        />
+        <CardContent>
+          <Typography gutterBottom variant="h5" component="h2">
+            {gameName}  
+          </Typography>
+            <Grid container alignItems="center" >
+              <Grid item xs={5}>
+                <Star /> {rating}/10
+              </Grid>
+              <Grid item xs={3}>
+                <Face /> {minAge}+
+              </Grid>
+              <Grid item xs={4}>
+                <People /> 
+                {minPlayer !== maxPlayer ? <span>{minPlayer}-</span> : null }
+                {maxPlayer}
+              </Grid>
+              <br />
+              <Grid item xs={6}><Timer /> 
+                {minTime !== maxTime ? <span>{minTime}-</span> : null }
+                {maxTime}min
+              </Grid>
+              <Grid item xs={6}>
+                <SignalCellular3Bar /> {weight}/10
+              </Grid>
+            </Grid>
+        </CardContent>
+      </CardActionArea>
+    </Card>
+  );
+}

@@ -2,8 +2,8 @@ import React, {Suspense} from 'react';
 import {
   BrowserRouter as Router,
   Switch,
-  Route
-} from "react-router-dom";
+  Route,
+} from 'react-router-dom';
 import Home from './Search/Home';
 import Game from './pages/Game';
 import Room from './pages/Room';
@@ -19,6 +19,10 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_FIREBASE_APP_ID,
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 };
+
+/**
+ * @return {ReactElement} UltimateBoardGame website
+ */
 
 function App() {
   return (
