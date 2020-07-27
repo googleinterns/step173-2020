@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import AllReviews from '../Reviews/AllReviews';
+import AllReviews from '../reviews/AllReviews';
 import {useParams, useHistory} from 'react-router-dom';
 import {useFirestore, AuthCheck, useUser} from 'reactfire';
 import Navbar from '../common/Navbar';
@@ -46,7 +46,7 @@ export default function Game() {
         />
         <button onClick={joinRoom}>Join Room</button>
       </AuthCheck>
-      <AllReviews />
+      <AllReviews gameId={gameId}/>
     </div>
   );
 }

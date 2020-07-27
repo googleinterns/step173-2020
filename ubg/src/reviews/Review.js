@@ -5,6 +5,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import {makeStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Rating from '@material-ui/lab/Rating';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
@@ -45,6 +46,10 @@ const Review = (props) => {
       <Divider />
     </div>
   );
+};
+
+Review.propTypes = {
+  review: PropTypes.object,
 };
 
 export default Review;
