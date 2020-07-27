@@ -21,7 +21,10 @@
   "devDependencies": {
     "eslint": "^6.6.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-react": "^7.20.3"
+    "eslint-plugin-react": "^7.20.3",
+    "firebase-functions-test": "^0.2.1",
+    "mocha": "^8.0.1",
+    "prettier": "^2.0.5"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -40,10 +43,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "firebase-functions-test": "^0.2.1",
-    "mocha": "^8.0.1",
-    "prettier": "^2.0.5"
   }
 }

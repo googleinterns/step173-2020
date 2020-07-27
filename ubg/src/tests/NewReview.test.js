@@ -1,19 +1,10 @@
-import React from "react";
-import { render, unmountComponentAtNode } from "react-dom";
-import { act } from "react-dom/test-utils";
-import Review from "../reviews/Review";
-import pretty from "pretty";
+import {unmountComponentAtNode} from 'react-dom';
 
 let container = null;
-const reviewOne = {
-  name: "John Smith",
-  rating: "8",
-  text: "This game is good!",
-};
 
 beforeEach(() => {
   // setup a DOM element as a render target
-  container = document.createElement("div");
+  container = document.createElement('div');
   document.body.appendChild(container);
 });
 
