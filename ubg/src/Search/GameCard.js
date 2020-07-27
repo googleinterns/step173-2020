@@ -18,6 +18,11 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+/**
+ * @param {json} props relevant information of game
+ * @return {ReactElement} GameCard with basic information of game
+ */
+
 export default function GameCard(props) {
     const classes = useStyles();
     let name = props.name;

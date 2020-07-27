@@ -21,6 +21,10 @@ const useStyles = makeStyles((theme) => ({
 
 let initialize = false;
 
+/**
+ * @return {ReactElement} Search page with filter and search result
+ */
+
 export default function Home() {
   const classes = useStyles();
   let ref = useFirestore().collection('games');

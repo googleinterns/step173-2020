@@ -15,6 +15,11 @@ const useStyles = makeStyles((theme) => ({
     }
   }));
 
+/**
+ * @param {json} props Filter parameters
+ * @return {ReactElement} Filter component 
+ */
+
 export default function Filter(props) {
     const classes = useStyles();
     let append = '';
