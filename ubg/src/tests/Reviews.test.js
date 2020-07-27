@@ -34,14 +34,5 @@ afterEach(() => {
   container = null;
 });
 
-it("renders name and text", () => {
-  //const review = getByTestId("review");
-  act(() => {
-    render(<Review review={reviewOne} />, container);
-  });
-  //expect(review).toBeInTheDocument();
-  expect(container.textContent).toBe(reviewOne.name + reviewOne.text);
-});
-
 // check if multiple comments are being rendered correctly
 // check if no text review rendered correctly
