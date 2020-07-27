@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 /**
- * @returns {ReactElement} Game room element
+ * @return {ReactElement} Game room element
  */
 export default function Room() {
   const [openRules, setOpenRules] = useState(false);
@@ -90,14 +90,12 @@ export default function Room() {
         <div className={classes.game}>
           {
             roomData.host === uid ?
-              'You are the host'
-            :
+              'You are the host' :
               'Waiting for the host'
           }
           {
             usersData.some((user) => user.uid === uid) ?
-              <button onClick={leaveRoom}>Leave Room</button>
-            :
+              <button onClick={leaveRoom}>Leave Room</button> :
               <button onClick={joinRoom}>Join Room</button>
           }
         </div>
@@ -119,7 +117,7 @@ export default function Room() {
                 key={user.uid}
                 user={user.displayName}
               />
-            )
+            );
           })
         }
       </Grid>

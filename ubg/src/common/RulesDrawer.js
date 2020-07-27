@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @param {boolean} open Declares if the drawer is open
  * @param {string} rules Descripton of the rules
- * @returns {ReactElement} Drawer with rules description
+ * @return {ReactElement} Drawer with rules description
  */
 export default function RulesDrawer({open, rules}) {
   const classes = useStyles();
@@ -30,6 +30,6 @@ export default function RulesDrawer({open, rules}) {
 }
 
 RulesDrawer.propTypes = {
-    open: PropTypes.bool,
-    rules: PropTypes.string,
+  open: PropTypes.bool,
+  rules: PropTypes.string,
 };

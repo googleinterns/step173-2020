@@ -1,19 +1,17 @@
 import React, {useState} from 'react';
 import AllReviews from '../Reviews/AllReviews';
-import { useParams, useHistory } from 'react-router-dom';
-import { useFirestore, AuthCheck, useUser } from 'reactfire';
+import {useParams, useHistory} from 'react-router-dom';
+import {useFirestore, AuthCheck, useUser} from 'reactfire';
 import Navbar from '../common/Navbar';
 
 /**
- * @returns {ReactElement} Game details page
+ * @return {ReactElement} Game details page
  */
 export default function Game() {
-
   const user = useUser();
   const {gameId} = useParams();
   const history = useHistory();
   const [roomId, setRoomId] = useState('');
-  
   const roomsCollection = useFirestore().collection('rooms');
 
   /**
@@ -24,7 +22,6 @@ export default function Game() {
     newRoom.set({gameId, host: user.uid});
     history.push(`/gameRoom/${newRoom.id}`);
   }
-  
   /**
    * Go to a rooms url with the room id
    */

@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
 
 /**
  * @param {string} user The current user's display name
- * @returns {ReactElement} Box with the users video and name
+ * @return {ReactElement} Box with the users video and name
  */
 export default function UserVideo({user}) {
   const classes = useStyles();
@@ -23,5 +23,5 @@ export default function UserVideo({user}) {
 }
 
 UserVideo.propTypes = {
-    user: PropTypes.string,
+  user: PropTypes.string,
 };
