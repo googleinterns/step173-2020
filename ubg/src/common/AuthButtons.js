@@ -1,15 +1,15 @@
 import firebase from 'firebase/app';
 import React from 'react';
-import { AuthCheck, useAuth, useUser } from 'reactfire';
+import {AuthCheck, useAuth, useUser} from 'reactfire';
 import Button from '@material-ui/core/Button';
 
 export default function AuthButtons() {
   const auth = useAuth();
   const user = useUser();
-  async function signIn () {
+  async function signIn() {
     await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
   };
-  async function signOut () {
+  async function signOut() {
     await auth.signOut();
   };
   return (
