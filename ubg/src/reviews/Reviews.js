@@ -13,7 +13,7 @@ export default class Reviews extends React.Component {
             // iterate through all reviews
             <div>
                 <List width="100%">
-                    {this.props.reviews.map(review => {
+                    {Array.from(this.props.reviews).map(review => {
                         return this.renderReview(review);
                     })}
                 </List>
