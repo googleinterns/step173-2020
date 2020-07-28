@@ -24,7 +24,7 @@ let initialize = false;
 /**
  * @return {ReactElement} Search page with filter and search result
  */
-export default function Home() {
+export default function Search() {
   const classes = useStyles();
   const ref = useFirestore().collection('games');
   const [minAge, setMinAge] = React.useState(21);

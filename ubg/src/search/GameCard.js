@@ -37,8 +37,8 @@ export default function GameCard({id, image, name, year, minTime, maxTime,
   minPlayer, maxPlayer, rating, minAge, weight}) {
   const classes = useStyles();
   let gameName = name;
-  if (name.length > 27) {
-    gameName = name.substring(0, 27) + '...';
+  if (name.length > 26) {
+    gameName = name.substring(0, 26) + '...';
   }
   rating = rating.toFixed(2);
   weight = weight.toFixed(2);

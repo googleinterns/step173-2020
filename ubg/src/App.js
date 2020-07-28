@@ -4,9 +4,10 @@ import {
   Switch,
   Route,
 } from 'react-router-dom';
-import Home from './Search/Home';
+import Home from './pages/Home';
 import Game from './pages/Game';
 import Room from './pages/Room';
+import Search from './search/Search';
 import {FirebaseAppProvider} from 'reactfire';
 
 const firebaseConfig = {
@@ -30,13 +31,16 @@ function App() {
         <Router>
           <Switch>
             <Route exact path="/">
-              <Home/>
+              <Home />
+            </Route>
+            <Route exact path="/search">
+              <Search />
             </Route>
             <Route exact path="/:gameId">
-              <Game/>
+              <Game />
             </Route>
             <Route exact path="/gameRoom/:roomId">
-              <Room/>
+              <Room />
             </Route>
           </Switch>
         </Router>
