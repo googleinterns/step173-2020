@@ -8,7 +8,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import AuthButtons from './AuthButtons';
 import SearchField from './SearchField';
-import {Link} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   menuButton: {
@@ -16,8 +16,8 @@ const useStyles = makeStyles((theme) => ({
   },
   titleButton: {
     flexGrow: 1,
-    textDecoration: 'none',
-    color: 'white',
+    justifyContent:'left',
+    textTransform: 'none',
   },
   Button: {
     textDecoration: 'none',
@@ -30,6 +30,20 @@ const useStyles = makeStyles((theme) => ({
  */
 export default function Navbar() {
   const classes = useStyles();
+  const history = useHistory();
+  
+  /**
+   * Go to the home page url
+   */
+  function homePage() {
+    history.push(`/`);
+  }
+  /**
+   * Go to the search games url
+   */
+  function searchGames() {
+    history.push(`/search`);
+  }
   return (
     <AppBar position="static">
       <Toolbar>
@@ -37,16 +51,14 @@ export default function Navbar() {
           aria-label="menu">
           <MenuIcon />
         </IconButton>
-        <Link to="/" className={classes.titleButton}>
-          <Typography variant="h6">
-            UltimateBoardGame
-          </Typography>
-        </Link>
-        <Link to="/search" className={classes.Button}>
-          <Button color="inherit">
+          <Button color="inherit" className={classes.titleButton} onClick={homePage}>
+            <Typography variant="h6">
+              UltimateBoardGame
+            </Typography>
+          </Button>
+          <Button color="inherit"  onClick={searchGames}>
             Search Games
           </Button>
-        </Link>
         <SearchField />
         <AuthButtons />
       </Toolbar>

@@ -18,5 +18,5 @@ it('renders without crashing', () => {
   const div = document.createElement('div');
   ReactDOM.render(<FirebaseAppProvider firebaseConfig={firebaseConfig}>
     <Suspense fallback={<h1>Loading Navbar...</h1>}><Navbar /></Suspense>
-    </FirebaseAppProvider>, div);
+  </FirebaseAppProvider>, div);
 });
