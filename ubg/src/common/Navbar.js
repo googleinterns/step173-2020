@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
   },
   titleButton: {
     flexGrow: 1,
-    justifyContent:'left',
+    justifyContent: 'left',
     textTransform: 'none',
   },
   Button: {
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Navbar() {
   const classes = useStyles();
   const history = useHistory();
-  
+
   /**
    * Go to the home page url
    */
@@ -51,14 +51,15 @@ export default function Navbar() {
           aria-label="menu">
           <MenuIcon />
         </IconButton>
-          <Button color="inherit" className={classes.titleButton} onClick={homePage}>
-            <Typography variant="h6">
-              UltimateBoardGame
-            </Typography>
-          </Button>
-          <Button color="inherit"  onClick={searchGames}>
-            Search Games
-          </Button>
+        <Button color="inherit" className={classes.titleButton} 
+          onClick={homePage}>
+          <Typography variant="h6">
+            UltimateBoardGame
+          </Typography>
+        </Button>
+        <Button color="inherit" onClick={searchGames}>
+          Search Games
+        </Button>
         <SearchField />
         <AuthButtons />
       </Toolbar>
