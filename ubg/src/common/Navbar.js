@@ -36,22 +36,25 @@ export default function Navbar() {
    * Go to the home page url
    */
   function homePage() {
-    history.push(`/`);
+    history.push('/');
   }
   /**
    * Go to the search games url
    */
   function searchGames() {
-    history.push(`/search`);
+    history.push('/search');
   }
   return (
     <AppBar position="static">
       <Toolbar>
-        <IconButton edge="start" className={classes.menuButton} color="inherit"
+        <IconButton edge="start"
+          className={classes.menuButton}
+          color="inherit"
           aria-label="menu">
           <MenuIcon />
         </IconButton>
-        <Button color="inherit" className={classes.titleButton}
+        <Button color="inherit"
+          className={classes.titleButton}
           onClick={homePage}>
           <Typography variant="h6">
             UltimateBoardGame
