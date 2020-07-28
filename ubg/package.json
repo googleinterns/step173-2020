@@ -10,6 +10,7 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "firebase": "^7.16.1",
+    "pretty": "^2.0.0",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -21,7 +22,10 @@
   "devDependencies": {
     "eslint": "^6.6.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-react": "^7.20.3"
+    "eslint-plugin-react": "^7.20.3",
+    "firebase-functions-test": "^0.2.1",
+    "mocha": "^8.0.1",
+    "prettier": "^2.0.5"
   },
   "scripts": {
     "start": "react-scripts start",
