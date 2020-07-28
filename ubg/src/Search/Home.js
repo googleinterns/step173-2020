@@ -52,71 +52,73 @@ export default function Home() {
       maxT = minTime;
     }
     ref.orderBy('rating', 'desc')
-      .get()
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-          if (doc.data()['minPlayer'] <= maxP &&
-          minPlayer <= doc.data()['maxPlayer'] &&
-          doc.data()['minPlaytime'] <= maxT &&
-          minTime <= doc.data()['maxPlaytime'] &&
-          doc.data()['minAge'] <= minAge) {
-            newGames.push(doc.data());
-          }
-        });
-        setGames(newGames);
-      })
-      .catch(function(error) {
-          console.log("Error getting documents: ", error);
-      });
-  };
-  useEffect(() => {
-    // using a hack to make useEffect act as onLoad()
-    if (initialize === false) {
-      // console.log("4");
-      const newGames = [];
-      ref.orderBy('rating', 'desc')
         .get()
         .then(function(querySnapshot) {
           querySnapshot.forEach(function(doc) {
-            newGames.push(doc.data());
+            if (doc.data()['minPlayer'] <= maxP &&
+            minPlayer <= doc.data()['maxPlayer'] &&
+            doc.data()['minPlaytime'] <= maxT &&
+            minTime <= doc.data()['maxPlaytime'] &&
+            doc.data()['minAge'] <= minAge) {
+              newGames.push(doc.data());
+            }
           });
           setGames(newGames);
-          initialize = true;
         })
         .catch(function(error) {
           console.log('Error getting documents: ', error);
         });
-    }
-  }, [ref]);
+    };
+    useEffect(() => {
+      // using a hack to make useEffect act as onLoad()
+      if (initialize === false) {
+        // console.log("4");
+        const newGames = [];
+        ref.orderBy('rating', 'desc')
+          .get()
+          .then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+              newGames.push(doc.data());
+            });
+            setGames(newGames);
+            initialize = true;
+          })
+          .catch(function(error) {
+            console.log('Error getting documents: ', error);
+          });
+      }
+    }, [ref]);
 
-  return (
-    <div>
-      <Navbar/>
-      <Box boxShadow={1} m={10}>
-        <Filter label = "Minimum Age" value={minAge} menu={[8, 10, 14, 16, 21]}
-        onChange={(v) => setMinAge(v)} />
-        <Filter label = "Minimum Player" value={minPlayer}
-        menu={[1, 2, 3, 4, 5, 6, 7, 8]}
-        onChange={(v) => setMinPlayer(v)}/>
-        <Filter label = "Maximum Player" value={maxPlayer}
-        menu={[1, 2, 3, 4, 5, 6, 7, '8+']}
-        onChange={(v) => setMaxPlayer(v)} />
-        <Filter label = "Minimum Time" value={minTime}
-        menu={[5, 15, 30, 60, 90, 120]}
-        append={'min'} onChange={(v) => setMinTime(v)} />
-        <Filter label = "Maximum Time" value={maxTime}
-        menu={[15, 30, 60, 90, 120, '240+']}
-        append={'min'} onChange={(v) => setMaxTime(v)} />
-        <Button className={classes.button} variant="contained"
-        onClick={() => handleFilter()}>Search</Button>
+    return (
+      <div>
+        <Navbar/>
+        <Box boxShadow={1} m={10}>
+          <Filter label = "Minimum Age" value={minAge} menu={[8, 10, 14, 16, 21]}
+          onChange={(v) => setMinAge(v)} />
+          <Filter label = "Minimum Player" value={minPlayer}
+          menu={[1, 2, 3, 4, 5, 6, 7, 8]}
+          onChange={(v) => setMinPlayer(v)}/>
+          <Filter label = "Maximum Player" value={maxPlayer}
+          menu={[1, 2, 3, 4, 5, 6, 7, '8+']}
+          onChange={(v) => setMaxPlayer(v)} />
+          <Filter label = "Minimum Time" value={minTime}
+          menu={[5, 15, 30, 60, 90, 120]}
+          append={'min'} onChange={(v) => setMinTime(v)} />
+          <Filter label = "Maximum Time" value={maxTime}
+          menu={[15, 30, 60, 90, 120, '240+']}
+          append={'min'} onChange={(v) => setMaxTime(v)} />
+          <Button className={classes.button} variant="contained"
+          onClick={() => handleFilter()}>Search</Button>
       </Box>
       <Box ml={10}>
         <Grid container justify="flex-start" alignItems="center" spacing={4}>
-          {games.map((item) => 
+          {games.map((item) =>
             <Grid key={item['id']} item>
-              <GameCard id={item['id']} image={item['image']} name={item['Name']} year={item['year']} 
-              minTime={item['minPlaytime']} maxTime={item['maxPlaytime']} minPlayer={item['minPlayer']}
-              maxPlayer={item['maxPlayer']} rating={item['rating']} minAge={item['minAge']} weight={item['weight']} />
+              <GameCard id={item['id']} image={item['image']} name={item['Name']}
+              year={item['year']} minTime={item['minPlaytime']}
+              maxTime={item['maxPlaytime']} minPlayer={item['minPlayer']}
+              maxPlayer={item['maxPlayer']} rating={item['rating']}
+              minAge={item['minAge']} weight={item['weight']} />
             </Grid>
           )}
         </Grid>

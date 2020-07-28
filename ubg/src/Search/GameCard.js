@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 const useStyles = makeStyles((theme) => ({
   card: {
     width: 370,
-  }
+  },
 }));
 
 /**
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
  * @param {number} weight difficulty of game out of 10
  * @return {ReactElement} GameCard with basic information of game
  */
-export default function GameCard({id, image, name, year, minTime, maxTime, 
+export default function GameCard({id, image, name, year, minTime, maxTime,
   minPlayer, maxPlayer, rating, minAge, weight}) {
   const classes = useStyles();
   let gameName = name;

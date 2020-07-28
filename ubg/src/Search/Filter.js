@@ -39,11 +39,13 @@ export default function Filter({label, value, menu, append, onChange}) {
         labelId="demo-simple-select-placeholder-label-label"
         id="demo-simple-select-placeholder-label"
         value={value}
-        onChange={e => onChange(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
         displayEmpty
         className={classes.selectEmpty}
       >
-        {menu.map((item) => <MenuItem key={item} value={item}>{item}{appendContent}</MenuItem>)}
+        {menu.map((item) => 
+          <MenuItem key={item} value={item}>{item}{appendContent}</MenuItem>
+        )}
       </Select>
     </FormControl>
   );
@@ -53,7 +55,7 @@ Filter.propTypes = {
   label: PropTypes.string,
   value: PropTypes.oneOfType([
     PropTypes.string,
-    PropTypes.number
+    PropTypes.number,
   ]),
   menu: PropTypes.array,
   append: PropTypes.string,
