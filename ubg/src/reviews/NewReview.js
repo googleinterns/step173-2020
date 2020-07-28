@@ -5,23 +5,24 @@ import PropTypes from 'prop-types';
 
 /**
  * Displays a review writing section
- * @param {l} props
+ * @param {object} user Firebase user object
+ * @param {func} handleAddReview Function that handles user review input
  * @return {ReactElement} Box containing section to write a new review
  */
-export default function NewReview(props) {
+export default function NewReview(user, handleAddReview) {
   const addReview = (event) => {
     event.preventDefault();
     // Get the values of the form
-    const name = props.user.displayName;
+    const name = user.displayName;
     const rating = event.target.elements.rating.value;
     const text = event.target.elements.text.value.trim();
     const timestamp = Date.now();
-    const userId = props.user.uid;
+    const userId = user.uid;
     const reviewObject = {name, rating, text, timestamp, userId};
 
     // force user to select a rating before submitting review
     if (rating && rating !== null) {
-      props.handleAddReview(reviewObject);
+      handleAddReview(reviewObject);
     } else {
       alert('You must rate the game');
     }
