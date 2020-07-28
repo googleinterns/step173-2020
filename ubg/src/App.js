@@ -7,7 +7,7 @@ import {
 import Home from './pages/Home';
 import Game from './pages/Game';
 import Room from './pages/Room';
-import Search from './search/Search';
+import Search from './pages/Search';
 import {FirebaseAppProvider} from 'reactfire';
 
 const firebaseConfig = {

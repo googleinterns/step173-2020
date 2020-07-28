@@ -32,12 +32,10 @@ export default function Filter({label, value, menu, append, onChange}) {
   }
   return (
     <FormControl className={classes.formControl}>
-      <InputLabel shrink id="demo-simple-select-placeholder-label-label">
+      <InputLabel shrink>
         {label}
       </InputLabel>
       <Select
-        labelId="demo-simple-select-placeholder-label-label"
-        id="demo-simple-select-placeholder-label"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         displayEmpty
