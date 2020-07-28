@@ -70,7 +70,7 @@ export default function Game() {
 
   return (
     <div>
-      <Navbar joinRoom={joinRoom} roomId={roomId} setRoomId={setRoomId}/>
+      <Navbar />
       <Box container='true' justify='center' alignItems='center' m={10}>
         <Description games={games} createRoom={createRoom} />
         <Spacer />
