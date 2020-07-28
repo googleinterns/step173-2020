@@ -15,5 +15,10 @@ afterEach(() => {
   container = null;
 });
 
-// check if multiple comments are being rendered correctly
-// check if no text review rendered correctly
+it('temp test', () => {
+});
+
+// test if new review section is being rendered correctly
+// test if alert pops up if no rating selected
+// test that onSubmit triggers addReview
+// test if input field has been cleared

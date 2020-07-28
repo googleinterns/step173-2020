@@ -15,6 +15,9 @@ afterEach(() => {
   container = null;
 });
 
+it('temp test', () => {
+});
+
 // test if reviews loaded from database at beginning
 // test that handleAddReview adding to local reviews array
 // test that handleAddReview adding to database new review
