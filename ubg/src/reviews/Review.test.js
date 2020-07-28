@@ -1,7 +1,7 @@
 import React from 'react';
 import {render, unmountComponentAtNode} from 'react-dom';
 import {act} from 'react-dom/test-utils';
-import Review from '../reviews/Review';
+import Review from './Review';
 import pretty from 'pretty';
 
 let container = null;
