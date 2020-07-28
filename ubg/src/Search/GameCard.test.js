@@ -6,15 +6,19 @@ const item = {'id': 296912, 'Name': 'Fort', 'minPlayer': 2, 'maxPlayer': 4,
   'minAge': 10, 'weight': 2.5, 'rating': 7.54706, 'year': 2020,
   'image': 'https://cf.geekdo-images.com/original/img/k-xxbzcg97D7aco25.png',
   'thumbnail': 'https://cf.geekdo-images.com/thumb/img/EV--Q1Jpic5241325.png',
-  'description': 'Fort is a 2-4 player card game and following friends.&#10;&#10;',
+  'description': 'Fort is a 2-4 player card game and fg friends.&#10;&#10;',
   'minPlaytime': 20, 'maxPlaytime': 40,
-  'videos': [{'title': 'One Minutof Fort', 'category': 'review', 'language': 'English',
+  'videos': [{'title': 'One Minutof Fort', 'category': 'review', 
+  'language': 'English',
     'link': 'http://www.youtube.com/watch?v=aDC69e8MWNU', 'postdate': '2020-07-23T13:28:40-05:00'},
-  {'title': 'Fort - How To Play', 'category': 'instructional', 'language': 'English',
+  {'title': 'Fort - How To Play', 'category': 'instructional', 
+  'language': 'English',
     'link': 'http://www.youtube.com/watch?v=_OdrIpLEFLQ', 'postdate': '2020-07-21T12:25:06-05:00'},
-  {'title': "Let's Unbox FORT fer Games!", 'category': 'unboxing', 'language': 'English',
+  {'title': 'Let\'s Unbox FORT fer Games!', 'category': 'unboxing', 
+  'language': 'English',
     'link': 'http://www.youtube.com/watch?v=JcaxNP0wAZc', 'postdate': '2020-07-21T11:29:46-05:00'},
-  {'title': 'Lord Of The Board', 'category': 'instructional', 'language': 'English',
+  {'title': 'Lord Of The Board', 'category': 'instructional', 
+  'language': 'English',
     'link': 'http://www.youtube.com/watch?v=lKeTmxLNNiU', 'postdate': '2020-07-21T11:15:46-05:00'},
   ]
 };
@@ -22,8 +26,8 @@ const item = {'id': 296912, 'Name': 'Fort', 'minPlayer': 2, 'maxPlayer': 4,
 it('renders without crashing', () => {
   const div = document.createElement('div');
   ReactDOM.render(<GameCard id={item['id']} image={item['image']}
-  name={item['Name']} year={item['year']} minTime={item['minPlaytime']}
-  maxTime={item['maxPlaytime']}minPlayer={item['minPlayer']}
-  maxPlayer={item['maxPlayer']} rating={item['rating']}
-  minAge={item['minAge']} weight={item['weight']} />, div);
+    name={item['Name']} year={item['year']} minTime={item['minPlaytime']}
+    maxTime={item['maxPlaytime']}minPlayer={item['minPlayer']}
+    maxPlayer={item['maxPlayer']} rating={item['rating']}
+    minAge={item['minAge']} weight={item['weight']} />, div);
 });

@@ -43,8 +43,8 @@ export default function Filter({label, value, menu, append, onChange}) {
         displayEmpty
         className={classes.selectEmpty}
       >
-        {menu.map((item) => 
-          <MenuItem key={item} value={item}>{item}{appendContent}</MenuItem>
+        {menu.map((item) =>
+          <MenuItem key={item} value={item}>{item}{appendContent}</MenuItem>,
         )}
       </Select>
     </FormControl>
