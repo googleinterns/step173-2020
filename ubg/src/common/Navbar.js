@@ -51,7 +51,7 @@ export default function Navbar() {
           aria-label="menu">
           <MenuIcon />
         </IconButton>
-        <Button color="inherit" className={classes.titleButton} 
+        <Button color="inherit" className={classes.titleButton}
           onClick={homePage}>
           <Typography variant="h6">
             UltimateBoardGame
