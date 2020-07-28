@@ -17,7 +17,6 @@ let initialize = false;
  * @return {ReactElement} Box containing review section
  */
 function AllReviews(props) {
-  console.log(props.gameId);
   const reviewsRef = useFirestore()
       .collection('gameReviews')
       .doc(props.gameId)
