@@ -18,10 +18,10 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
   },
   gameName: {
-    'white-space': 'nowrap', 
+    'white-space': 'nowrap',
     'overflow': 'hidden',
     'text-overflow': 'ellipsis',
-  }
+  },
 }));
 
 /**
@@ -43,19 +43,19 @@ export default function GameCard({id, image, name, minTime, maxTime,
   rating = rating.toFixed(2);
   weight = weight.toFixed(2);
   const ref = useRef(null);
-  const [height, setHeight] = useState(0)
+  const [height, setHeight] = useState(0);
   useEffect(() => {
     if (ref.current) {
       setHeight(ref.current.offsetWidth * 1.2);
     }
     const handleResize = () => {
       if (ref.current) {
-      setHeight(ref.current.offsetWidth * 1.2);
-    }
-    }
-    window.addEventListener('resize', handleResize)
+        setHeight(ref.current.offsetWidth * 1.2);
+      }
+    };
+    window.addEventListener('resize', handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize)
+      window.removeEventListener('resize', handleResize);
     }
   }, [ref]);
 
@@ -70,7 +70,8 @@ export default function GameCard({id, image, name, minTime, maxTime,
           title="Random Image"
         />
         <CardContent>
-          <Typography gutterBottom variant="h5" component="h2" className={classes.gameName}>
+          <Typography gutterBottom variant="h5" component="h2" 
+            className={classes.gameName}>
             {name}
           </Typography>
           <Grid container alignItems="center" >

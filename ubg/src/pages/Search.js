@@ -1,11 +1,11 @@
 import React, {useEffect} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Pagination from '@material-ui/lab/Pagination';
+// import Grid from '@material-ui/core/Grid';
+// import Pagination from '@material-ui/lab/Pagination';
 import Button from '@material-ui/core/Button';
 import Navbar from '../common/Navbar';
-import GameCard from '../search/GameCard';
+import DisplayGames from '../search/DisplayGames';
 import Filter from '../search/Filter';
 import {useFirestore} from 'reactfire';
 
@@ -41,7 +41,7 @@ export default function Search() {
   const [initialize, setInitialize] = React.useState(false);
   const handleFilter = () => {
     const newGames = [];
-    var list = []
+    let list = [];
     let maxP = maxPlayer;
     if (typeof maxP === 'string') {
       maxP = Number.MAX_SAFE_INTEGER;
@@ -68,13 +68,13 @@ export default function Search() {
             minTime <= doc.data()['maxPlaytime'] &&
             doc.data()['minAge'] <= minAge) {
               list.push(doc.data());
-              if (list.length === 12){
+              if (list.length === 12) {
                 newGames.push(list);
                 list = [];
               }
             }
           });
-          if (list.length !== 0){
+          if (list.length !== 0) {
             newGames.push(list);
           }
           setGames(newGames);
@@ -88,19 +88,19 @@ export default function Search() {
     // using a hack to make useEffect act as onLoad()
     if (initialize === false) {
       const newGames = [];
-      var list = []
+      let list = [];
       ref.orderBy('rating', 'desc')
           .get()
           .then(function(querySnapshot) {
             setInitialize(true);
             querySnapshot.forEach(function(doc) {
               list.push(doc.data());
-              if (list.length === 12){
+              if (list.length === 12) {
                 newGames.push(list);
                 list = [];
               }
             });
-            if (list.length !== 0){
+            if (list.length !== 0) {
               newGames.push(list);
             }
             setGames(newGames);
@@ -150,31 +150,31 @@ export default function Search() {
   );
 }
 
-function DisplayGames({games, paginationCount}) {
-  const classes = useStyles();
-  const [page, setPage] = React.useState(1);
-  return (
-    <Box m={10}>
-        <Grid container justify="flex-start" alignItems="center" spacing={4}>
-          {games[page-1].map((item) =>
-            <Grid key={item['id']} item xl={2} lg={3} md={4} sm={6} xs={12}>
-              <GameCard id={item['id']}
-                image={item['image']}
-                name={item['Name']}
-                minTime={item['minPlaytime']}
-                maxTime={item['maxPlaytime']}
-                minPlayer={item['minPlayer']}
-                maxPlayer={item['maxPlayer']}
-                rating={item['rating']}
-                minAge={item['minAge']}
-                weight={item['weight']} />
-            </Grid>,
-          )}
-        </Grid>
-        <div className={classes.pagination}>
-          <Pagination count={paginationCount} boundaryCount={2} onChange={(e, p) => setPage(p)} />
-        </div>
-      </Box>
-  );
-}
+// function DisplayGames({games, paginationCount}) {
+//   const classes = useStyles();
+//   const [page, setPage] = React.useState(1);
+//   return (
+//     <Box m={10}>
+//         <Grid container justify="flex-start" alignItems="center" spacing={4}>
+//           {games[page-1].map((item) =>
+//             <Grid key={item['id']} item xl={2} lg={3} md={4} sm={6} xs={12}>
+//               <GameCard id={item['id']}
+//                 image={item['image']}
+//                 name={item['Name']}
+//                 minTime={item['minPlaytime']}
+//                 maxTime={item['maxPlaytime']}
+//                 minPlayer={item['minPlayer']}
+//                 maxPlayer={item['maxPlayer']}
+//                 rating={item['rating']}
+//                 minAge={item['minAge']}
+//                 weight={item['weight']} />
+//             </Grid>,
+//           )}
+//         </Grid>
+//         <div className={classes.pagination}>
+//           <Pagination count={paginationCount} boundaryCount={2} onChange={(e, p) => setPage(p)} />
+//         </div>
+//       </Box>
+//   );
+// }
 
