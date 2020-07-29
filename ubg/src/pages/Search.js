@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
+import Pagination from '@material-ui/lab/Pagination';
 import Button from '@material-ui/core/Button';
 import Navbar from '../common/Navbar';
 import GameCard from '../search/GameCard';
@@ -16,6 +17,11 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1.5),
     marginRight: theme.spacing(3),
     float: 'right',
+  },
+  pagination: {
+    '& > *': {
+      margin: theme.spacing(2),
+    },
   },
 }));
 
@@ -32,7 +38,8 @@ export default function Search() {
   const [maxPlayer, setMaxPlayer] = React.useState('8+');
   const [minTime, setMinTime] = React.useState(5);
   const [maxTime, setMaxTime] = React.useState('240+');
-  const [games, setGames] = React.useState([]);
+  const [games, setGames] = React.useState([[]]);
+  const [paginationCount, setPaginationCount] = React.useState(1);
   const handleFilter = () => {
     const newGames = [];
     let maxP = maxPlayer;
@@ -73,13 +80,23 @@ export default function Search() {
     // using a hack to make useEffect act as onLoad()
     if (initialize === false) {
       const newGames = [];
+      var list = []
       ref.orderBy('rating', 'desc')
           .get()
           .then(function(querySnapshot) {
             querySnapshot.forEach(function(doc) {
-              newGames.push(doc.data());
+              list.push(doc.data());
+              if (list.length === 10){
+                newGames.push(list);
+                list = [];
+              }
             });
+            if (list.length !== 0){
+              newGames.push(list);
+            }
             setGames(newGames);
+            setPaginationCount(newGames.length);
+            console.log(newGames);
             initialize = true;
           })
           .catch(function(error) {
@@ -120,9 +137,18 @@ export default function Search() {
           Search
         </Button>
       </Box>
-      <Box ml={10}>
+      <DisplayGames games = {games} paginationCount = {paginationCount} />
+    </div>
+  );
+}
+
+function DisplayGames({games, paginationCount}) {
+  const classes = useStyles();
+  const [page, setPage] = React.useState(1);
+  return (
+    <Box ml={10}>
         <Grid container justify="flex-start" alignItems="center" spacing={4}>
-          {games.map((item) =>
+          {games[page-1].map((item) =>
             <Grid key={item['id']} item>
               <GameCard id={item['id']}
                 image={item['image']}
@@ -138,8 +164,10 @@ export default function Search() {
             </Grid>,
           )}
         </Grid>
+        <div className={classes.pagination}>
+          <Pagination count={paginationCount} boundaryCount={2} onChange={(e, p) => setPage(p)} />
+        </div>
       </Box>
-    </div>
   );
 }
 
