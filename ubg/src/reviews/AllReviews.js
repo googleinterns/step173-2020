@@ -92,7 +92,7 @@ function AllReviews(gameId) {
 }
 
 AllReviews.propTypes = {
-  gameId: PropTypes.number,
+  gameId: PropTypes.string,
 };
 
 export default AllReviews;
