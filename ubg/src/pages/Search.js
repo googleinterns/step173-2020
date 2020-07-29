@@ -149,32 +149,3 @@ export default function Search() {
     </div>
   );
 }
-
-// function DisplayGames({games, paginationCount}) {
-//   const classes = useStyles();
-//   const [page, setPage] = React.useState(1);
-//   return (
-//     <Box m={10}>
-//         <Grid container justify="flex-start" alignItems="center" spacing={4}>
-//           {games[page-1].map((item) =>
-//             <Grid key={item['id']} item xl={2} lg={3} md={4} sm={6} xs={12}>
-//               <GameCard id={item['id']}
-//                 image={item['image']}
-//                 name={item['Name']}
-//                 minTime={item['minPlaytime']}
-//                 maxTime={item['maxPlaytime']}
-//                 minPlayer={item['minPlayer']}
-//                 maxPlayer={item['maxPlayer']}
-//                 rating={item['rating']}
-//                 minAge={item['minAge']}
-//                 weight={item['weight']} />
-//             </Grid>,
-//           )}
-//         </Grid>
-//         <div className={classes.pagination}>
-//           <Pagination count={paginationCount} boundaryCount={2} onChange={(e, p) => setPage(p)} />
-//         </div>
-//       </Box>
-//   );
-// }
-

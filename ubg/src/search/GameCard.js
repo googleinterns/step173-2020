@@ -56,7 +56,7 @@ export default function GameCard({id, image, name, minTime, maxTime,
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
-    }
+    };
   }, [ref]);
 
   return (
@@ -70,7 +70,7 @@ export default function GameCard({id, image, name, minTime, maxTime,
           title="Random Image"
         />
         <CardContent>
-          <Typography gutterBottom variant="h5" component="h2" 
+          <Typography gutterBottom variant="h5" component="h2"
             className={classes.gameName}>
             {name}
           </Typography>
