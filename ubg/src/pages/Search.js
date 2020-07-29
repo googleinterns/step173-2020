@@ -25,8 +25,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-let initialize = false;
-
 /**
  * @return {ReactElement} Search page with filter and search result
  */
@@ -40,6 +38,7 @@ export default function Search() {
   const [maxTime, setMaxTime] = React.useState('240+');
   const [games, setGames] = React.useState([[]]);
   const [paginationCount, setPaginationCount] = React.useState(1);
+  const [initialize, setInitialize] = React.useState(false);
   const handleFilter = () => {
     const newGames = [];
     var list = []
@@ -88,12 +87,15 @@ export default function Search() {
   };
   useEffect(() => {
     // using a hack to make useEffect act as onLoad()
+    console.log('3');
     if (initialize === false) {
+      console.log('4');
       const newGames = [];
       var list = []
       ref.orderBy('rating', 'desc')
           .get()
           .then(function(querySnapshot) {
+            setInitialize(true);
             querySnapshot.forEach(function(doc) {
               list.push(doc.data());
               if (list.length === 12){
@@ -106,8 +108,7 @@ export default function Search() {
             }
             setGames(newGames);
             setPaginationCount(newGames.length);
-            // console.log(newGames);
-            initialize = true;
+            setInitialize(true);
           })
           .catch(function(error) {
             console.log('Error getting documents: ', error);
@@ -159,7 +160,7 @@ function DisplayGames({games, paginationCount}) {
     <Box ml={10}>
         <Grid container justify="flex-start" alignItems="center" spacing={4}>
           {games[page-1].map((item) =>
-            <Grid key={item['id']} item xs={12} sm={6} xl={2} lg={3} md={4} sm={6} xs={12}>
+            <Grid key={item['id']} item xl={2} lg={3} md={4} sm={6} xs={12}>
               <GameCard id={item['id']}
                 image={item['image']}
                 name={item['Name']}
