@@ -69,7 +69,7 @@ export default function Search() {
             minTime <= doc.data()['maxPlaytime'] &&
             doc.data()['minAge'] <= minAge) {
               list.push(doc.data());
-              if (list.length === 10){
+              if (list.length === 12){
                 newGames.push(list);
                 list = [];
               }
@@ -96,7 +96,7 @@ export default function Search() {
           .then(function(querySnapshot) {
             querySnapshot.forEach(function(doc) {
               list.push(doc.data());
-              if (list.length === 10){
+              if (list.length === 12){
                 newGames.push(list);
                 list = [];
               }
@@ -159,7 +159,7 @@ function DisplayGames({games, paginationCount}) {
     <Box ml={10}>
         <Grid container justify="flex-start" alignItems="center" spacing={4}>
           {games[page-1].map((item) =>
-            <Grid key={item['id']} item>
+            <Grid key={item['id']} item xs={12} sm={6} xl={2} lg={3} md={4} sm={6} xs={12}>
               <GameCard id={item['id']}
                 image={item['image']}
                 name={item['Name']}

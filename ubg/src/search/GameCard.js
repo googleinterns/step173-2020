@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
   card: {
-    width: 370,
+    width: '100%',
   },
 }));
 
@@ -48,7 +48,7 @@ export default function GameCard({id, image, name, year, minTime, maxTime,
         <CardMedia
           component="img"
           alt="Contemplative Reptile"
-          height="300"
+          height="100%"
           image={image}
           title="Random Image"
         />
