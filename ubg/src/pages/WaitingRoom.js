@@ -54,12 +54,12 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
   },
   btn: {
-      margin: '5px',
+    margin: '5px',
   },
   inRoomBtns: {
     display: 'flex',
     flexDirection: 'column',
-  }
+  },
 }));
 
 /**
@@ -75,15 +75,16 @@ export default function WaitingRoom() {
   const usersData = useFirestoreCollectionData(usersCollection);
   const prevUsersData = usePrevious(usersData);
   const game = useFirestoreDocData(
-    useFirestore().collection('games').doc(roomData.gameId),
+      useFirestore().collection('games').doc(roomData.gameId),
   );
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
 
   /**
    * Get previous value of variable
-   * @param {*} value 
-   */      
+   * @param {*} value
+   * @return {*} previous value
+   */
   function usePrevious(value) {
     const ref = useRef();
     useEffect(() => {
@@ -93,14 +94,14 @@ export default function WaitingRoom() {
   }
 
   useEffect(() => {
-    if(prevUsersData){
+    if (prevUsersData) {
       const usersJoined = usersData.filter(x => !prevUsersData.includes(x));
       const usersLeft = prevUsersData.filter(x => !usersData.includes(x));
-      if(usersJoined.length > 0){
+      if (usersJoined.length > 0) {
         setOpen(false);
         setMessage(`${usersJoined[0].displayName} joined the room`);
       }
-      if(usersLeft.length > 0){
+      if (usersLeft.length > 0) {
         setOpen(false);
         setMessage(`${usersLeft[0].displayName} left the room`);
       }
@@ -134,7 +135,7 @@ export default function WaitingRoom() {
           <div className={classes.game}>
             <div>
               <Typography variant='body1'>
-                  {game.description}
+                {game.description}
               </Typography>
             </div>
           </div>
@@ -143,18 +144,18 @@ export default function WaitingRoom() {
               usersData.some((user) => user.uid === uid) ?
                 (
                   <div className={classes.inRoomBtns}>
-                      { roomData.host === uid ?
+                    { roomData.host === uid ?
                       <Button
-                      className={classes.btn}
-                      variant="contained"
-                      color="primary"
+                        className={classes.btn}
+                        variant="contained"
+                        color="primary"
                       >Start Game</Button> :
                       'Waiting for the host'}
-                  <Button
+                    <Button
                       className={classes.btn}
                       variant="contained"
                       onClick={leaveRoom}
-                  >Leave Room</Button>
+                    >Leave Room</Button>
                   </div>
                 ) :
                 <Button
@@ -189,10 +190,10 @@ export default function WaitingRoom() {
         onClose={() => setOpen(false)}
         message={message}
         action={
-          <IconButton 
-            size="small" 
-            aria-label="close" 
-            color="inherit" 
+          <IconButton
+            size="small"
+            aria-label="close"
+            color="inherit"
             onClick={() => setOpen(false)}
           >
             <CloseIcon fontSize="small" />
