@@ -6,8 +6,9 @@ import {
 } from 'react-router-dom';
 import Home from './pages/Home';
 import Game from './pages/Game';
-import Room from './pages/Room';
+// import Room from './pages/Room';
 import Search from './pages/Search';
+import WaitingRoom from './pages/WaitingRoom';
 import {FirebaseAppProvider} from 'reactfire';
 
 const firebaseConfig = {
@@ -40,7 +41,7 @@ function App() {
               <Game />
             </Route>
             <Route exact path="/gameRoom/:roomId">
-              <Room />
+              <WaitingRoom/>
             </Route>
           </Switch>
         </Router>
