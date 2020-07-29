@@ -36,7 +36,7 @@ export default function NewReview(user, handleAddReview) {
     <div>
       <br />
       <Box>
-        <form onSubmit={addReview}>
+        <form onSubmit={addReview} data-testid='form'>
           <Box component="div" mb={3} borderColor="transparent">
             <InputLabel name="reviewText" label="Rating: " />
             <Rating name="rating" defaultValue={0} max={10} />

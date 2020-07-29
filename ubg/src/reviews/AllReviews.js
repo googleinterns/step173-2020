@@ -16,7 +16,7 @@ let initialize = false;
  * @param {number} gameId ID of current game on page
  * @return {ReactElement} Box containing review section
  */
-function AllReviews(gameId) {
+function AllReviews({gameId}) {
   const reviewsRef = useFirestore()
       .collection('gameReviews')
       .doc(gameId)
@@ -68,7 +68,7 @@ function AllReviews(gameId) {
 
   return (
     <div className='reviews'>
-      <Box container="true" justify="center" alignItems="center" m={10}>
+      <Box container="true" justify="center" alignItems="center">
         <Typography variant="h3">
           Reviews
         </Typography>

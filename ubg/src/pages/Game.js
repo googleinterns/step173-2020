@@ -138,12 +138,7 @@ function Description({games, createRoom}) {
   let playTime = games.minPlaytime + '-' + games.maxPlaytime;
   let players = games.minPlayer + '-' + games.maxPlayer;
   if (games.description !== undefined) {
-    description = games.description.replace(/&#10;&#10;/g, ' ')
-        .replace(/&quot;/g, ' ')
-        .replace(/&ndash;/g, '-')
-        .replace(/&#10;/g, ' ')
-        .replace(/&amp;/g, ' ')
-        .replace(/&mdash;/g, '-');
+    description = games.description;
   }
   if (games.minPlaytime === games.maxPlaytime) {
     playTime = games.minPlaytime;
