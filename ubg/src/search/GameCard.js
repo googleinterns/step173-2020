@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef, useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
@@ -17,13 +17,17 @@ const useStyles = makeStyles((theme) => ({
   card: {
     width: '100%',
   },
+  gameName: {
+    'white-space': 'nowrap', 
+    'overflow': 'hidden',
+    'text-overflow': 'ellipsis',
+  }
 }));
 
 /**
  * @param {number} id game unique id
  * @param {string} image iamge link of game
  * @param {string} name game name
- * @param {number} year year published of game
  * @param {number} minTime minimum time required
  * @param {number} maxTime maximum time
  * @param {number} minPlayer minimum player
@@ -33,28 +37,41 @@ const useStyles = makeStyles((theme) => ({
  * @param {number} weight difficulty of game out of 10
  * @return {ReactElement} GameCard with basic information of game
  */
-export default function GameCard({id, image, name, year, minTime, maxTime,
+export default function GameCard({id, image, name, minTime, maxTime,
   minPlayer, maxPlayer, rating, minAge, weight}) {
   const classes = useStyles();
-  let gameName = name;
-  if (name.length > 26) {
-    gameName = name.substring(0, 26) + '...';
-  }
   rating = rating.toFixed(2);
   weight = weight.toFixed(2);
+  const ref = useRef(null);
+  const [height, setHeight] = useState(0)
+  useEffect(() => {
+    if (ref.current) {
+      setHeight(ref.current.offsetWidth * 1.2);
+    }
+    const handleResize = () => {
+      if (ref.current) {
+      setHeight(ref.current.offsetWidth * 1.2);
+    }
+    }
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [ref]);
+
   return (
-    <Card className={classes.card}>
+    <Card className={classes.card} ref={ref}>
       <CardActionArea>
         <CardMedia
           component="img"
           alt="Contemplative Reptile"
-          height="100%"
+          height={height}
           image={image}
           title="Random Image"
         />
         <CardContent>
-          <Typography gutterBottom variant="h5" component="h2">
-            {gameName}
+          <Typography gutterBottom variant="h5" component="h2" className={classes.gameName}>
+            {name}
           </Typography>
           <Grid container alignItems="center" >
             <Grid item xs={5}>
@@ -87,7 +104,6 @@ GameCard.propTypes = {
   id: PropTypes.number,
   image: PropTypes.string,
   name: PropTypes.string,
-  year: PropTypes.number,
   minTime: PropTypes.number,
   maxTime: PropTypes.number,
   minPlayer: PropTypes.number,

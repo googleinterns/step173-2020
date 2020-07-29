@@ -14,6 +14,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 /**
+ * @param {object} games all the games that satisfy filter condition
+ * @param {number} paginationCount number of page
  * @return {ReactElement} Display results of all the games that satisfy filter conditions
  */
 export default function DisplayGames({games, paginationCount}) {
@@ -44,4 +46,10 @@ export default function DisplayGames({games, paginationCount}) {
     </Box>
   );
 }
+
+DisplayGames.propTypes = {
+  games: PropTypes.array,
+  paginationCount: PropTypes.number,
+};
+
   

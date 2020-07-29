@@ -154,14 +154,13 @@ function DisplayGames({games, paginationCount}) {
   const classes = useStyles();
   const [page, setPage] = React.useState(1);
   return (
-    <Box ml={10}>
+    <Box m={10}>
         <Grid container justify="flex-start" alignItems="center" spacing={4}>
           {games[page-1].map((item) =>
             <Grid key={item['id']} item xl={2} lg={3} md={4} sm={6} xs={12}>
               <GameCard id={item['id']}
                 image={item['image']}
                 name={item['Name']}
-                year={item['year']}
                 minTime={item['minPlaytime']}
                 maxTime={item['maxPlaytime']}
                 minPlayer={item['minPlayer']}
