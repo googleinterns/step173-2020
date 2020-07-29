@@ -95,8 +95,8 @@ export default function WaitingRoom() {
 
   useEffect(() => {
     if (prevUsersData) {
-      const usersJoined = usersData.filter(x => !prevUsersData.includes(x));
-      const usersLeft = prevUsersData.filter(x => !usersData.includes(x));
+      const usersJoined = usersData.filter((x) => !prevUsersData.includes(x));
+      const usersLeft = prevUsersData.filter((x) => !usersData.includes(x));
       if (usersJoined.length > 0) {
         setOpen(false);
         setMessage(`${usersJoined[0].displayName} joined the room`);
