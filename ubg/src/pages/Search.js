@@ -42,6 +42,7 @@ export default function Search() {
   const [paginationCount, setPaginationCount] = React.useState(1);
   const handleFilter = () => {
     const newGames = [];
+    var list = []
     let maxP = maxPlayer;
     if (typeof maxP === 'string') {
       maxP = Number.MAX_SAFE_INTEGER;
@@ -67,10 +68,19 @@ export default function Search() {
             doc.data()['minPlaytime'] <= maxT &&
             minTime <= doc.data()['maxPlaytime'] &&
             doc.data()['minAge'] <= minAge) {
-              newGames.push(doc.data());
+              list.push(doc.data());
+              if (list.length === 10){
+                newGames.push(list);
+                list = [];
+              }
             }
           });
+          if (list.length !== 0){
+            newGames.push(list);
+          }
           setGames(newGames);
+          setPaginationCount(newGames.length);
+          console.log(newGames);
         })
         .catch(function(error) {
           console.log('Error getting documents: ', error);
@@ -96,7 +106,7 @@ export default function Search() {
             }
             setGames(newGames);
             setPaginationCount(newGames.length);
-            console.log(newGames);
+            // console.log(newGames);
             initialize = true;
           })
           .catch(function(error) {
