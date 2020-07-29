@@ -7,6 +7,7 @@ import {
 import Home from './pages/Home';
 import Game from './pages/Game';
 import Room from './pages/Room';
+import Search from './pages/Search';
 import {FirebaseAppProvider} from 'reactfire';
 
 const firebaseConfig = {
@@ -20,6 +21,9 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 };
 
+/**
+ * @return {ReactElement} UltimateBoardGame website
+ */
 function App() {
   return (
     <FirebaseAppProvider firebaseConfig={firebaseConfig}>
@@ -27,13 +31,16 @@ function App() {
         <Router>
           <Switch>
             <Route exact path="/">
-              <Home/>
+              <Home />
+            </Route>
+            <Route exact path="/search">
+              <Search />
             </Route>
             <Route exact path="/:gameId">
-              <Game/>
+              <Game />
             </Route>
             <Route exact path="/gameRoom/:roomId">
-              <Room/>
+              <Room />
             </Route>
           </Switch>
         </Router>
