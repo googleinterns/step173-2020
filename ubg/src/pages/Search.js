@@ -79,7 +79,6 @@ export default function Search() {
           }
           setGames(newGames);
           setPaginationCount(newGames.length);
-          console.log(newGames);
         })
         .catch(function(error) {
           console.log('Error getting documents: ', error);
@@ -87,9 +86,7 @@ export default function Search() {
   };
   useEffect(() => {
     // using a hack to make useEffect act as onLoad()
-    console.log('3');
     if (initialize === false) {
-      console.log('4');
       const newGames = [];
       var list = []
       ref.orderBy('rating', 'desc')
@@ -114,7 +111,7 @@ export default function Search() {
             console.log('Error getting documents: ', error);
           });
     }
-  }, [ref]);
+  }, [ref, initialize]);
 
   return (
     <div>
