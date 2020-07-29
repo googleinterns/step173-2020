@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {useParams} from 'react-router-dom';
 import {
   useFirestore,
@@ -11,6 +11,9 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import UserVideo from '../common/UserVideo';
+import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -74,12 +77,8 @@ export default function WaitingRoom() {
   const game = useFirestoreDocData(
     useFirestore().collection('games').doc(roomData.gameId),
   );
-  let description = game.description.replace(/&#10;&#10;/g, ' ')
-        .replace(/&quot;/g, ' ')
-        .replace(/&ndash;/g, '-')
-        .replace(/&#10;/g, ' ')
-        .replace(/&amp;/g, ' ')
-        .replace(/&mdash;/g, '-');
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState('');
 
   /**
    * Get previous value of variable
@@ -94,9 +93,20 @@ export default function WaitingRoom() {
   }
 
   useEffect(() => {
-    console.log(prevUsersData);
-    console.log(usersData);
-  }, [usersData, prevUsersData])
+    if(prevUsersData){
+      const usersJoined = usersData.filter(x => !prevUsersData.includes(x));
+      const usersLeft = prevUsersData.filter(x => !usersData.includes(x));
+      if(usersJoined.length > 0){
+        setOpen(false);
+        setMessage(`${usersJoined[0].displayName} joined the room`);
+      }
+      if(usersLeft.length > 0){
+        setOpen(false);
+        setMessage(`${usersLeft[0].displayName} left the room`);
+      }
+      setOpen(true);
+    }
+  }, [usersData, prevUsersData]);
 
   /**
    * Add user to the users collection in the room
@@ -113,60 +123,82 @@ export default function WaitingRoom() {
   }
 
   return (
-    <Grid className={classes.main} container>
-      <Grid className={classes.gameContainer} item xs={9}>
-        <div className={classes.title}>
-          <Typography variant="h3" className={classes.fonts}>
-            {game.Name}
-          </Typography>
-        </div>
-        <div className={classes.game}>
-          <div>
-            <Typography variant='body1'>
-                {description}
+    <div>
+      <Grid className={classes.main} container>
+        <Grid className={classes.gameContainer} item xs={9}>
+          <div className={classes.title}>
+            <Typography variant="h3" className={classes.fonts}>
+              {game.Name}
             </Typography>
           </div>
-        </div>
-        <div className={classes.actionBtns}>
-          {
-            usersData.some((user) => user.uid === uid) ?
-              (
-                <div className={classes.inRoomBtns}>
-                    { roomData.host === uid ?
-                    <Button
-                    className={classes.btn}
-                    variant="contained"
-                    color="primary"
-                    >Start Game</Button> :
-                    'Waiting for the host'}
+          <div className={classes.game}>
+            <div>
+              <Typography variant='body1'>
+                  {game.description}
+              </Typography>
+            </div>
+          </div>
+          <div className={classes.actionBtns}>
+            {
+              usersData.some((user) => user.uid === uid) ?
+                (
+                  <div className={classes.inRoomBtns}>
+                      { roomData.host === uid ?
+                      <Button
+                      className={classes.btn}
+                      variant="contained"
+                      color="primary"
+                      >Start Game</Button> :
+                      'Waiting for the host'}
+                  <Button
+                      className={classes.btn}
+                      variant="contained"
+                      onClick={leaveRoom}
+                  >Leave Room</Button>
+                  </div>
+                ) :
                 <Button
-                    className={classes.btn}
-                    variant="contained"
-                    onClick={leaveRoom}
-                >Leave Room</Button>
-                </div>
-              ) :
-              <Button
-                className={classes.btn}
-                variant="contained"
-                color="primary"
-                onClick={joinRoom}
-              >Join Room</Button>
+                  className={classes.btn}
+                  variant="contained"
+                  color="primary"
+                  onClick={joinRoom}
+                >Join Room</Button>
+            }
+          </div>
+        </Grid>
+        <Grid className={classes.video} item xs={3}>
+          {
+            usersData.map((user) => {
+              return (
+                <UserVideo
+                  key={user.uid}
+                  user={user.displayName}
+                />
+              );
+            })
           }
-        </div>
+        </Grid>
       </Grid>
-      <Grid className={classes.video} item xs={3}>
-        {
-          usersData.map((user) => {
-            return (
-              <UserVideo
-                key={user.uid}
-                user={user.displayName}
-              />
-            );
-          })
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        open={open}
+        autoHideDuration={2000}
+        onClose={() => setOpen(false)}
+        message={message}
+        action={
+          <IconButton 
+            size="small" 
+            aria-label="close" 
+            color="inherit" 
+            onClick={() => setOpen(false)}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
         }
-      </Grid>
-    </Grid>
+      />
+    </div>
   );
 }
