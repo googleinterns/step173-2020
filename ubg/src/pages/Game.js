@@ -20,6 +20,8 @@ import Icon from '@material-ui/core/Icon';
 import Timer from '@material-ui/icons/Timer';
 import Star from '@material-ui/icons/Star';
 import People from '@material-ui/icons/People';
+import Face from '@material-ui/icons/Face';
+import SignalCellular3Bar from '@material-ui/icons/SignalCellular3Bar';
 import TextField from '@material-ui/core/TextField';
 import ReactPlayer from 'react-player';
 import PropTypes from 'prop-types';
@@ -138,12 +140,7 @@ function Description({games, createRoom}) {
   let playTime = games.minPlaytime + '-' + games.maxPlaytime;
   let players = games.minPlayer + '-' + games.maxPlayer;
   if (games.description !== undefined) {
-    description = games.description.replace(/&#10;&#10;/g, ' ')
-        .replace(/&quot;/g, ' ')
-        .replace(/&ndash;/g, '-')
-        .replace(/&#10;/g, ' ')
-        .replace(/&amp;/g, ' ')
-        .replace(/&mdash;/g, '-');
+    description = games.description;
   }
   if (games.minPlaytime === games.maxPlaytime) {
     playTime = games.minPlaytime;
@@ -174,7 +171,11 @@ function Description({games, createRoom}) {
           <br />
           <Typography variant='body2' color='textSecondary' component='p'>
             <Icon aria-label='share'>
-              <Star />{Math.round(games.rating)}/10
+              <Star />{games.rating.toFixed(2)}/10
+            </Icon>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <Icon aria-label='share'>
+              <Face />{games.minAge}+
             </Icon>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <Icon aria-label='share'>
@@ -183,6 +184,10 @@ function Description({games, createRoom}) {
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <Icon aria-label='share'>
               <People />{players}
+            </Icon>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <Icon aria-label='share'>
+              <SignalCellular3Bar />{games.weight.toFixed(2)}
             </Icon>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <AuthCheck>
@@ -238,10 +243,12 @@ Description.propTypes = {
     maxPlayer: PropTypes.number,
     minPlaytime: PropTypes.number,
     maxPlaytime: PropTypes.number,
+    minAge: PropTypes.number,
     description: PropTypes.string,
     Name: PropTypes.string,
     image: PropTypes.string,
     rating: PropTypes.number,
+    weight: PropTypes.number,
   }),
 };
 

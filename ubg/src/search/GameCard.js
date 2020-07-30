@@ -12,6 +12,7 @@ import Face from '@material-ui/icons/Face';
 import SignalCellular3Bar from '@material-ui/icons/SignalCellular3Bar';
 import Grid from '@material-ui/core/Grid';
 import PropTypes from 'prop-types';
+import {useHistory} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -42,6 +43,15 @@ export default function GameCard({id, image, name, minTime, maxTime,
   const classes = useStyles();
   rating = rating.toFixed(2);
   weight = weight.toFixed(2);
+  const history = useHistory();
+
+  /**
+   * Go to game page
+   */
+  function goToDetails() {
+    history.push(`/${id}`);
+  }
+
   const ref = useRef(null);
   const [height, setHeight] = useState(0);
   useEffect(() => {
@@ -60,7 +70,7 @@ export default function GameCard({id, image, name, minTime, maxTime,
   }, [ref]);
 
   return (
-    <Card className={classes.card} ref={ref}>
+    <Card className={classes.card} ref={ref} onClick={goToDetails}>
       <CardActionArea>
         <CardMedia
           component="img"
