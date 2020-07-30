@@ -125,9 +125,9 @@ export default function WaitingRoom() {
    */
   function joinRoom() {
     usersCollection.doc(user.uid).set({
-      displayName : user.displayName,
+      displayName: user.displayName,
       email: user.email,
-      uid: user.uid
+      uid: user.uid,
     });
   }
 
@@ -224,12 +224,12 @@ export default function WaitingRoom() {
                 <CloseIcon fontSize="small" />
               </IconButton>
             }
-          /> 
+          />
         </div> :
         <div className={classes.signInContainer}>
-          <Button 
-            onClick={signIn} 
-            variant="contained" 
+          <Button
+            onClick={signIn}
+            variant="contained"
             color="primary"
             className={classes.btn}
           >
