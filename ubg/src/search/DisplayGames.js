@@ -10,6 +10,8 @@ const useStyles = makeStyles((theme) => ({
   pagination: {
     '& > *': {
       margin: theme.spacing(2),
+      display: 'flex',
+      justifyContent: 'center',
     },
   },
 }));
@@ -41,11 +43,10 @@ export default function DisplayGames({games, paginationCount}) {
           </Grid>,
         )}
       </Grid>
-      <div className={classes.pagination}>
-        <Pagination count={paginationCount}
-          boundaryCount={2}
-          onChange={(e, p) => setPage(p)} />
-      </div>
+      <Pagination count={paginationCount}
+        boundaryCount={2}
+        onChange={(e, p) => setPage(p)}
+        className={classes.pagination} />
     </Box>
   );
 }
