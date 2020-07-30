@@ -26,9 +26,6 @@ export default function Home() {
   const ref = useFirestore().collection('games');
   const [initialize, setInitialize] = React.useState(false);
   const [sortBy] = React.useState('rating');
-  const breakPoints = [
-    {width: 1200, itemsToShow: 5},
-  ];
 
   useEffect(() => {
     if (initialize === false) {
@@ -72,10 +69,15 @@ export default function Home() {
           Top-Rated Games
         </Typography>
         <br />
-        <Carousel breakPoints={breakPoints}>
+        <Carousel
+          itemPadding={[10, 15]}
+          itemsToShow={5}
+          itemsToScroll={5}
+        >
           {games.map((game) => {
             return (
-              <GameCard key={game.id}
+              <GameCard className={classes.card}
+                key={game.id}
                 id={game.id}
                 image={game.image}
                 name={game.Name}
