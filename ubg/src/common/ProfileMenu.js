@@ -53,7 +53,6 @@ export default function AuthButtons() {
    */
   async function signOut() {
     await auth.signOut();
-    history.push(`/`);
   };
 
   /**
