@@ -16,6 +16,9 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import firebase from 'firebase/app';
+import Fab from '@material-ui/core/Fab';
+import ChatIcon from '@material-ui/icons/Chat';
+import Chat from '../common/Chat';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -58,9 +61,16 @@ const useStyles = makeStyles((theme) => ({
   btn: {
     margin: '5px',
   },
-  inRoomBtns: {
+  flexColumn: {
     display: 'flex',
     flexDirection: 'column',
+    height: '100%',
+  },
+  grow: {
+    flexGrow: 1,
+  },
+  textRight: {
+    textAlign: 'right',
   },
   signInContainer: {
     height: '100vh',
@@ -88,6 +98,7 @@ export default function WaitingRoom() {
       useFirestore().collection('games').doc(roomData.gameId),
   );
   const [open, setOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
   const [message, setMessage] = useState('');
 
   /**
@@ -193,16 +204,37 @@ export default function WaitingRoom() {
               </div>
             </Grid>
             <Grid className={classes.video} item xs={3}>
-              {
-                usersData.map((u) => {
-                  return (
-                    <UserVideo
-                      key={u.uid}
-                      user={u.displayName}
-                    />
-                  );
-                })
-              }
+              <div className={classes.flexColumn}>
+                <div className={classes.grow}>
+                  {
+                    usersData.map((u) => {
+                      return (
+                        <UserVideo
+                          key={u.uid}
+                          user={u.displayName}
+                        />
+                      );
+                    })
+                  }
+                </div>
+                <div className={classes.textRight}>
+                  <Fab 
+                    size="small" 
+                    color="secondary" 
+                    aria-label="add" 
+                    className={classes.margin}
+                    onClick={() => setChatOpen(!chatOpen)}
+                  >
+                    <ChatIcon />
+                  </Fab>
+                  <Chat
+                    open={chatOpen}
+                    messages={roomData.chat}
+                    roomId={roomId}
+                    user={user.displayName}
+                  />
+                </div>
+              </div>
             </Grid>
           </Grid>
           <Snackbar
