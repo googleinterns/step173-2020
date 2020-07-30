@@ -43,10 +43,12 @@ export default function DisplayGames({games, paginationCount}) {
           </Grid>,
         )}
       </Grid>
-      <Pagination count={paginationCount}
+      <Pagination
+        count={paginationCount}
         boundaryCount={2}
         onChange={(e, p) => setPage(p)}
-        className={classes.pagination} />
+        className={classes.pagination}
+      />
     </Box>
   );
 }
