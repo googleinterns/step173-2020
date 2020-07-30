@@ -1,10 +1,11 @@
 import React, {useEffect} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
+// import Grid from '@material-ui/core/Grid';
+// import Pagination from '@material-ui/lab/Pagination';
 import Button from '@material-ui/core/Button';
 import Navbar from '../common/Navbar';
-import GameCard from '../search/GameCard';
+import DisplayGames from '../search/DisplayGames';
 import Filter from '../search/Filter';
 import {useFirestore} from 'reactfire';
 
@@ -17,9 +18,12 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(3),
     float: 'right',
   },
+  pagination: {
+    '& > *': {
+      margin: theme.spacing(2),
+    },
+  },
 }));
-
-let initialize = false;
 
 /**
  * @return {ReactElement} Search page with filter and search result
@@ -32,9 +36,12 @@ export default function Search() {
   const [maxPlayer, setMaxPlayer] = React.useState('8+');
   const [minTime, setMinTime] = React.useState(5);
   const [maxTime, setMaxTime] = React.useState('240+');
-  const [games, setGames] = React.useState([]);
+  const [games, setGames] = React.useState([[]]);
+  const [paginationCount, setPaginationCount] = React.useState(1);
+  const [initialize, setInitialize] = React.useState(false);
   const handleFilter = () => {
     const newGames = [];
+    let list = [];
     let maxP = maxPlayer;
     if (typeof maxP === 'string') {
       maxP = Number.MAX_SAFE_INTEGER;
@@ -60,10 +67,18 @@ export default function Search() {
             doc.data()['minPlaytime'] <= maxT &&
             minTime <= doc.data()['maxPlaytime'] &&
             doc.data()['minAge'] <= minAge) {
-              newGames.push(doc.data());
+              list.push(doc.data());
+              if (list.length === 12) {
+                newGames.push(list);
+                list = [];
+              }
             }
           });
+          if (list.length !== 0) {
+            newGames.push(list);
+          }
           setGames(newGames);
+          setPaginationCount(newGames.length);
         })
         .catch(function(error) {
           console.log('Error getting documents: ', error);
@@ -73,20 +88,30 @@ export default function Search() {
     // using a hack to make useEffect act as onLoad()
     if (initialize === false) {
       const newGames = [];
+      let list = [];
       ref.orderBy('rating', 'desc')
           .get()
           .then(function(querySnapshot) {
+            setInitialize(true);
             querySnapshot.forEach(function(doc) {
-              newGames.push(doc.data());
+              list.push(doc.data());
+              if (list.length === 12) {
+                newGames.push(list);
+                list = [];
+              }
             });
+            if (list.length !== 0) {
+              newGames.push(list);
+            }
             setGames(newGames);
-            initialize = true;
+            setPaginationCount(newGames.length);
+            setInitialize(true);
           })
           .catch(function(error) {
             console.log('Error getting documents: ', error);
           });
     }
-  }, [ref]);
+  }, [ref, initialize]);
 
   return (
     <div>
@@ -120,26 +145,7 @@ export default function Search() {
           Search
         </Button>
       </Box>
-      <Box ml={10}>
-        <Grid container justify="flex-start" alignItems="center" spacing={4}>
-          {games.map((item) =>
-            <Grid key={item['id']} item>
-              <GameCard id={item['id']}
-                image={item['image']}
-                name={item['Name']}
-                year={item['year']}
-                minTime={item['minPlaytime']}
-                maxTime={item['maxPlaytime']}
-                minPlayer={item['minPlayer']}
-                maxPlayer={item['maxPlayer']}
-                rating={item['rating']}
-                minAge={item['minAge']}
-                weight={item['weight']} />
-            </Grid>,
-          )}
-        </Grid>
-      </Box>
+      <DisplayGames games = {games} paginationCount = {paginationCount} />
     </div>
   );
 }
-
