@@ -1,13 +1,11 @@
 import React, {useEffect} from 'react';
 import Navbar from '../common/Navbar';
 import Box from '@material-ui/core/Box';
-import Slide from '@material-ui/core/Slide';
 import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
-import DisplayGames from '../search/DisplayGames';
-import AllFilters from '../search/AllFilters';
-import TopGames from '../home/TopGames';
 import {useFirestore} from 'reactfire';
+import GameCard from '../search/GameCard';
+import Carousel from 'react-elastic-carousel';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -17,6 +15,9 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  card: {
+    padding: '0 30px',
+  }
 }));
 
 /**
@@ -25,15 +26,17 @@ const useStyles = makeStyles((theme) => ({
 export default function Home() {
   const classes = useStyles();
   const [games, setGames] = React.useState([]);
-  const [paginationCount, setPaginationCount] = React.useState(1);
   const ref = useFirestore().collection('games');
   const [initialize, setInitialize] = React.useState(false);
-  const [sortBy, setSortBy] = React.useState('rating');
+  const [sortBy] = React.useState('rating');
+  const breakPoints = [
+    { width: 1200, itemsToShow: 5 },
+  ];
 
   useEffect(() => {
     if (initialize === false) {
       let list = [];
-      ref.orderBy(sortBy, 'desc').limit(12)
+      ref.orderBy(sortBy, 'desc').limit(10)
           .get()
           .then(function(querySnapshot) {
             setInitialize(true);
@@ -69,13 +72,28 @@ export default function Home() {
         container='true'
         m={10}
       >
-        <Typography
-          variant='h5'
-        >
+        <Typography variant='h5'>
           Top-Rated Games
         </Typography>
         <br />
-        <TopGames games={games} />
+        <Carousel breakPoints={breakPoints}>
+          {games.map(game => {
+            return (
+              <GameCard id={game.id}
+                image={game.image}
+                name={game.Name}
+                year={game.year}
+                minTime={game.minPlaytime}
+                maxTime={game.maxPlaytime}
+                minPlayer={game.minPlayer}
+                maxPlayer={game.maxPlayer}
+                rating={game.rating}
+                minAge={game.minAge}
+                weight={game.weight}
+              />
+            );
+          })}
+        </Carousel>
       </Box>
     </div>
   );
