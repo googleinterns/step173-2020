@@ -15,9 +15,6 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  card: {
-    padding: '0 30px',
-  }
 }));
 
 /**
@@ -30,25 +27,24 @@ export default function Home() {
   const [initialize, setInitialize] = React.useState(false);
   const [sortBy] = React.useState('rating');
   const breakPoints = [
-    { width: 1200, itemsToShow: 5 },
+    {width: 1200, itemsToShow: 5},
   ];
 
   useEffect(() => {
     if (initialize === false) {
-      let list = [];
+      const gameArr = [];
       ref.orderBy(sortBy, 'desc').limit(10)
           .get()
-          .then(function(querySnapshot) {
+          .then((querySnapshot) => {
             setInitialize(true);
-            querySnapshot.forEach(function(doc) {
-              list.push(doc.data());
-            })
-            setGames(list);
+            querySnapshot.forEach((doc) => {
+              gameArr.push(doc.data());
+            });
+            setGames(gameArr);
           })
           .catch(function(error) {
             console.log('Error getting documents: ', error);
           });
-      
     }
   }, [ref, initialize, sortBy, setGames]);
 
@@ -77,9 +73,10 @@ export default function Home() {
         </Typography>
         <br />
         <Carousel breakPoints={breakPoints}>
-          {games.map(game => {
+          {games.map((game) => {
             return (
-              <GameCard id={game.id}
+              <GameCard key={game.id}
+                id={game.id}
                 image={game.image}
                 name={game.Name}
                 year={game.year}
