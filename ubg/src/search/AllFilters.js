@@ -88,29 +88,7 @@ export default function AllFilters({setPaginationCount, setGames}) {
     setMaxPlayer('8+');
     setMinTime(5);
     setMaxTime('240+');
-    const newGames = [];
-    let list = [];
-    ref.orderBy(sortBy, 'desc')
-        .get()
-        .then(function(querySnapshot) {
-          setInitialize(true);
-          querySnapshot.forEach(function(doc) {
-            list.push(doc.data());
-            if (list.length === 12) {
-              newGames.push(list);
-              list = [];
-            }
-          });
-          if (list.length !== 0) {
-            newGames.push(list);
-          }
-          setGames(newGames);
-          setPaginationCount(newGames.length);
-          setInitialize(true);
-        })
-        .catch(function(error) {
-          console.log('Error getting documents: ', error);
-        });
+    setInitialize(false);
   };
   useEffect(() => {
     // using a hack to make useEffect act as onLoad()
@@ -133,7 +111,6 @@ export default function AllFilters({setPaginationCount, setGames}) {
             }
             setGames(newGames);
             setPaginationCount(newGames.length);
-            setInitialize(true);
           })
           .catch(function(error) {
             console.log('Error getting documents: ', error);
@@ -143,32 +120,44 @@ export default function AllFilters({setPaginationCount, setGames}) {
 
   return (
     <Box boxShadow={1} m={10}>
-      <Filter label = "Minimum Age"
+      <Filter
+        label = "Minimum Age"
         value={minAge}
         menu={[8, 10, 14, 16, 21]}
-        onChange={(v) => setMinAge(v)} />
-      <Filter label = "Minimum Player"
+        onChange={(v) => setMinAge(v)}
+      />
+      <Filter
+        label = "Minimum Player"
         value={minPlayer}
         menu={[1, 2, 3, 4, 5, 6, 7, 8]}
-        onChange={(v) => setMinPlayer(v)}/>
-      <Filter label = "Maximum Player"
+        onChange={(v) => setMinPlayer(v)}
+      />
+      <Filter
+        label = "Maximum Player"
         value={maxPlayer}
         menu={[1, 2, 3, 4, 5, 6, 7, '8+']}
-        onChange={(v) => setMaxPlayer(v)} />
-      <Filter label = "Minimum Time"
+        onChange={(v) => setMaxPlayer(v)}
+      />
+      <Filter
+        label = "Minimum Time"
         value={minTime}
         menu={[5, 15, 30, 60, 90, 120]}
         append={'min'}
-        onChange={(v) => setMinTime(v)} />
-      <Filter label = "Maximum Time"
+        onChange={(v) => setMinTime(v)}
+      />
+      <Filter
+        label = "Maximum Time"
         value={maxTime}
         menu={[15, 30, 60, 90, 120, '240+']}
         append={'min'}
-        onChange={(v) => setMaxTime(v)} />
-      <Filter label = "Sort By"
+        onChange={(v) => setMaxTime(v)}
+      />
+      <Filter
+        label = "Sort By"
         value={sortBy}
         menu={['rating', 'weight']}
-        onChange={(v) => setSortBy(v)} />
+        onChange={(v) => setSortBy(v)}
+      />
       <Button className={classes.button}
         variant="contained"
         onClick={() => handleClear()}>

@@ -13,13 +13,13 @@ let initialize = false;
 
 /**
  * Displays the review section of a game page and handles review input
- * @param {*} props ID of current game on page
+ * @param {string} gameId ID of current game on page
  * @return {ReactElement} Box containing review section
  */
-function AllReviews(props) {
+function AllReviews({gameId}) {
   const reviewsRef = useFirestore()
       .collection('gameReviews')
-      .doc(props.gameId)
+      .doc(gameId)
       .collection('reviews');
   const auth = useAuth();
   const user = useUser();
@@ -82,7 +82,7 @@ function AllReviews(props) {
             </div>
           }
         >
-          <NewReview gameId={props.gameId} user={user}
+          <NewReview gameId={gameId} user={user}
             handleAddReview={handleAddReview} />
         </AuthCheck>
         <Reviews reviews={reviews} />
