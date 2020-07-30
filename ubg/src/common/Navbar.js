@@ -53,13 +53,13 @@ export default function Navbar() {
           aria-label="menu">
           <MenuIcon />
         </IconButton>
-        <Button color="inherit"
-          className={classes.titleButton}
-          onClick={homePage}>
-          <Typography variant="h6">
-            UltimateBoardGame
-          </Typography>
-        </Button>
+        <div className={classes.titleButton}>
+          <Button color="inherit" onClick={homePage}>
+            <Typography variant="h6">
+              UltimateBoardGame
+            </Typography>
+          </Button>
+        </div>
         <Button color="inherit" onClick={searchGames}>
           Search Games
         </Button>

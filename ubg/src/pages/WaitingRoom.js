@@ -5,6 +5,7 @@ import {
   useFirestoreDocData,
   useUser,
   useFirestoreCollectionData,
+  useAuth,
 } from 'reactfire';
 import {makeStyles} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -14,6 +15,7 @@ import UserVideo from '../common/UserVideo';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import firebase from 'firebase/app';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -60,6 +62,13 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
+  signInContainer: {
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 }));
 
 /**
@@ -67,7 +76,8 @@ const useStyles = makeStyles((theme) => ({
  */
 export default function WaitingRoom() {
   const classes = useStyles();
-  const {uid, displayName, email} = useUser();
+  const user = useUser();
+  const auth = useAuth();
   const {roomId} = useParams();
   const room = useFirestore().collection('rooms').doc(roomId);
   const roomData = useFirestoreDocData(room);
@@ -100,12 +110,13 @@ export default function WaitingRoom() {
       if (usersJoined.length > 0) {
         setOpen(false);
         setMessage(`${usersJoined[0].displayName} joined the room`);
+        setOpen(true);
       }
       if (usersLeft.length > 0) {
         setOpen(false);
         setMessage(`${usersLeft[0].displayName} left the room`);
+        setOpen(true);
       }
-      setOpen(true);
     }
   }, [usersData, prevUsersData]);
 
@@ -113,93 +124,122 @@ export default function WaitingRoom() {
    * Add user to the users collection in the room
    */
   function joinRoom() {
-    usersCollection.doc(uid).set({displayName, email, uid});
+    usersCollection.doc(user.uid).set({
+      displayName: user.displayName,
+      email: user.email,
+      uid: user.uid,
+    });
   }
+
+  /**
+   * Brings up a Google sign in popup
+   * @return {void}
+   */
+  async function signIn() {
+    await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+  };
 
   /**
    * Delete user from user collection in the room
    */
   function leaveRoom() {
-    usersCollection.doc(uid).delete();
+    usersCollection.doc(user.uid).delete();
   }
 
   return (
     <div>
-      <Grid className={classes.main} container>
-        <Grid className={classes.gameContainer} item xs={9}>
-          <div className={classes.title}>
-            <Typography variant="h3" className={classes.fonts}>
-              {game.Name}
-            </Typography>
-          </div>
-          <div className={classes.game}>
-            <div>
-              <Typography variant='body1'>
-                {game.description}
-              </Typography>
-            </div>
-          </div>
-          <div className={classes.actionBtns}>
-            {
-              usersData.some((user) => user.uid === uid) ?
-                (
-                  <div className={classes.inRoomBtns}>
-                    { roomData.host === uid ?
-                      <Button
-                        className={classes.btn}
-                        variant="contained"
-                        color="primary"
-                      >Start Game</Button> :
-                      'Waiting for the host'}
+      { user ?
+        <div>
+          <Grid className={classes.main} container>
+            <Grid className={classes.gameContainer} item xs={9}>
+              <div className={classes.title}>
+                <Typography variant="h3" className={classes.fonts}>
+                  {game.Name}
+                </Typography>
+              </div>
+              <div className={classes.game}>
+                <div>
+                  <Typography variant='body1'>
+                    {game.description}
+                  </Typography>
+                </div>
+              </div>
+              <div className={classes.actionBtns}>
+                {
+                  usersData.some((u) => u.uid === user.uid) ?
+                    (
+                      <div className={classes.inRoomBtns}>
+                        { roomData.host === user.uid ?
+                          <Button
+                            className={classes.btn}
+                            variant="contained"
+                            color="primary"
+                          >Start Game</Button> :
+                          'Waiting for the host'}
+                        <Button
+                          className={classes.btn}
+                          variant="contained"
+                          onClick={leaveRoom}
+                        >Leave Room</Button>
+                      </div>
+                    ) :
                     <Button
                       className={classes.btn}
                       variant="contained"
-                      onClick={leaveRoom}
-                    >Leave Room</Button>
-                  </div>
-                ) :
-                <Button
-                  className={classes.btn}
-                  variant="contained"
-                  color="primary"
-                  onClick={joinRoom}
-                >Join Room</Button>
+                      color="primary"
+                      onClick={joinRoom}
+                    >Join Room</Button>
+                }
+              </div>
+            </Grid>
+            <Grid className={classes.video} item xs={3}>
+              {
+                usersData.map((u) => {
+                  return (
+                    <UserVideo
+                      key={u.uid}
+                      user={u.displayName}
+                    />
+                  );
+                })
+              }
+            </Grid>
+          </Grid>
+          <Snackbar
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            open={open}
+            autoHideDuration={2000}
+            onClose={() => setOpen(false)}
+            message={message}
+            action={
+              <IconButton
+                size="small"
+                aria-label="close"
+                color="inherit"
+                onClick={() => setOpen(false)}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
             }
-          </div>
-        </Grid>
-        <Grid className={classes.video} item xs={3}>
-          {
-            usersData.map((user) => {
-              return (
-                <UserVideo
-                  key={user.uid}
-                  user={user.displayName}
-                />
-              );
-            })
-          }
-        </Grid>
-      </Grid>
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        open={open}
-        autoHideDuration={2000}
-        onClose={() => setOpen(false)}
-        message={message}
-        action={
-          <IconButton
-            size="small"
-            aria-label="close"
-            color="inherit"
-            onClick={() => setOpen(false)}
+          />
+        </div> :
+        <div className={classes.signInContainer}>
+          <Button
+            onClick={signIn}
+            variant="contained"
+            color="primary"
+            className={classes.btn}
           >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        }
-      />
+            Sign In
+          </Button>
+          <Typography variant="subtitle1">
+            You must sign in to join a game room
+          </Typography>
+        </div>
+      }
     </div>
   );
 }
