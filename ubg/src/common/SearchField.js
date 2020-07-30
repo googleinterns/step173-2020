@@ -53,13 +53,8 @@ export default function SearchField() {
   const history = useHistory();
   const [value, setValue] = React.useState('');
   const handleSubmit = () => {
-    // if(e.key === 'Enter'){
-      console.log({value});
-      // put the login here
-  //  }
-    // e.precentDefault();
-    // console.log(e.target.value);
-    history.push('/search');
+    console.log(value);
+    history.push('/search',{'value':value,display:'inline-flex'});
   };
   return (
     <div className={classes.search}>

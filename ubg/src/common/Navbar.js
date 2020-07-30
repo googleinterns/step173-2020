@@ -42,7 +42,7 @@ export default function Navbar() {
    * Go to the search games url
    */
   function searchGames() {
-    history.push('/search');
+    history.push('/search',{value:'',display:'none'});
   }
   return (
     <AppBar position="static">

@@ -39,8 +39,8 @@ const useStyles = chipDisplay => makeStyles((theme) => ({
  * @param {object} setGames function to set games
  * @return {ReactElement} All Filters and related buttons
  */
-export default function AllFilters({setPaginationCount, setGames}) {
-  const [chipDisplay, setChipDisplay] = React.useState('inline-flex');
+export default function AllFilters({setPaginationCount, setGames, value, display}) {
+  const [chipDisplay, setChipDisplay] = React.useState(display);
   const classes = useStyles(chipDisplay)();
   const ref = useFirestore().collection('games');
   const [minAge, setMinAge] = React.useState(21);
@@ -197,7 +197,7 @@ export default function AllFilters({setPaginationCount, setGames}) {
         Search
       </Button>
       <br />
-      <Chip label="Deletable primary" onDelete={handleDelete} className={classes.chip} display="block"/>
+      <Chip label={value} onDelete={handleDelete} className={classes.chip} display="block"/>
       <Button
         className={classes.clearButton}
         variant="contained"
