@@ -14,7 +14,7 @@ export default class Reviews extends React.Component {
    * @return {ReactElement} Single, formatted review
    */
   renderReview(review) {
-    return <Review review={review} />;
+    return <Review key={review.userId + '' + review.timestamp} review={review} />;
   }
 
   /**

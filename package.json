@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "mocha --reporter spec"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/googleinterns/step173-2020.git"
