@@ -5,6 +5,7 @@ import Button from '@material-ui/core/Button';
 import Filter from './Filter';
 import {useFirestore} from 'reactfire';
 import PropTypes from 'prop-types';
+import Chip from '@material-ui/core/Chip';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -14,6 +15,13 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1.5),
     marginRight: theme.spacing(3),
     float: 'right',
+  },
+  clearButton: {
+    marginRight: theme.spacing(3),
+    float: 'right',
+  },
+  chip: {
+    margin: theme.spacing(1.3),
   },
   pagination: {
     '& > *': {
@@ -37,6 +45,7 @@ export default function AllFilters({setPaginationCount, setGames}) {
   const [maxTime, setMaxTime] = React.useState('240+');
   const [sortBy, setSortBy] = React.useState('rating');
   const [initialize, setInitialize] = React.useState(false);
+
   const handleFilter = () => {
     const newGames = [];
     let list = [];
@@ -118,6 +127,11 @@ export default function AllFilters({setPaginationCount, setGames}) {
     }
   }, [ref, sortBy, setGames, setPaginationCount, initialize]);
 
+  const handleDelete = () => {
+    console.info('You clicked the delete icon.');
+  };
+
+
   return (
     <Box boxShadow={1} m={10}>
       <Filter
@@ -158,15 +172,19 @@ export default function AllFilters({setPaginationCount, setGames}) {
         menu={['rating', 'weight']}
         onChange={(v) => setSortBy(v)}
       />
-      <Button className={classes.button}
-        variant="contained"
-        onClick={() => handleClear()}>
-        Clear All Filters
-      </Button>
-      <Button className={classes.button}
+      <Button
+        className={classes.button}
         variant="contained"
         onClick={() => handleFilter()}>
         Search
+      </Button>
+      <br />
+      <Chip label="Deletable primary" onDelete={handleDelete} className={classes.chip} />
+      <Button
+        className={classes.clearButton}
+        variant="contained"
+        onClick={() => handleClear()}>
+        Clear All Filters
       </Button>
     </Box>
   );
