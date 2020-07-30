@@ -84,6 +84,36 @@ export default function Search() {
           console.log('Error getting documents: ', error);
         });
   };
+  const handleClear = () => {
+    setMinAge(21);
+    setMinPlayer(1);
+    setMaxPlayer('8+');
+    setMinTime(5);
+    setMaxTime('240+');
+    const newGames = [];
+    let list = [];
+    ref.orderBy('rating', 'desc')
+        .get()
+        .then(function(querySnapshot) {
+          setInitialize(true);
+          querySnapshot.forEach(function(doc) {
+            list.push(doc.data());
+            if (list.length === 12) {
+              newGames.push(list);
+              list = [];
+            }
+          });
+          if (list.length !== 0) {
+            newGames.push(list);
+          }
+          setGames(newGames);
+          setPaginationCount(newGames.length);
+          setInitialize(true);
+        })
+        .catch(function(error) {
+          console.log('Error getting documents: ', error);
+        });
+  };
   useEffect(() => {
     // using a hack to make useEffect act as onLoad()
     if (initialize === false) {
@@ -139,6 +169,11 @@ export default function Search() {
           menu={[15, 30, 60, 90, 120, '240+']}
           append={'min'}
           onChange={(v) => setMaxTime(v)} />
+        <Button className={classes.button}
+          variant="contained"
+          onClick={() => handleClear()}>
+          Clear All Filters
+        </Button>
         <Button className={classes.button}
           variant="contained"
           onClick={() => handleFilter()}>
