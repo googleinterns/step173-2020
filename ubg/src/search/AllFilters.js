@@ -7,9 +7,12 @@ import {useFirestore} from 'reactfire';
 import PropTypes from 'prop-types';
 import Chip from '@material-ui/core/Chip';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = chipDisplay => makeStyles((theme) => ({
   root: {
     flexGrow: 1,
+  },
+  box: {
+    'height': '115px',
   },
   button: {
     marginTop: theme.spacing(1.5),
@@ -22,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
   },
   chip: {
     margin: theme.spacing(1.3),
+    display: chipDisplay,
   },
   pagination: {
     '& > *': {
@@ -36,7 +40,8 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} All Filters and related buttons
  */
 export default function AllFilters({setPaginationCount, setGames}) {
-  const classes = useStyles();
+  const [chipDisplay, setChipDisplay] = React.useState('inline-flex');
+  const classes = useStyles(chipDisplay)();
   const ref = useFirestore().collection('games');
   const [minAge, setMinAge] = React.useState(21);
   const [minPlayer, setMinPlayer] = React.useState(1);
@@ -45,7 +50,9 @@ export default function AllFilters({setPaginationCount, setGames}) {
   const [maxTime, setMaxTime] = React.useState('240+');
   const [sortBy, setSortBy] = React.useState('rating');
   const [initialize, setInitialize] = React.useState(false);
-
+  /**
+   * Get games that satisfy filter conditions
+   */
   const handleFilter = () => {
     const newGames = [];
     let list = [];
@@ -91,6 +98,9 @@ export default function AllFilters({setPaginationCount, setGames}) {
           console.log('Error getting documents: ', error);
         });
   };
+  /**
+   * Clear all the filters
+   */
   const handleClear = () => {
     setMinAge(21);
     setMinPlayer(1);
@@ -99,6 +109,9 @@ export default function AllFilters({setPaginationCount, setGames}) {
     setMaxTime('240+');
     setInitialize(false);
   };
+  /**
+   * Load all the games data
+   */
   useEffect(() => {
     // using a hack to make useEffect act as onLoad()
     if (initialize === false) {
@@ -127,13 +140,18 @@ export default function AllFilters({setPaginationCount, setGames}) {
     }
   }, [ref, sortBy, setGames, setPaginationCount, initialize]);
 
+
+  /**
+   * handle delete Chip
+   */
   const handleDelete = () => {
     console.info('You clicked the delete icon.');
+    setChipDisplay('none');
   };
 
 
   return (
-    <Box boxShadow={1} m={10}>
+    <Box boxShadow={1} m={10} className={classes.box}>
       <Filter
         label = "Minimum Age"
         value={minAge}
@@ -179,7 +197,7 @@ export default function AllFilters({setPaginationCount, setGames}) {
         Search
       </Button>
       <br />
-      <Chip label="Deletable primary" onDelete={handleDelete} className={classes.chip} />
+      <Chip label="Deletable primary" onDelete={handleDelete} className={classes.chip} display="block"/>
       <Button
         className={classes.clearButton}
         variant="contained"
