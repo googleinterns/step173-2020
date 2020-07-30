@@ -93,7 +93,6 @@ export default function AllFilters({setPaginationCount, setGames}) {
   useEffect(() => {
     // using a hack to make useEffect act as onLoad()
     if (initialize === false) {
-      console.log('43');
       const newGames = [];
       let list = [];
       ref.orderBy(sortBy, 'desc')
