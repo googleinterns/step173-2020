@@ -23,8 +23,10 @@ import People from '@material-ui/icons/People';
 import Face from '@material-ui/icons/Face';
 import SignalCellular3Bar from '@material-ui/icons/SignalCellular3Bar';
 import TextField from '@material-ui/core/TextField';
-import ReactPlayer from 'react-player';
 import PropTypes from 'prop-types';
+import Carousel from 'react-elastic-carousel';
+import VideoCard from '../reviews/VideoCard';
+import ReactPlayer from 'react-player';
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
@@ -108,7 +110,9 @@ export default function Game() {
           </Grid>
         </AuthCheck>
         <Spacer />
-        <Rules videos={games.videos}/>
+        <Rules 
+          videos={games.videos.filter((video) => video.category === 'instructional')}
+        />
         <Spacer />
         <AllReviews gameId={gameId}/>
       </Box>
@@ -211,6 +215,13 @@ function Description({games, createRoom}) {
  * @return {ReactElement} Videos describing rules for game
  */
 function Rules({videos}) {
+  if (Object.keys(videos).length === 0) {
+    return (
+      <Typography variant='h4'>
+        No rules available
+      </Typography>
+    );
+  }
   return (
     <div>
       <Grid container>
@@ -222,15 +233,20 @@ function Rules({videos}) {
       </Grid>
       <br />
       <Grid container spacing={3}>
-        {Array.from(videos).slice(0, 3).map((video) => {
-          return (
-            <Grid item key={video.link}>
-              <ReactPlayer
-                url={video.link}
-              />
-            </Grid>
-          );
-        })}
+        <Carousel
+            itemPadding={[10, 15]}
+            itemsToShow={3}
+            itemsToScroll={3}
+          >
+            {videos.map((video) => {
+              return (
+                <VideoCard video={video} />
+                // <ReactPlayer
+                //   url={video.link}
+                // />
+              );
+            })}
+          </Carousel>
       </Grid>
     </div>
   );

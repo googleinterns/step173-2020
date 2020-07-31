@@ -69,7 +69,7 @@ function AllReviews({gameId}) {
   return (
     <div className='reviews'>
       <Box container="true" justify="center" alignItems="center">
-        <Typography variant="h3">
+        <Typography variant="h4">
           Reviews
         </Typography>
         <AuthCheck
