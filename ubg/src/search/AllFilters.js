@@ -49,7 +49,8 @@ const checkMatch = (values, name) => {
  * @param {object} setGames function to set games
  * @return {ReactElement} All Filters and related buttons
  */
-export default function AllFilters({setPaginationCount, setGames, value, chipDisplay, setChipDisplay, initialize, setInitialize}) {
+export default function AllFilters({setPaginationCount, setGames, value, chipDisplay, setChipDisplay,
+  initialize, setInitialize, totalGames, setTotalGames}) {
   // const [chipDisplay, setChipDisplay] = React.useState(display);
   const classes = useStyles(chipDisplay)();
   const ref = useFirestore().collection('games');
@@ -82,7 +83,8 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
       setMaxTime(minTime);
       maxT = minTime;
     }
-    const values = value.trim().split(/\ +/);
+    const values = value.trim().split(/ +/);
+    let total = 0;
     ref.orderBy(sortBy, 'desc')
         .get()
         .then(function(querySnapshot) {
@@ -99,12 +101,14 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
               // }
               if (value === '' || chipDisplay === 'none'){
                 list.push(doc.data());
+                total += 1;
                 if (list.length === 12) {
                   newGames.push(list);
                   list = [];
                 }
               } else if (checkMatch(values, doc.data()['Name'])) {
                 list.push(doc.data());
+                total += 1
                 if (list.length === 12) {
                   newGames.push(list);
                   list = [];
@@ -116,6 +120,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
             newGames.push(list);
           }
           setGames(newGames);
+          setTotalGames(total);
           setPaginationCount(newGames.length);
         })
         .catch(function(error) {
@@ -131,6 +136,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
     setMaxPlayer('8+');
     setMinTime(5);
     setMaxTime('240+');
+    setChipDisplay('none');
     setInitialize(false);
   };
   /**
@@ -142,7 +148,8 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
       console.log('234');
       const newGames = [];
       let list = [];
-      const values = value.trim().split(/\ +/);
+      const values = value.trim().split(/ +/);
+      let total = 0;
       ref.orderBy(sortBy, 'desc')
           .get()
           .then(function(querySnapshot) {
@@ -150,12 +157,14 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
             querySnapshot.forEach(function(doc) {
               if (value === '' || chipDisplay === 'none'){
               list.push(doc.data());
+              total += 1
               if (list.length === 12) {
                 newGames.push(list);
                 list = [];
               }
               } else if (checkMatch(values, doc.data()['Name'])) {
                 list.push(doc.data());
+                total += 1
                 if (list.length === 12) {
                   newGames.push(list);
                   list = [];
@@ -167,13 +176,15 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
               newGames.push(list);
             }
             setGames(newGames);
+            setTotalGames(total);
+            console.log(totalGames);
             setPaginationCount(newGames.length);
           })
           .catch(function(error) {
             console.log('Error getting documents: ', error);
           });
     }
-  }, [ref, sortBy, setGames, setPaginationCount, initialize, chipDisplay, value]);
+  }, [ref, sortBy, setGames, setPaginationCount, initialize, chipDisplay, value, setInitialize]);
 
 
   /**
@@ -225,12 +236,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
         menu={['rating', 'weight']}
         onChange={(v) => setSortBy(v)}
       />
-      <Button
-        className={classes.button}
-        variant="contained"
-        onClick={() => handleFilter()}>
-        Search
-      </Button>
+      <Chip label={totalGames+' Games'} className={classes.button} display="block"/>
       <br />
       <Chip label={value} onDelete={handleDelete} className={classes.chip} display="block"/>
       <Button
@@ -238,6 +244,12 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
         variant="contained"
         onClick={() => handleClear()}>
         Clear All Filters
+      </Button>
+      <Button
+        className={classes.button}
+        variant="contained"
+        onClick={() => handleFilter()}>
+        Search
       </Button>
     </Box>
   );

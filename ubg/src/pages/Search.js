@@ -14,6 +14,7 @@ export default function Search() {
   const [value, setValue] = React.useState('');
   const [initialize, setInitialize] = React.useState(false);
   const [search, setSearch] = React.useState(false);
+  const [totalGames, setTotalGames] = React.useState(0);
   // let display = 'none';
   const location = useLocation();
   if (location.state && search === true) {
@@ -29,8 +30,9 @@ export default function Search() {
       <Navbar setSearch={setSearch}/>
       <AllFilters setPaginationCount={setPaginationCount} setGames={setGames}
       value={value} chipDisplay={chipDisplay} setChipDisplay={setChipDisplay}
-      initialize={initialize} setInitialize={setInitialize}/>
-      <DisplayGames games = {games} paginationCount = {paginationCount} />
+      initialize={initialize} setInitialize={setInitialize}
+      totalGames={totalGames} setTotalGames={setTotalGames}/>
+      <DisplayGames games = {games} paginationCount = {paginationCount} totalGames={totalGames}/>
     </div>
   );
 }

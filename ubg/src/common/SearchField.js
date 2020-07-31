@@ -54,7 +54,7 @@ export default function SearchField({setSearch}) {
   const [value, setValue] = React.useState('');
 
   const handleSubmit = () => {
-    console.log(value);
+    // console.log(value);
     setValue('');
     if (setSearch!==null) {
       setSearch(true);
