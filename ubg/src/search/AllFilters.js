@@ -34,12 +34,14 @@ const useStyles = chipDisplay => makeStyles((theme) => ({
   },
 }));
 
+// const checkMatch = ()
+
 /**
  * @param {object} setPaginationCount function to set pagination
  * @param {object} setGames function to set games
  * @return {ReactElement} All Filters and related buttons
  */
-export default function AllFilters({setPaginationCount, setGames, value, chipDisplay, setChipDisplay}) {
+export default function AllFilters({setPaginationCount, setGames, value, chipDisplay, setChipDisplay, initialize, setInitialize}) {
   // const [chipDisplay, setChipDisplay] = React.useState(display);
   const classes = useStyles(chipDisplay)();
   const ref = useFirestore().collection('games');
@@ -49,7 +51,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
   const [minTime, setMinTime] = React.useState(5);
   const [maxTime, setMaxTime] = React.useState('240+');
   const [sortBy, setSortBy] = React.useState('rating');
-  const [initialize, setInitialize] = React.useState(false);
+  // const [initialize, setInitialize] = React.useState(false);
   /**
    * Get games that satisfy filter conditions
    */
@@ -81,10 +83,23 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
             doc.data()['minPlaytime'] <= maxT &&
             minTime <= doc.data()['maxPlaytime'] &&
             doc.data()['minAge'] <= minAge) {
-              list.push(doc.data());
-              if (list.length === 12) {
-                newGames.push(list);
-                list = [];
+              // list.push(doc.data());
+              // if (list.length === 12) {
+              //   newGames.push(list);
+              //   list = [];
+              // }
+              if (value === '' || chipDisplay === 'none'){
+                list.push(doc.data());
+                if (list.length === 12) {
+                  newGames.push(list);
+                  list = [];
+                }
+              } else if (doc.data()['Name'].includes(value)) {
+                list.push(doc.data());
+                if (list.length === 12) {
+                  newGames.push(list);
+                  list = [];
+                }
               }
             }
           });
@@ -115,6 +130,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
   useEffect(() => {
     // using a hack to make useEffect act as onLoad()
     if (initialize === false) {
+      console.log('234');
       const newGames = [];
       let list = [];
       ref.orderBy(sortBy, 'desc')
@@ -122,10 +138,18 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
           .then(function(querySnapshot) {
             setInitialize(true);
             querySnapshot.forEach(function(doc) {
+              if (value === '' || chipDisplay === 'none'){
               list.push(doc.data());
               if (list.length === 12) {
                 newGames.push(list);
                 list = [];
+              }
+              } else if (value !== '' && doc.data()['Name'].includes(value)) {
+                list.push(doc.data());
+                if (list.length === 12) {
+                  newGames.push(list);
+                  list = [];
+                }
               }
             });
             if (list.length !== 0) {
@@ -138,7 +162,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
             console.log('Error getting documents: ', error);
           });
     }
-  }, [ref, sortBy, setGames, setPaginationCount, initialize]);
+  }, [ref, sortBy, setGames, setPaginationCount, initialize, chipDisplay, value]);
 
 
   /**
@@ -146,6 +170,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
    */
   const handleDelete = () => {
     setChipDisplay('none');
+    setInitialize(false);
   };
 
 

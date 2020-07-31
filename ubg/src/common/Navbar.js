@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Navigation bar of website
  */
-export default function Navbar() {
+export default function Navbar({setSearch=null}) {
   const classes = useStyles();
   const history = useHistory();
 
@@ -63,7 +63,7 @@ export default function Navbar() {
         <Button color="inherit" onClick={searchGames}>
           Search Games
         </Button>
-        <SearchField />
+        <SearchField setSearch={setSearch}/>
         <AuthButtons />
       </Toolbar>
     </AppBar>

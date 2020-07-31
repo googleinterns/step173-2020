@@ -12,19 +12,24 @@ export default function Search() {
   const [paginationCount, setPaginationCount] = React.useState(1);
   const [chipDisplay, setChipDisplay] = React.useState('none');
   const [value, setValue] = React.useState('');
+  const [initialize, setInitialize] = React.useState(false);
+  const [search, setSearch] = React.useState(false);
   // let display = 'none';
   const location = useLocation();
-  if (location.state && value !== location.state.value) {
+  if (location.state && search === true) {
     setValue(location.state.value);
     setChipDisplay(location.state.display);
+    setSearch(false);
+    setInitialize(false);
   }
   
 
   return (
     <div>
-      <Navbar />
+      <Navbar setSearch={setSearch}/>
       <AllFilters setPaginationCount={setPaginationCount} setGames={setGames}
-      value={value} chipDisplay={chipDisplay} setChipDisplay={setChipDisplay}/>
+      value={value} chipDisplay={chipDisplay} setChipDisplay={setChipDisplay}
+      initialize={initialize} setInitialize={setInitialize}/>
       <DisplayGames games = {games} paginationCount = {paginationCount} />
     </div>
   );
