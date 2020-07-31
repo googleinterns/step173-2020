@@ -34,7 +34,15 @@ const useStyles = chipDisplay => makeStyles((theme) => ({
   },
 }));
 
-// const checkMatch = ()
+const checkMatch = (values, name) => {
+  // value = value.split(' ');
+  for (let i = 0; i < values.length; i++) {
+    if (name.toLowerCase().includes(values[i].toLowerCase())) {
+      return true;
+    }
+  }
+  return false;
+}
 
 /**
  * @param {object} setPaginationCount function to set pagination
@@ -74,6 +82,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
       setMaxTime(minTime);
       maxT = minTime;
     }
+    const values = value.trim().split(/\ +/);
     ref.orderBy(sortBy, 'desc')
         .get()
         .then(function(querySnapshot) {
@@ -94,7 +103,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
                   newGames.push(list);
                   list = [];
                 }
-              } else if (doc.data()['Name'].includes(value)) {
+              } else if (checkMatch(values, doc.data()['Name'])) {
                 list.push(doc.data());
                 if (list.length === 12) {
                   newGames.push(list);
@@ -133,6 +142,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
       console.log('234');
       const newGames = [];
       let list = [];
+      const values = value.trim().split(/\ +/);
       ref.orderBy(sortBy, 'desc')
           .get()
           .then(function(querySnapshot) {
@@ -144,13 +154,14 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
                 newGames.push(list);
                 list = [];
               }
-              } else if (value !== '' && doc.data()['Name'].includes(value)) {
+              } else if (checkMatch(values, doc.data()['Name'])) {
                 list.push(doc.data());
                 if (list.length === 12) {
                   newGames.push(list);
                   list = [];
                 }
               }
+              
             });
             if (list.length !== 0) {
               newGames.push(list);
