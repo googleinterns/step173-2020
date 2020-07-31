@@ -39,8 +39,8 @@ const useStyles = chipDisplay => makeStyles((theme) => ({
  * @param {object} setGames function to set games
  * @return {ReactElement} All Filters and related buttons
  */
-export default function AllFilters({setPaginationCount, setGames, value, display}) {
-  const [chipDisplay, setChipDisplay] = React.useState(display);
+export default function AllFilters({setPaginationCount, setGames, value, chipDisplay, setChipDisplay}) {
+  // const [chipDisplay, setChipDisplay] = React.useState(display);
   const classes = useStyles(chipDisplay)();
   const ref = useFirestore().collection('games');
   const [minAge, setMinAge] = React.useState(21);
@@ -145,7 +145,6 @@ export default function AllFilters({setPaginationCount, setGames, value, display
    * handle delete Chip
    */
   const handleDelete = () => {
-    console.info('You clicked the delete icon.');
     setChipDisplay('none');
   };
 

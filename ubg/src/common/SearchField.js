@@ -54,6 +54,7 @@ export default function SearchField() {
   const [value, setValue] = React.useState('');
   const handleSubmit = () => {
     console.log(value);
+    setValue('');
     history.push('/search',{'value':value,display:'inline-flex'});
   };
   return (
@@ -67,10 +68,12 @@ export default function SearchField() {
           root: classes.inputRoot,
           input: classes.inputInput,
         }}
+        value = {value}
         onChange={(e)=> setValue(e.target.value)}
         // onSubmit={(e)=> handleSubmit()}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
+            // e.target.reset();
             handleSubmit();
           }
        }}

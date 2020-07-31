@@ -10,19 +10,21 @@ import { useLocation } from "react-router-dom";
 export default function Search() {
   const [games, setGames] = React.useState([[]]);
   const [paginationCount, setPaginationCount] = React.useState(1);
-  let value = '';
-  let display = 'none';
+  const [chipDisplay, setChipDisplay] = React.useState('none');
+  const [value, setValue] = React.useState('');
+  // let display = 'none';
   const location = useLocation();
-  if (location.state) {
-    value = location.state.value;
-    display = location.state.display;
+  if (location.state && value !== location.state.value) {
+    setValue(location.state.value);
+    setChipDisplay(location.state.display);
   }
   
 
   return (
     <div>
       <Navbar />
-      <AllFilters setPaginationCount={setPaginationCount} setGames={setGames} value={value} display={display}/>
+      <AllFilters setPaginationCount={setPaginationCount} setGames={setGames}
+      value={value} chipDisplay={chipDisplay} setChipDisplay={setChipDisplay}/>
       <DisplayGames games = {games} paginationCount = {paginationCount} />
     </div>
   );
