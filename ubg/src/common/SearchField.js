@@ -59,7 +59,7 @@ export default function SearchField({setSearch}) {
     if (setSearch!==null) {
       setSearch(true);
     }
-    history.push('/search',{'value':value,display:'inline-flex'});
+    history.push('/search',{'value':value});
   };
   return (
     <div className={classes.search}>

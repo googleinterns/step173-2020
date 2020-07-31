@@ -15,11 +15,6 @@ const useStyles = chipDisplay => makeStyles((theme) => ({
     'height': '115px',
   },
   button: {
-    marginTop: theme.spacing(1.5),
-    marginRight: theme.spacing(3),
-    float: 'right',
-  },
-  clearButton: {
     marginRight: theme.spacing(3),
     float: 'right',
   },
@@ -65,7 +60,84 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
    * Get games that satisfy filter conditions
    */
   const handleFilter = () => {
-    const newGames = [];
+    setInitialize(false);
+    // const newGames = [];
+    // let list = [];
+    // let maxP = maxPlayer;
+    // if (typeof maxP === 'string') {
+    //   maxP = Number.MAX_SAFE_INTEGER;
+    // }
+    // let maxT = maxTime;
+    // if (typeof maxT === 'string') {
+    //   maxT = Number.MAX_SAFE_INTEGER;
+    // }
+    // if (minPlayer > maxP) {
+    //   setMaxPlayer(minPlayer);
+    //   maxP = minPlayer;
+    // }
+    // if (minTime > maxT) {
+    //   setMaxTime(minTime);
+    //   maxT = minTime;
+    // }
+    // const values = value.trim().split(/ +/);
+    // let total = 0;
+    // ref.orderBy(sortBy, 'desc')
+    //     .get()
+    //     .then(function(querySnapshot) {
+    //       querySnapshot.forEach(function(doc) {
+    //         if (doc.data()['minPlayer'] <= maxP &&
+    //         minPlayer <= doc.data()['maxPlayer'] &&
+    //         doc.data()['minPlaytime'] <= maxT &&
+    //         minTime <= doc.data()['maxPlaytime'] &&
+    //         doc.data()['minAge'] <= minAge) {
+    //           if (value === '' || chipDisplay === 'none'){
+    //             list.push(doc.data());
+    //             total += 1;
+    //             if (list.length === 12) {
+    //               newGames.push(list);
+    //               list = [];
+    //             }
+    //           } else if (checkMatch(values, doc.data()['Name'])) {
+    //             list.push(doc.data());
+    //             total += 1
+    //             if (list.length === 12) {
+    //               newGames.push(list);
+    //               list = [];
+    //             }
+    //           }
+    //         }
+    //       });
+    //       if (list.length !== 0) {
+    //         newGames.push(list);
+    //       }
+    //       setGames(newGames);
+    //       setTotalGames(total);
+    //       setPaginationCount(newGames.length);
+    //     })
+    //     .catch(function(error) {
+    //       console.log('Error getting documents: ', error);
+    //     });
+  };
+  /**
+   * Clear all the filters
+   */
+  const handleClear = () => {
+    setMinAge(21);
+    setMinPlayer(1);
+    setMaxPlayer('8+');
+    setMinTime(5);
+    setMaxTime('240+');
+    setChipDisplay('none');
+    setInitialize(false);
+  };
+  /**
+   * Load all the games data
+   */
+  useEffect(() => {
+    // using a hack to make useEffect act as onLoad()
+    if (initialize === false) {
+      console.log('234');
+      const newGames = [];
     let list = [];
     let maxP = maxPlayer;
     if (typeof maxP === 'string') {
@@ -88,17 +160,13 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
     ref.orderBy(sortBy, 'desc')
         .get()
         .then(function(querySnapshot) {
+          setInitialize(true);
           querySnapshot.forEach(function(doc) {
             if (doc.data()['minPlayer'] <= maxP &&
             minPlayer <= doc.data()['maxPlayer'] &&
             doc.data()['minPlaytime'] <= maxT &&
             minTime <= doc.data()['maxPlaytime'] &&
             doc.data()['minAge'] <= minAge) {
-              // list.push(doc.data());
-              // if (list.length === 12) {
-              //   newGames.push(list);
-              //   list = [];
-              // }
               if (value === '' || chipDisplay === 'none'){
                 list.push(doc.data());
                 total += 1;
@@ -126,65 +194,46 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
         .catch(function(error) {
           console.log('Error getting documents: ', error);
         });
-  };
-  /**
-   * Clear all the filters
-   */
-  const handleClear = () => {
-    setMinAge(21);
-    setMinPlayer(1);
-    setMaxPlayer('8+');
-    setMinTime(5);
-    setMaxTime('240+');
-    setChipDisplay('none');
-    setInitialize(false);
-  };
-  /**
-   * Load all the games data
-   */
-  useEffect(() => {
-    // using a hack to make useEffect act as onLoad()
-    if (initialize === false) {
-      console.log('234');
-      const newGames = [];
-      let list = [];
-      const values = value.trim().split(/ +/);
-      let total = 0;
-      ref.orderBy(sortBy, 'desc')
-          .get()
-          .then(function(querySnapshot) {
-            setInitialize(true);
-            querySnapshot.forEach(function(doc) {
-              if (value === '' || chipDisplay === 'none'){
-              list.push(doc.data());
-              total += 1
-              if (list.length === 12) {
-                newGames.push(list);
-                list = [];
-              }
-              } else if (checkMatch(values, doc.data()['Name'])) {
-                list.push(doc.data());
-                total += 1
-                if (list.length === 12) {
-                  newGames.push(list);
-                  list = [];
-                }
-              }
+      // const newGames = [];
+      // let list = [];
+      // const values = value.trim().split(/ +/);
+      // let total = 0;
+      // ref.orderBy(sortBy, 'desc')
+      //     .get()
+      //     .then(function(querySnapshot) {
+      //       setInitialize(true);
+      //       querySnapshot.forEach(function(doc) {
+      //         if (value === '' || chipDisplay === 'none'){
+      //         list.push(doc.data());
+      //         total += 1
+      //         if (list.length === 12) {
+      //           newGames.push(list);
+      //           list = [];
+      //         }
+      //         } else if (checkMatch(values, doc.data()['Name'])) {
+      //           list.push(doc.data());
+      //           total += 1
+      //           if (list.length === 12) {
+      //             newGames.push(list);
+      //             list = [];
+      //           }
+      //         }
               
-            });
-            if (list.length !== 0) {
-              newGames.push(list);
-            }
-            setGames(newGames);
-            setTotalGames(total);
-            console.log(totalGames);
-            setPaginationCount(newGames.length);
-          })
-          .catch(function(error) {
-            console.log('Error getting documents: ', error);
-          });
+      //       });
+      //       if (list.length !== 0) {
+      //         newGames.push(list);
+      //       }
+      //       setGames(newGames);
+      //       setTotalGames(total);
+      //       console.log(totalGames);
+      //       setPaginationCount(newGames.length);
+      //     })
+      //     .catch(function(error) {
+      //       console.log('Error getting documents: ', error);
+      //     });
     }
-  }, [ref, sortBy, setGames, setPaginationCount, initialize, chipDisplay, value, setInitialize]);
+  }, [ref, sortBy, setGames, setPaginationCount, initialize, chipDisplay, value, setInitialize, totalGames, setTotalGames,
+  maxPlayer, maxTime, minAge, minPlayer, minTime]);
 
 
   /**
@@ -201,7 +250,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
       <Filter
         label = "Minimum Age"
         value={minAge}
-        menu={[8, 10, 14, 16, 21]}
+        menu={[8, 10, 12, 14, 16, 21]}
         onChange={(v) => setMinAge(v)}
       />
       <Filter
@@ -240,7 +289,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
       <br />
       <Chip label={value} onDelete={handleDelete} className={classes.chip} display="block"/>
       <Button
-        className={classes.clearButton}
+        className={classes.button}
         variant="contained"
         onClick={() => handleClear()}>
         Clear All Filters

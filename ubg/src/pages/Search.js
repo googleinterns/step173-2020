@@ -18,8 +18,9 @@ export default function Search() {
   // let display = 'none';
   const location = useLocation();
   if (location.state && search === true) {
+    console.log("search %%%%");
     setValue(location.state.value);
-    setChipDisplay(location.state.display);
+    setChipDisplay('inline-flex');
     setSearch(false);
     setInitialize(false);
   }
