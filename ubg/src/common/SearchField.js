@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Search for games on Navbar
  */
-export default function SearchField({setSearch}) {
+export default function SearchField() {
   const classes = useStyles();
   const history = useHistory();
   const [value, setValue] = React.useState('');
@@ -56,10 +56,10 @@ export default function SearchField({setSearch}) {
   const handleSubmit = () => {
     // console.log(value);
     setValue('');
-    if (setSearch!==null) {
-      setSearch(true);
-    }
-    history.push('/search',{'value':value});
+    // if (setSearch!==null) {
+    //   setSearch(true);
+    // }
+    history.push(`/search/${value}`);
   };
   return (
     <div className={classes.search}>

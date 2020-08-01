@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
 export default function DisplayGames({games, paginationCount, totalGames}) {
   const classes = useStyles();
   const [page, setPage] = React.useState(1);
-  console.log(games);
+  // console.log(games);
   let total = totalGames;
   if (games.length < 1 || games === undefined) {
     total = 0;
