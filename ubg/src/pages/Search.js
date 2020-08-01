@@ -27,7 +27,7 @@ export default function Search() {
       setClear(true);
       setInitialize(false);
   }
-  if (query === undefined && value != '') {
+  if (query === undefined && value !== '') {
     console.log("%%%");
     setValue('');
     setChipDisplay('none');

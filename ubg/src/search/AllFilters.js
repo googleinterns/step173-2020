@@ -18,6 +18,11 @@ const useStyles = chipDisplay => makeStyles((theme) => ({
     marginRight: theme.spacing(3),
     float: 'right',
   },
+  gameChip: {
+    marginTop: theme.spacing(2),
+    marginRight: theme.spacing(3),
+    float: 'right',
+  },
   chip: {
     margin: theme.spacing(1.3),
     display: chipDisplay,
@@ -29,8 +34,10 @@ const useStyles = chipDisplay => makeStyles((theme) => ({
   },
 }));
 
+/**
+ * Check whether game name match search input
+ */
 const checkMatch = (values, name) => {
-  // value = value.split(' ');
   for (let i = 0; i < values.length; i++) {
     if (name.toLowerCase().includes(values[i].toLowerCase())) {
       return true;
@@ -71,7 +78,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
     setMinTime(5);
     setMaxTime('240+');
     setChipDisplay('none');
-    // setInitialize(false);
+    setInitialize(false);
   };
   /**
    * Load the games data according to filter
@@ -190,7 +197,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
         menu={['rating', 'weight']}
         onChange={(v) => setSortBy(v)}
       />
-      <Chip label={totalGames+' Games'} className={classes.button} display="block"/>
+      <Chip label={totalGames+' Games'} className={classes.gameChip} display="block"/>
       <br />
       <Chip label={value} className={classes.chip} display="block"/>
       <Button
