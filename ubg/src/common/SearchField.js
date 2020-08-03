@@ -54,7 +54,6 @@ export default function SearchField() {
   const [value, setValue] = React.useState('');
 
   const handleSubmit = () => {
-    // console.log(value);
     setValue('');
     history.push(`/search/${value}`);
   };
