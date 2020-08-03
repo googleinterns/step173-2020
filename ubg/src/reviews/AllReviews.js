@@ -1,4 +1,3 @@
-import firebase from 'firebase/app';
 import React, {useState, useEffect} from 'react';
 import Box from '@material-ui/core/Box';
 import Reviews from './Reviews';
@@ -6,7 +5,6 @@ import Typography from '@material-ui/core/Typography';
 import {useFirestore} from 'reactfire';
 import NewReview from './NewReview';
 import {AuthCheck, useAuth, useUser} from 'reactfire';
-import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
 
 /**
@@ -19,17 +17,9 @@ function AllReviews({gameId}) {
       .collection('gameReviews')
       .doc(gameId)
       .collection('reviews');
-  const auth = useAuth();
   const user = useUser();
   const [reviews, setReviews] = useState([]);
   const [initialize, setInitialize] = useState(false);
-
-  /**
-  * Shows a popup for user to sign in
-  */
-  async function signIn() {
-    await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-  };
 
   const handleAddReview = (review) => {
     const tempReviews = [...reviews];
@@ -68,16 +58,16 @@ function AllReviews({gameId}) {
   return (
     <div className='reviews'>
       <Box container="true" justify="center" alignItems="center">
-        <Typography variant="h3">
+        <Typography variant="h4">
           Reviews
         </Typography>
         <AuthCheck
           fallback={
             <div>
               <br />
-              <Button variant="contained" color="primary" onClick={signIn}>
-                Sign in to leave a review
-              </Button>
+              <Typography variant='body1'>
+                Sign in to leave a review.
+              </Typography>
             </div>
           }
         >
