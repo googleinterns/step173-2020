@@ -46,7 +46,8 @@ export default function Chat({open, messages, roomId, user}) {
 
   function addMessage() {
     const today = new Date();
-    const time = `${today.getHours()}:${today.getMinutes()}`;
+    const time = 
+    `${("0" + today.getHours()).slice(-2)}:${("0" + today.getMinutes()).slice(-2)}`;
     roomDoc.update({chat: fieldValue.arrayUnion({text: newMessage, user, time})});
     setNewMessage("");
   }
