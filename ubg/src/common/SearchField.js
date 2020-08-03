@@ -71,13 +71,11 @@ export default function SearchField() {
         }}
         value = {value}
         onChange={(e)=> setValue(e.target.value)}
-        // onSubmit={(e)=> handleSubmit()}
         onKeyDown={(e) => {
-          if (e.key === "Enter" && value !== '') {
-            // e.target.reset();
+          if (e.key === 'Enter' && value !== '') {
             handleSubmit();
           }
-       }}
+        }}
         inputProps={{'aria-label': 'search'}}
       />
     </div>

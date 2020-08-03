@@ -31,7 +31,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 /**
- * Check whether game name match search input
+ * @param {object} values input in SearchField
+ * @param {string} name name of game
+ * @return {boolean} whether game name match search input
  */
 const checkMatch = (values, name) => {
   for (let i = 0; i < values.length; i++) {
@@ -40,7 +42,7 @@ const checkMatch = (values, name) => {
     }
   }
   return false;
-}
+};
 
 /**
  * @param {object} setPaginationCount function to set pagination
@@ -54,7 +56,7 @@ const checkMatch = (values, name) => {
  * @param {object} setClear function to reset filters
  * @return {ReactElement} All Filters and related buttons
  */
-export default function AllFilters({setPaginationCount, setGames, value, 
+export default function AllFilters({setPaginationCount, setGames, value,
   initialize, setInitialize, totalGames, setTotalGames, clear, setClear}) {
   const classes = useStyles();
   const ref = useFirestore().collection('games');
@@ -120,7 +122,7 @@ export default function AllFilters({setPaginationCount, setGames, value,
               doc.data()['minPlaytime'] <= maxT &&
               minTime <= doc.data()['maxPlaytime'] &&
               doc.data()['minAge'] <= minAge) {
-                if (value === ''){
+                if (value === '') {
                   list.push(doc.data());
                   total += 1;
                   if (list.length === 12) {
@@ -129,7 +131,7 @@ export default function AllFilters({setPaginationCount, setGames, value,
                   }
                 } else if (checkMatch(values, doc.data()['Name'])) {
                   list.push(doc.data());
-                  total += 1
+                  total += 1;
                   if (list.length === 12) {
                     newGames.push(list);
                     list = [];
@@ -148,9 +150,9 @@ export default function AllFilters({setPaginationCount, setGames, value,
             console.log('Error getting documents: ', error);
           });
     }
-  }, [ref, sortBy, setGames, setPaginationCount, initialize, 
-  value, setInitialize, totalGames, setTotalGames,maxPlayer,
-  maxTime, minAge, minPlayer, minTime, setClear, clear]);
+  }, [ref, sortBy, setGames, setPaginationCount, initialize,
+    value, setInitialize, totalGames, setTotalGames, maxPlayer,
+    maxTime, minAge, minPlayer, minTime, setClear, clear]);
 
   return (
     <Box boxShadow={1} m={10} className={classes.box}>
@@ -192,7 +194,11 @@ export default function AllFilters({setPaginationCount, setGames, value,
         menu={['rating', 'weight']}
         onChange={(v) => setSortBy(v)}
       />
-      <Chip label={totalGames+' Games'} className={classes.gameChip} display="block"/>
+      <Chip
+        label={totalGames+' Games'}
+        className={classes.gameChip}
+        display="block"
+      />
       <br />
       <Button
         className={classes.button}
