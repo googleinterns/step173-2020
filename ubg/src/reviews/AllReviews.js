@@ -4,7 +4,7 @@ import Reviews from './Reviews';
 import Typography from '@material-ui/core/Typography';
 import {useFirestore} from 'reactfire';
 import NewReview from './NewReview';
-import {AuthCheck, useAuth, useUser} from 'reactfire';
+import {AuthCheck, useUser} from 'reactfire';
 import PropTypes from 'prop-types';
 
 /**

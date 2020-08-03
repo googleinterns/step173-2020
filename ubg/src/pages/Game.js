@@ -25,6 +25,7 @@ import SignalCellular3Bar from '@material-ui/icons/SignalCellular3Bar';
 import TextField from '@material-ui/core/TextField';
 import ReactPlayer from 'react-player';
 import PropTypes from 'prop-types';
+import * as firebase from "firebase/app";
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
@@ -49,10 +50,19 @@ export default function Game() {
   const history = useHistory();
   const [roomId, setRoomId] = useState('');
   const roomsCollection = useFirestore().collection('rooms');
+  const usersCollection = useFirestore().collection('users');
+  const userDoc = useFirestoreDocData(
+    useFirestore().collection('users').doc(user ? user.uid : '0'));
   const games = useFirestoreDocData(
       useFirestore().collection('games').doc(gameId),
   );
-
+  
+  function addFavorite() {
+    userDoc.games.push(games);
+    usersCollection.doc(user.uid).update({
+      games: firebase.firestore.FieldValue.arrayUnion(...userDoc.games)
+    });
+  }
   /**
    * Creates a room in firebase and adds the current user as host
    */
@@ -74,7 +84,7 @@ export default function Game() {
     <div>
       <Navbar />
       <Box container='true' justify='center' alignItems='center' m={10}>
-        <Description games={games} createRoom={createRoom} />
+        <Description games={games} createRoom={createRoom} addFavorite={addFavorite} />
         <Spacer />
         <Grid container spacing={5}>
           <Grid item>
@@ -134,7 +144,7 @@ function Spacer() {
  * @param {func} createRoom Creates game room for current game
  * @return {ReactElement} Description of game
  */
-function Description({games, createRoom}) {
+function Description({games, createRoom, addFavorite}) {
   const classes = useStyles();
   let description = 'Game is not available';
   let playTime = games.minPlaytime + '-' + games.maxPlaytime;
@@ -197,6 +207,13 @@ function Description({games, createRoom}) {
                 onClick={createRoom}>
                 Create Room
               </Button>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button
+                variant='contained'
+                color='primary'
+                onClick={addFavorite}>
+                Add to favorites
+              </Button>
             </AuthCheck>
           </Typography>
         </Grid>
@@ -253,5 +270,5 @@ Description.propTypes = {
 };
 
 Rules.propTypes = {
-  videos: PropTypes.object,
+  videos: PropTypes.array,
 };
