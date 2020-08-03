@@ -23,8 +23,9 @@ import People from '@material-ui/icons/People';
 import Face from '@material-ui/icons/Face';
 import SignalCellular3Bar from '@material-ui/icons/SignalCellular3Bar';
 import TextField from '@material-ui/core/TextField';
-import ReactPlayer from 'react-player';
 import PropTypes from 'prop-types';
+import Pagination from '@material-ui/lab/Pagination';
+import VideoCard from '../game/VideoCard';
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
@@ -38,12 +39,20 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  pagination: {
+    '& > *': {
+      margin: theme.spacing(2),
+      display: 'flex',
+      justifyContent: 'center',
+    },
+  },
 }));
 
 /**
  * @return {ReactElement} Game details page
  */
 export default function Game() {
+  const classes = useStyles();
   const user = useUser();
   const {gameId} = useParams();
   const history = useHistory();
@@ -67,8 +76,6 @@ export default function Game() {
   function joinRoom() {
     history.push(`/gameRoom/${roomId}`);
   }
-
-  const classes = useStyles();
 
   return (
     <div>
@@ -108,7 +115,9 @@ export default function Game() {
           </Grid>
         </AuthCheck>
         <Spacer />
-        <Rules videos={games.videos}/>
+        <Videos
+          videos={paginateVideos(games)}
+        />
         <Spacer />
         <AllReviews gameId={gameId}/>
       </Box>
@@ -207,33 +216,73 @@ function Description({games, createRoom}) {
 }
 
 /**
- * @param {object} videos Object containing all rules videos
- * @return {ReactElement} Videos describing rules for game
+ * @param {object} videos Object containing all videos
+ * @return {ReactElement} Videos describing the game
  */
-function Rules({videos}) {
+function Videos({videos}) {
+  const classes = useStyles();
+  const [page, setPage] = React.useState(1);
+  if (Object.keys(videos).length === 0) {
+    return (
+      <Typography variant='h4'>
+        No videos available
+      </Typography>
+    );
+  }
   return (
-    <div>
-      <Grid container>
-        <Grid item>
-          <Typography variant='h4'>
-            Rules
-          </Typography>
+    <Box>
+      <Box>
+        <Grid container>
+          <Grid item>
+            <Typography variant='h4'>
+              Videos
+            </Typography>
+          </Grid>
         </Grid>
-      </Grid>
-      <br />
-      <Grid container spacing={3}>
-        {Array.from(videos).slice(0, 3).map((video) => {
-          return (
-            <Grid item key={video.link}>
-              <ReactPlayer
-                url={video.link}
-              />
-            </Grid>
-          );
-        })}
-      </Grid>
-    </div>
+        <br />
+        <Grid container justify="flex-start" alignItems="stretch" spacing={4}>
+          {videos[page-1].map((video) => {
+            return (
+              <Grid item
+                key={video.link}
+                className={classes.section}
+                xs={12} sm={6} xl={2} lg={3} md={4}
+              >
+                <VideoCard video={video} />
+              </Grid>
+            );
+          })}
+        </Grid>
+      </Box>
+      <Pagination
+        count={videos.length}
+        boundaryCount={2}
+        onChange={(e, p) => setPage(p)}
+        className={classes.pagination}
+      />
+    </Box>
   );
+}
+
+/**
+ * Sets up array of videos for pagination
+ * @param {array} videos Array of videos for game page
+ * @return {array} Nested array for videos
+ */
+function paginateVideos({videos}) {
+  const allVideos = [];
+  let list = [];
+  videos.forEach((video) => {
+    list.push(video);
+    if (list.length === 12) {
+      allVideos.push(list);
+      list = [];
+    }
+  });
+  if (list.length !== 0) {
+    allVideos.push(list);
+  }
+  return allVideos;
 }
 
 Description.propTypes = {
@@ -252,6 +301,6 @@ Description.propTypes = {
   }),
 };
 
-Rules.propTypes = {
-  videos: PropTypes.object,
+Videos.propTypes = {
+  videos: PropTypes.array,
 };
