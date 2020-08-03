@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
@@ -18,13 +18,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+/**
+ * 
+ * @param {string} user name of the user who sent the message
+ * @param {string} text text of the message
+ * @param {string} time time that the message was sent
+ * @return {ReactElement} Div with message info
+ */
 export default function Message({user, text, time}) {
   const classes = useStyles();
   return (
     <div className={classes.main}>
       <div className={classes.nameTime}>
-        <Typography 
-          variant="subtitle2" 
+        <Typography
+          variant="subtitle2"
           color="primary"
           className={classes.name}
         >{user}</Typography>
@@ -33,11 +40,11 @@ export default function Message({user, text, time}) {
       <Typography variant="body2">{text}</Typography>
       <Divider />
     </div>
-  )
+  );
 }
 
 Message.propTypes = {
-    user: PropTypes.string,
-    text: PropTypes.string,
-    time: PropTypes.string,
+  user: PropTypes.string,
+  text: PropTypes.string,
+  time: PropTypes.string,
 };

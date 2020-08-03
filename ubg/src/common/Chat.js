@@ -17,9 +17,9 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'left',
   },
   chatMessages: {
-      flexGrow: 1,
-      margin: '5px 10px',
-      overflow: 'scroll',
+    flexGrow: 1,
+    margin: '5px 10px',
+    overflow: 'scroll',
   },
   sendMessage: {
     display: 'flex',
@@ -41,20 +41,26 @@ export default function Chat({open, messages, roomId, user}) {
   const classes = useStyles();
   const fieldValue = firebase.firestore.FieldValue;
   const roomDoc = useFirestore().collection('rooms').doc(roomId);
-  const [newMessage, setNewMessage] = useState("");
+  const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef(null);
 
+  /**
+   * Post message to database
+   */
   function addMessage() {
     const today = new Date();
-    const time = 
-    `${("0" + today.getHours()).slice(-2)}:${("0" + today.getMinutes()).slice(-2)}`;
-    roomDoc.update({chat: fieldValue.arrayUnion({text: newMessage, user, time})});
-    setNewMessage("");
+    const hours = ('0' + today.getHours()).slice(-2);
+    const minutes = ('0' + today.getMinutes()).slice(-2);
+    const time = `${hours}:${minutes}`;
+    roomDoc.update(
+      {chat: fieldValue.arrayUnion({text: newMessage, user, time})}
+    );
+    setNewMessage('');
   }
 
-  const scrollToBottom = () => {
-    if(open){
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+  function scrollToBottom() {
+    if (open) {
+      messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
     }
   }
 
@@ -65,37 +71,42 @@ export default function Chat({open, messages, roomId, user}) {
       <div className={classes.chatContainer}>
         <div className={classes.chatMessages}>
           {
-            messages.map((message) => {
+            messages.map((message, index) => {
               return (
-                <Message user={message.user} text={message.text} time={message.time} />
-              )
+                <Message
+                  key={index}
+                  user={message.user}
+                  text={message.text}
+                  time={message.time}
+                />
+              );
             })
           }
           <div ref={messagesEndRef} />
         </div>
         <div className={classes.sendMessage}>
-            <input
-              value={newMessage}
-              onChange={(e) => {
-                  setNewMessage(e.target.value);
-              }}
-              type='text'
-              className={classes.chatField}
-              onKeyDown={(e) => {
-                if(e.keyCode === 13){
-                  addMessage();
-                }
-              }}
-            />
-            <IconButton
-              disabled={newMessage === ""}
-              color="primary"
-              className={classes.margin}
-              size="small"
-              onClick={addMessage}
-            >
-              <SendIcon fontSize="inherit" />
-            </IconButton>
+          <input
+            value={newMessage}
+            onChange={(e) => {
+                setNewMessage(e.target.value);
+            }}
+            type='text'
+            className={classes.chatField}
+            onKeyDown={(e) => {
+              if(e.keyCode === 13){
+                addMessage();
+              }
+            }}
+          />
+          <IconButton
+            disabled={newMessage === ''}
+            color="primary"
+            className={classes.margin}
+            size="small"
+            onClick={addMessage}
+          >
+            <SendIcon fontSize="inherit" />
+          </IconButton>
         </div>
       </div>
     </Slide>
@@ -105,4 +116,6 @@ export default function Chat({open, messages, roomId, user}) {
 Chat.propTypes = {
   open: PropTypes.bool,
   messages: PropTypes.array,
+  roomId: PropTypes.string,
+  user: PropTypes.string
 };

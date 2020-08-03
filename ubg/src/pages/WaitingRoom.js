@@ -40,6 +40,9 @@ const useStyles = makeStyles((theme) => ({
   game: {
     margin: '10px 35px',
     flexGrow: 1,
+    overflow: 'scroll',
+    //Hacky fix for scroll with flexGrow
+    height: '200px',
   },
   table: {
     height: '300px',
@@ -176,11 +179,9 @@ export default function WaitingRoom() {
                 </Typography>
               </div>
               <div className={classes.game}>
-                <div>
-                  <Typography variant='body1'>
-                    {game.description}
-                  </Typography>
-                </div>
+                <Typography variant='body1'>
+                  {game.description}
+                </Typography>
               </div>
               <div className={classes.actionBtns}>
                 {
@@ -225,8 +226,8 @@ export default function WaitingRoom() {
                   }
                 </div>
                 <Paper>
-                  <div 
-                    className={classes.chatHeader} 
+                  <div
+                    className={classes.chatHeader}
                     onClick={() => setChatOpen(!chatOpen)}
                   >
                     <ChatIcon className={classes.sideMargin10px}/>
