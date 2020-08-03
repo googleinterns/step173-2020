@@ -53,11 +53,14 @@ export default function Chat({open, messages, roomId, user}) {
     const minutes = ('0' + today.getMinutes()).slice(-2);
     const time = `${hours}:${minutes}`;
     roomDoc.update(
-      {chat: fieldValue.arrayUnion({text: newMessage, user, time})}
+        {chat: fieldValue.arrayUnion({text: newMessage, user, time})},
     );
     setNewMessage('');
   }
 
+  /**
+   * Scroll to the bottom of chat
+   */
   function scrollToBottom() {
     if (open) {
       messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
@@ -88,12 +91,12 @@ export default function Chat({open, messages, roomId, user}) {
           <input
             value={newMessage}
             onChange={(e) => {
-                setNewMessage(e.target.value);
+              setNewMessage(e.target.value);
             }}
             type='text'
             className={classes.chatField}
             onKeyDown={(e) => {
-              if(e.keyCode === 13){
+              if (e.keyCode === 13) {
                 addMessage();
               }
             }}
@@ -117,5 +120,5 @@ Chat.propTypes = {
   open: PropTypes.bool,
   messages: PropTypes.array,
   roomId: PropTypes.string,
-  user: PropTypes.string
+  user: PropTypes.string,
 };

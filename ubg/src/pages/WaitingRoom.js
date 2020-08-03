@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     margin: '10px 35px',
     flexGrow: 1,
     overflow: 'scroll',
-    //Hacky fix for scroll with flexGrow
+    // Hacky fix for scroll with flexGrow
     height: '200px',
   },
   table: {

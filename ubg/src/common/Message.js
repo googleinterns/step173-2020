@@ -19,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 /**
- * 
  * @param {string} user name of the user who sent the message
  * @param {string} text text of the message
  * @param {string} time time that the message was sent
