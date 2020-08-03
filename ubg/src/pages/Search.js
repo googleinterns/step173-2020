@@ -1,16 +1,27 @@
 import React from 'react';
+import {makeStyles} from '@material-ui/core/styles';
 import Navbar from '../common/Navbar';
 import DisplayGames from '../search/DisplayGames';
 import AllFilters from '../search/AllFilters';
 import {useParams} from "react-router-dom";
 
+const useStyles = searchDisplay => makeStyles((theme) => ({
+  h1: {
+    marginLeft: '80px',
+    marginBottom: '-59px',
+    display: searchDisplay,
+  }
+}));
+
 /**
  * @return {ReactElement} Search page with filter and search result
  */
 export default function Search() {
+  // const classes = useStyles(searchDisplay)();
   const [games, setGames] = React.useState([[]]);
   const [paginationCount, setPaginationCount] = React.useState(1);
-  const [chipDisplay, setChipDisplay] = React.useState('none');
+  const [searchDisplay, setSearchDisplay] = React.useState('none');
+  const classes = useStyles(searchDisplay)();
   const [initialize, setInitialize] = React.useState(false);
   //track total number of games
   const [totalGames, setTotalGames] = React.useState(0);
@@ -22,7 +33,7 @@ export default function Search() {
 
   if (query !== undefined && query !== value) {
     setValue(query);
-    setChipDisplay('inline-flex');
+    setSearchDisplay('block');
     setClear(true);
     setInitialize(false);
   }
@@ -32,20 +43,20 @@ export default function Search() {
    */
   if (query === undefined && value !== '') {
     setValue('');
-    setChipDisplay('none');
+    setSearchDisplay('none');
     setClear(true);
     setInitialize(false);
   }
   
-
   return (
     <div>
       <Navbar />
+      <h1 className={classes.h1}>Search result for: {value}</h1>
       <AllFilters
         setPaginationCount={setPaginationCount}
         setGames={setGames}
         value={value}
-        chipDisplay={chipDisplay}
+        // searchDisplay={chipDisplay}
         initialize={initialize}
         setInitialize={setInitialize}
         totalGames={totalGames}

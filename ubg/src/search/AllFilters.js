@@ -7,7 +7,7 @@ import {useFirestore} from 'reactfire';
 import PropTypes from 'prop-types';
 import Chip from '@material-ui/core/Chip';
 
-const useStyles = chipDisplay => makeStyles((theme) => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
@@ -23,10 +23,10 @@ const useStyles = chipDisplay => makeStyles((theme) => ({
     marginRight: theme.spacing(3),
     float: 'right',
   },
-  chip: {
-    margin: theme.spacing(1.3),
-    display: chipDisplay,
-  },
+  // chip: {
+  //   margin: theme.spacing(1.3),
+  //   display: chipDisplay,
+  // },
   pagination: {
     '& > *': {
       margin: theme.spacing(2),
@@ -50,7 +50,6 @@ const checkMatch = (values, name) => {
  * @param {object} setPaginationCount function to set pagination
  * @param {object} setGames function to set games
  * @param {object} value value entered in SearchField
- * @param {object} chipDisplay display property of Chip
  * @param {object} initialize load all data from database
  * @param {object} setInitialize function to load data
  * @param {object} totalGames number of total games
@@ -59,9 +58,9 @@ const checkMatch = (values, name) => {
  * @param {object} setClear function to reset filters
  * @return {ReactElement} All Filters and related buttons
  */
-export default function AllFilters({setPaginationCount, setGames, value, chipDisplay, 
+export default function AllFilters({setPaginationCount, setGames, value, 
   initialize, setInitialize, totalGames, setTotalGames, clear, setClear}) {
-  const classes = useStyles(chipDisplay)();
+  const classes = useStyles();
   const ref = useFirestore().collection('games');
   const [minAge, setMinAge] = React.useState(21);
   const [minPlayer, setMinPlayer] = React.useState(1);
@@ -86,7 +85,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
    * Load the games data according to filter
    */
   useEffect(() => {
-    // using a hack to load data when needed
+    // using a hack to load data and reset filters when needed
     if (clear === true) {
       setMinAge(21);
       setMinPlayer(1);
@@ -127,7 +126,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
               doc.data()['minPlaytime'] <= maxT &&
               minTime <= doc.data()['maxPlaytime'] &&
               doc.data()['minAge'] <= minAge) {
-                if (value === '' || chipDisplay === 'none'){
+                if (value === ''){
                   list.push(doc.data());
                   total += 1;
                   if (list.length === 12) {
@@ -155,7 +154,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
             console.log('Error getting documents: ', error);
           });
     }
-  }, [ref, sortBy, setGames, setPaginationCount, initialize, chipDisplay, 
+  }, [ref, sortBy, setGames, setPaginationCount, initialize, 
   value, setInitialize, totalGames, setTotalGames,maxPlayer,
   maxTime, minAge, minPlayer, minTime, setClear, clear]);
 
@@ -201,7 +200,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
       />
       <Chip label={totalGames+' Games'} className={classes.gameChip} display="block"/>
       <br />
-      <Chip label={'Search result for: ' + value} className={classes.chip} display="block"/>
+      {/* <Chip label={'Search result for: ' + value} className={classes.chip} display="block"/> */}
       <Button
         className={classes.button}
         variant="contained"
@@ -222,7 +221,6 @@ AllFilters.propTypes = {
   setPaginationCount: PropTypes.func,
   setGames: PropTypes.func,
   value: PropTypes.string,
-  chipDisplay: PropTypes.string,
   initialize: PropTypes.bool,
   setInitialize: PropTypes.func,
   totalGames: PropTypes.number,
