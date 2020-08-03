@@ -87,15 +87,14 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
    */
   useEffect(() => {
     // using a hack to load data when needed
-    if (initialize === false) {
-      if (clear === true) {
-        setClear(false);
-        setMinAge(21);
-        setMinPlayer(1);
-        setMaxPlayer('8+');
-        setMinTime(5);
-        setMaxTime('240+');
-      }
+    if (clear === true) {
+      setMinAge(21);
+      setMinPlayer(1);
+      setMaxPlayer('8+');
+      setMinTime(5);
+      setMaxTime('240+');
+      setClear(false);
+    } else if (initialize === false) {
       console.log('234');
       setInitialize(true);
       const newGames = [];
@@ -121,6 +120,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
       ref.orderBy(sortBy, 'desc')
           .get()
           .then(function(querySnapshot) {
+            console.log('236');
             querySnapshot.forEach(function(doc) {
               if (doc.data()['minPlayer'] <= maxP &&
               minPlayer <= doc.data()['maxPlayer'] &&
