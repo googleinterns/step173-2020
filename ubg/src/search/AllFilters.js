@@ -49,10 +49,18 @@ const checkMatch = (values, name) => {
 /**
  * @param {object} setPaginationCount function to set pagination
  * @param {object} setGames function to set games
+ * @param {object} value value entered in SearchField
+ * @param {object} chipDisplay display property of Chip
+ * @param {object} initialize load all data from database
+ * @param {object} setInitialize function to load data
+ * @param {object} totalGames number of total games
+ * @param {object} setTotalGames function for setting toal games
+ * @param {object} clear reset all the filters
+ * @param {object} setClear function to reset filters
  * @return {ReactElement} All Filters and related buttons
  */
-export default function AllFilters({setPaginationCount, setGames, value, chipDisplay, setChipDisplay,
-  initialize, setInitialize, totalGames, setTotalGames, setClear, clear}) {
+export default function AllFilters({setPaginationCount, setGames, value, chipDisplay, 
+  initialize, setInitialize, totalGames, setTotalGames, clear, setClear}) {
   const classes = useStyles(chipDisplay)();
   const ref = useFirestore().collection('games');
   const [minAge, setMinAge] = React.useState(21);
@@ -193,7 +201,7 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
       />
       <Chip label={totalGames+' Games'} className={classes.gameChip} display="block"/>
       <br />
-      <Chip label={value} className={classes.chip} display="block"/>
+      <Chip label={'Search result for: ' + value} className={classes.chip} display="block"/>
       <Button
         className={classes.button}
         variant="contained"
@@ -213,4 +221,12 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
 AllFilters.propTypes = {
   setPaginationCount: PropTypes.func,
   setGames: PropTypes.func,
+  value: PropTypes.string,
+  chipDisplay: PropTypes.string,
+  initialize: PropTypes.bool,
+  setInitialize: PropTypes.func,
+  totalGames: PropTypes.number,
+  setTotalGames: PropTypes.func,
+  clear: PropTypes.bool,
+  setClear: PropTypes.func,
 };

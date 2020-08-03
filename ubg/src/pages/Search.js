@@ -18,15 +18,9 @@ export default function Search() {
   const [clear, setClear] = React.useState(false);
   //value of what's been entered in SearchField
   const [value, setValue] = React.useState('');
-const {query} = useParams();
-  // const [searchGames, setSearchGame] = React.useState(true);
-  // if (query !== undefined) {
-  //   setSearchGame(false);
-  // }
+  const {query} = useParams();
 
-  
   if (query !== undefined && query !== value) {
-    // console.log("search %%%%");
     setValue(query);
     setChipDisplay('inline-flex');
     setClear(true);
@@ -37,7 +31,6 @@ const {query} = useParams();
    * click on 'SEARCH GAMES' button
    */
   if (query === undefined && value !== '') {
-    // console.log("%%%");
     setValue('');
     setChipDisplay('none');
     setClear(true);
@@ -48,12 +41,19 @@ const {query} = useParams();
   return (
     <div>
       <Navbar />
-      <AllFilters setPaginationCount={setPaginationCount} setGames={setGames}
-      value={value} chipDisplay={chipDisplay} setChipDisplay={setChipDisplay}
-      initialize={initialize} setInitialize={setInitialize}
-      totalGames={totalGames} setTotalGames={setTotalGames}
-      setClear={setClear} clear={clear}/>
-      <DisplayGames games = {games} paginationCount = {paginationCount} totalGames={totalGames}/>
+      <AllFilters
+        setPaginationCount={setPaginationCount}
+        setGames={setGames}
+        value={value}
+        chipDisplay={chipDisplay}
+        initialize={initialize}
+        setInitialize={setInitialize}
+        totalGames={totalGames}
+        setTotalGames={setTotalGames}
+        clear={clear}
+        setClear={setClear}
+      />
+      <DisplayGames games = {games} paginationCount = {paginationCount} totalGames={totalGames} />
     </div>
   );
 }
