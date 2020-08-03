@@ -23,10 +23,6 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(3),
     float: 'right',
   },
-  // chip: {
-  //   margin: theme.spacing(1.3),
-  //   display: chipDisplay,
-  // },
   pagination: {
     '& > *': {
       margin: theme.spacing(2),
@@ -94,7 +90,6 @@ export default function AllFilters({setPaginationCount, setGames, value,
       setMaxTime('240+');
       setClear(false);
     } else if (initialize === false) {
-      console.log('234');
       setInitialize(true);
       const newGames = [];
       let list = [];
@@ -119,7 +114,6 @@ export default function AllFilters({setPaginationCount, setGames, value,
       ref.orderBy(sortBy, 'desc')
           .get()
           .then(function(querySnapshot) {
-            console.log('236');
             querySnapshot.forEach(function(doc) {
               if (doc.data()['minPlayer'] <= maxP &&
               minPlayer <= doc.data()['maxPlayer'] &&
@@ -200,7 +194,6 @@ export default function AllFilters({setPaginationCount, setGames, value,
       />
       <Chip label={totalGames+' Games'} className={classes.gameChip} display="block"/>
       <br />
-      {/* <Chip label={'Search result for: ' + value} className={classes.chip} display="block"/> */}
       <Button
         className={classes.button}
         variant="contained"

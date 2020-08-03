@@ -56,7 +56,6 @@ export default function Search() {
         setPaginationCount={setPaginationCount}
         setGames={setGames}
         value={value}
-        // searchDisplay={chipDisplay}
         initialize={initialize}
         setInitialize={setInitialize}
         totalGames={totalGames}
