@@ -16,7 +16,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import firebase from 'firebase/app';
-import Fab from '@material-ui/core/Fab';
+import Paper from '@material-ui/core/Paper';
 import ChatIcon from '@material-ui/icons/Chat';
 import Chat from '../common/Chat';
 
@@ -69,15 +69,22 @@ const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
   },
-  textRight: {
-    textAlign: 'right',
-  },
   signInContainer: {
     height: '100vh',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  chatHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    background: '#e0e0e0',
+    color: 'black',
+    borderRadius: '4px 4px 0 0',
+  },
+  sideMargin10px: {
+    margin: '0 10px',
   },
 }));
 
@@ -217,23 +224,21 @@ export default function WaitingRoom() {
                     })
                   }
                 </div>
-                <div className={classes.textRight}>
-                  <Fab 
-                    size="small" 
-                    color="secondary" 
-                    aria-label="add" 
-                    className={classes.margin}
+                <Paper>
+                  <div 
+                    className={classes.chatHeader} 
                     onClick={() => setChatOpen(!chatOpen)}
                   >
-                    <ChatIcon />
-                  </Fab>
+                    <ChatIcon className={classes.sideMargin10px}/>
+                    <Typography variant="h6">Chat</Typography>
+                  </div>
                   <Chat
                     open={chatOpen}
                     messages={roomData.chat}
                     roomId={roomId}
                     user={user.displayName}
                   />
-                </div>
+                </Paper>
               </div>
             </Grid>
           </Grid>

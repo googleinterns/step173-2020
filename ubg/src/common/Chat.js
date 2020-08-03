@@ -1,11 +1,12 @@
-import React, {useState} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import Slide from '@material-ui/core/Slide';
 import {makeStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import firebase from 'firebase/app';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import { useFirestore } from 'reactfire';
+import {useFirestore} from 'reactfire';
+import Message from './Message';
+import SendIcon from '@material-ui/icons/Send';
+import IconButton from '@material-ui/core/IconButton';
 
 const useStyles = makeStyles((theme) => ({
   chatContainer: {
@@ -17,6 +18,17 @@ const useStyles = makeStyles((theme) => ({
   },
   chatMessages: {
       flexGrow: 1,
+      margin: '5px 10px',
+      overflow: 'scroll',
+  },
+  sendMessage: {
+    display: 'flex',
+    justifyContent: 'center',
+    margin: '10px',
+  },
+  chatField: {
+    flexGrow: 1,
+    minWidth: '10px',
   },
 }));
 
@@ -30,41 +42,59 @@ export default function Chat({open, messages, roomId, user}) {
   const fieldValue = firebase.firestore.FieldValue;
   const roomDoc = useFirestore().collection('rooms').doc(roomId);
   const [newMessage, setNewMessage] = useState("");
+  const messagesEndRef = useRef(null);
 
   function addMessage() {
-    roomDoc.update({chat: fieldValue.arrayUnion({text: newMessage, user})});
+    const today = new Date();
+    const time = `${today.getHours()}:${today.getMinutes()}`;
+    roomDoc.update({chat: fieldValue.arrayUnion({text: newMessage, user, time})});
+    setNewMessage("");
   }
+
+  const scrollToBottom = () => {
+    if(open){
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+    }
+  }
+
+  useEffect(scrollToBottom, [messages]);
 
   return (
     <Slide direction="up" in={open} mountOnEnter unmountOnExit>
       <div className={classes.chatContainer}>
         <div className={classes.chatMessages}>
-            <ul>
-                {
-                    messages.map((message) => {
-                        return (
-                            <li>{message.user}: {message.text}</li>
-                        )
-                    })
-                }
-            </ul>
+          {
+            messages.map((message) => {
+              return (
+                <Message user={message.user} text={message.text} time={message.time} />
+              )
+            })
+          }
+          <div ref={messagesEndRef} />
         </div>
-        <div>
-            <TextField
-                value={newMessage}
-                onChange={(e) => {
-                    setNewMessage(e.target.value);
-                }}
-                type='text'
-                variant='outlined'
+        <div className={classes.sendMessage}>
+            <input
+              value={newMessage}
+              onChange={(e) => {
+                  setNewMessage(e.target.value);
+              }}
+              type='text'
+              className={classes.chatField}
+              onKeyDown={(e) => {
+                if(e.keyCode === 13){
+                  addMessage();
+                }
+              }}
             />
-            <Button
-                variant='contained'
-                color='primary'
-                onClick={addMessage}
+            <IconButton
+              disabled={newMessage === ""}
+              color="primary"
+              className={classes.margin}
+              size="small"
+              onClick={addMessage}
             >
-                Send
-            </Button>
+              <SendIcon fontSize="inherit" />
+            </IconButton>
         </div>
       </div>
     </Slide>
