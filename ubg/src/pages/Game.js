@@ -115,7 +115,7 @@ export default function Game() {
           </Grid>
         </AuthCheck>
         <Spacer />
-        <Rules
+        <Videos
           videos={paginateVideos(games)}
         />
         <Spacer />
@@ -216,16 +216,16 @@ function Description({games, createRoom}) {
 }
 
 /**
- * @param {object} videos Object containing all rules videos
- * @return {ReactElement} Videos describing rules for game
+ * @param {object} videos Object containing all videos
+ * @return {ReactElement} Videos describing the game
  */
-function Rules({videos}) {
+function Videos({videos}) {
   const classes = useStyles();
   const [page, setPage] = React.useState(1);
   if (Object.keys(videos).length === 0) {
     return (
       <Typography variant='h4'>
-        No rules available
+        No videos available
       </Typography>
     );
   }
@@ -235,7 +235,7 @@ function Rules({videos}) {
         <Grid container>
           <Grid item>
             <Typography variant='h4'>
-              Rules
+              Videos
             </Typography>
           </Grid>
         </Grid>
@@ -301,6 +301,6 @@ Description.propTypes = {
   }),
 };
 
-Rules.propTypes = {
+Videos.propTypes = {
   videos: PropTypes.array,
 };
