@@ -25,7 +25,7 @@ import SignalCellular3Bar from '@material-ui/icons/SignalCellular3Bar';
 import TextField from '@material-ui/core/TextField';
 import PropTypes from 'prop-types';
 import Pagination from '@material-ui/lab/Pagination';
-import VideoCard from '../reviews/VideoCard';
+import VideoCard from '../game/VideoCard';
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
