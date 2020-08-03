@@ -39,7 +39,7 @@ export default function VideoCard({video}) {
       />
       <CardContent>
         <Typography
-          gutterBottom variant='h5' 
+          gutterBottom variant='h5'
           component='h2'
           className={classes.videoName}>
           {video.title}
