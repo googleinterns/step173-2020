@@ -1,6 +1,6 @@
 import firebase from 'firebase/app';
 import React from 'react';
-import {AuthCheck, useAuth, useUser} from 'reactfire';
+import {AuthCheck, useAuth, useUser, useFirestore} from 'reactfire';
 import Button from '@material-ui/core/Button';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
@@ -29,6 +29,8 @@ export default function AuthButtons() {
   const history = useHistory();
   const auth = useAuth();
   const user = useUser();
+  const ref = useFirestore()
+      .collection('users');
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -45,6 +47,18 @@ export default function AuthButtons() {
    */
   async function signIn() {
     await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    const currUser = firebase.auth().currentUser;
+    await ref.doc(currUser.uid).get().then((doc) => {
+      if (!doc.exists) {
+        ref.doc(currUser.uid).set({
+          uid: currUser.uid,
+          displayName: currUser.displayName,
+          games: [],
+        });
+      }
+    }).catch(function(error) {
+      console.log("Error getting document:", error);
+    });
   };
 
   /**
