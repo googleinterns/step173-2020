@@ -53,7 +53,6 @@ const checkMatch = (values, name) => {
  */
 export default function AllFilters({setPaginationCount, setGames, value, chipDisplay, setChipDisplay,
   initialize, setInitialize, totalGames, setTotalGames, setClear, clear}) {
-  // const [chipDisplay, setChipDisplay] = React.useState(display);
   const classes = useStyles(chipDisplay)();
   const ref = useFirestore().collection('games');
   const [minAge, setMinAge] = React.useState(21);
@@ -72,90 +71,85 @@ export default function AllFilters({setPaginationCount, setGames, value, chipDis
    * Reset all the filters
    */
   const handleClear = () => {
-    setMinAge(21);
-    setMinPlayer(1);
-    setMaxPlayer('8+');
-    setMinTime(5);
-    setMaxTime('240+');
-    setChipDisplay('none');
     setInitialize(false);
+    setClear(true);
   };
   /**
    * Load the games data according to filter
    */
   useEffect(() => {
-    // using a hack to make useEffect act as onLoad()
+    // using a hack to load data when needed
     if (initialize === false) {
       if (clear === true) {
         setClear(false);
         setMinAge(21);
-      setMinPlayer(1);
-      setMaxPlayer('8+');
-      setMinTime(5);
-      setMaxTime('240+');
-      setInitialize(false);
+        setMinPlayer(1);
+        setMaxPlayer('8+');
+        setMinTime(5);
+        setMaxTime('240+');
       }
       console.log('234');
+      setInitialize(true);
       const newGames = [];
-    let list = [];
-    let maxP = maxPlayer;
-    if (typeof maxP === 'string') {
-      maxP = Number.MAX_SAFE_INTEGER;
-    }
-    let maxT = maxTime;
-    if (typeof maxT === 'string') {
-      maxT = Number.MAX_SAFE_INTEGER;
-    }
-    if (minPlayer > maxP) {
-      setMaxPlayer(minPlayer);
-      maxP = minPlayer;
-    }
-    if (minTime > maxT) {
-      setMaxTime(minTime);
-      maxT = minTime;
-    }
-    const values = value.trim().split(/ +/);
-    let total = 0;
-    ref.orderBy(sortBy, 'desc')
-        .get()
-        .then(function(querySnapshot) {
-          setInitialize(true);
-          querySnapshot.forEach(function(doc) {
-            if (doc.data()['minPlayer'] <= maxP &&
-            minPlayer <= doc.data()['maxPlayer'] &&
-            doc.data()['minPlaytime'] <= maxT &&
-            minTime <= doc.data()['maxPlaytime'] &&
-            doc.data()['minAge'] <= minAge) {
-              if (value === '' || chipDisplay === 'none'){
-                list.push(doc.data());
-                total += 1;
-                if (list.length === 12) {
-                  newGames.push(list);
-                  list = [];
-                }
-              } else if (checkMatch(values, doc.data()['Name'])) {
-                list.push(doc.data());
-                total += 1
-                if (list.length === 12) {
-                  newGames.push(list);
-                  list = [];
+      let list = [];
+      let maxP = maxPlayer;
+      if (typeof maxP === 'string') {
+        maxP = Number.MAX_SAFE_INTEGER;
+      }
+      let maxT = maxTime;
+      if (typeof maxT === 'string') {
+        maxT = Number.MAX_SAFE_INTEGER;
+      }
+      if (minPlayer > maxP) {
+        setMaxPlayer(minPlayer);
+        maxP = minPlayer;
+      }
+      if (minTime > maxT) {
+        setMaxTime(minTime);
+        maxT = minTime;
+      }
+      const values = value.trim().split(/ +/);
+      let total = 0;
+      ref.orderBy(sortBy, 'desc')
+          .get()
+          .then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+              if (doc.data()['minPlayer'] <= maxP &&
+              minPlayer <= doc.data()['maxPlayer'] &&
+              doc.data()['minPlaytime'] <= maxT &&
+              minTime <= doc.data()['maxPlaytime'] &&
+              doc.data()['minAge'] <= minAge) {
+                if (value === '' || chipDisplay === 'none'){
+                  list.push(doc.data());
+                  total += 1;
+                  if (list.length === 12) {
+                    newGames.push(list);
+                    list = [];
+                  }
+                } else if (checkMatch(values, doc.data()['Name'])) {
+                  list.push(doc.data());
+                  total += 1
+                  if (list.length === 12) {
+                    newGames.push(list);
+                    list = [];
+                  }
                 }
               }
+            });
+            if (list.length !== 0) {
+              newGames.push(list);
             }
+            setGames(newGames);
+            setTotalGames(total);
+            setPaginationCount(newGames.length);
+          })
+          .catch(function(error) {
+            console.log('Error getting documents: ', error);
           });
-          if (list.length !== 0) {
-            newGames.push(list);
-          }
-          setGames(newGames);
-          setTotalGames(total);
-          setPaginationCount(newGames.length);
-        })
-        .catch(function(error) {
-          console.log('Error getting documents: ', error);
-        });
     }
-  }, [ref, sortBy, setGames, setPaginationCount, initialize, chipDisplay, value, setInitialize, totalGames, setTotalGames,
-  maxPlayer, maxTime, minAge, minPlayer, minTime, setClear, clear]);
+  }, [ref, sortBy, setGames, setPaginationCount, initialize, chipDisplay, 
+  value, setInitialize, totalGames, setTotalGames,maxPlayer,
+  maxTime, minAge, minPlayer, minTime, setClear, clear]);
 
   return (
     <Box boxShadow={1} m={10} className={classes.box}>

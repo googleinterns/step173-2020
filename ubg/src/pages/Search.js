@@ -11,27 +11,35 @@ export default function Search() {
   const [games, setGames] = React.useState([[]]);
   const [paginationCount, setPaginationCount] = React.useState(1);
   const [chipDisplay, setChipDisplay] = React.useState('none');
-  const [value, setValue] = React.useState('');
   const [initialize, setInitialize] = React.useState(false);
-  const [search, setSearch] = React.useState(true);
   //track total number of games
   const [totalGames, setTotalGames] = React.useState(0);
-  //whether clear all the filters
+  //whether reset all the filters
   const [clear, setClear] = React.useState(false);
-  const {query} = useParams();
-  if (query !== undefined && (search === true || query !== value)) {
-    console.log("search %%%%");
-      setValue(query);
-      setChipDisplay('inline-flex');
-      setSearch(false);
-      setClear(true);
-      setInitialize(false);
+  //value of what's been entered in SearchField
+  const [value, setValue] = React.useState('');
+const {query} = useParams();
+  // const [searchGames, setSearchGame] = React.useState(true);
+  // if (query !== undefined) {
+  //   setSearchGame(false);
+  // }
+
+  
+  if (query !== undefined && query !== value) {
+    // console.log("search %%%%");
+    setValue(query);
+    setChipDisplay('inline-flex');
+    setClear(true);
+    setInitialize(false);
   }
+  /**
+   * the situation where user is on Search page from Search Field and  
+   * click on 'SEARCH GAMES' button
+   */
   if (query === undefined && value !== '') {
-    console.log("%%%");
+    // console.log("%%%");
     setValue('');
     setChipDisplay('none');
-    setSearch(false);
     setClear(true);
     setInitialize(false);
   }

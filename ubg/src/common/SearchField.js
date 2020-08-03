@@ -56,9 +56,6 @@ export default function SearchField() {
   const handleSubmit = () => {
     // console.log(value);
     setValue('');
-    // if (setSearch!==null) {
-    //   setSearch(true);
-    // }
     history.push(`/search/${value}`);
   };
   return (

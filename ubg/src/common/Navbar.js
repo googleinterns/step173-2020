@@ -60,7 +60,7 @@ export default function Navbar() {
             </Typography>
           </Button>
         </div>
-        <Button color="inherit" onClick={searchGames}>
+        <Button color='inherit' onClick={searchGames}>
           Search Games
         </Button>
         <SearchField />
