@@ -56,12 +56,43 @@ export default function Game() {
   const games = useFirestoreDocData(
       useFirestore().collection('games').doc(gameId),
   );
+  const [favorite, setFavorite] = useState(inFavorites());
   
+  /**
+   * check if game is included in favorite games
+   * @return {bool} whether game is in favorite games
+   */
+  function inFavorites() {
+    for(let i = 0; i < userDoc.games.length; i++) {
+      if(userDoc.games[i].id === games.id) {
+        return true;
+      }
+    }
+    return false;
+  }
+  /**
+   * @return {void}
+   */
   function addFavorite() {
-    userDoc.games.push(games);
-    usersCollection.doc(user.uid).update({
-      games: firebase.firestore.FieldValue.arrayUnion(...userDoc.games)
-    });
+    if (favorite) {
+      for(let i = 0; i < userDoc.games.length; i++) {
+        if(userDoc.games[i].id === games.id) {
+          userDoc.games.splice(i, 1);
+          console.log(userDoc.games);
+          usersCollection.doc(user.uid).update({
+            games: firebase.firestore.FieldValue.arrayUnion(...userDoc.games)
+          });
+          break;
+        }
+      }
+      setFavorite(false);
+    } else {
+      userDoc.games.push(games);
+      usersCollection.doc(user.uid).update({
+        games: firebase.firestore.FieldValue.arrayUnion(...userDoc.games)
+      });
+      setFavorite(true);
+    }
   }
   /**
    * Creates a room in firebase and adds the current user as host
@@ -84,7 +115,7 @@ export default function Game() {
     <div>
       <Navbar />
       <Box container='true' justify='center' alignItems='center' m={10}>
-        <Description games={games} createRoom={createRoom} addFavorite={addFavorite} />
+        <Description favorite={favorite} games={games} createRoom={createRoom} addFavorite={addFavorite} />
         <Spacer />
         <Grid container spacing={5}>
           <Grid item>
@@ -144,7 +175,7 @@ function Spacer() {
  * @param {func} createRoom Creates game room for current game
  * @return {ReactElement} Description of game
  */
-function Description({games, createRoom, addFavorite}) {
+function Description({games, createRoom, favorite, addFavorite}) {
   const classes = useStyles();
   let description = 'Game is not available';
   let playTime = games.minPlaytime + '-' + games.maxPlaytime;
@@ -158,6 +189,7 @@ function Description({games, createRoom, addFavorite}) {
   if (games.minPlayer === games.maxPlayer) {
     players = games.minPlayer;
   }
+
   return (
     <Grid container spacing={5}>
       <Grid item xs={2} className={classes.section}>
@@ -212,7 +244,7 @@ function Description({games, createRoom, addFavorite}) {
                 variant='contained'
                 color='primary'
                 onClick={addFavorite}>
-                Add to favorites
+                {favorite ? 'Delete from favorites' : 'Add to favorites'}
               </Button>
             </AuthCheck>
           </Typography>

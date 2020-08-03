@@ -19,9 +19,8 @@ const useStyles = makeStyles((theme) => ({
 export default function Profile() {
   const user = useUser();
   const classes = useStyles();
-  const userDoc = useFirestoreDocData(
-    useFirestore().collection('users').doc(user ? user.uid : '0'));
-  console.log(userDoc.games)
+  const userGames = useFirestoreDocData(
+    useFirestore().collection('users').doc(user ? user.uid : '0')).games;
 
   return (
     <div>
@@ -39,7 +38,7 @@ export default function Profile() {
             </Typography>
             <br />
             <Grid container justify="flex-start" alignItems="stretch" spacing={4}>
-              {userDoc.games.map((game) =>
+              {userGames.map((game) =>
                 <Grid item key={game.id} xs={12} sm={6} xl={2} lg={3} md={4}>
                   <GameCard
                     id={game.id}
