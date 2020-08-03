@@ -9,8 +9,6 @@ import {AuthCheck, useAuth, useUser} from 'reactfire';
 import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
 
-let initialize = false;
-
 /**
  * Displays the review section of a game page and handles review input
  * @param {string} gameId ID of current game on page
@@ -24,6 +22,7 @@ function AllReviews({gameId}) {
   const auth = useAuth();
   const user = useUser();
   const [reviews, setReviews] = useState([]);
+  const [initialize, setInitialize] = useState(false);
 
   /**
   * Shows a popup for user to sign in
@@ -48,6 +47,7 @@ function AllReviews({gameId}) {
       reviewsRef.orderBy('timestamp', 'desc')
           .get()
           .then(function(querySnapshot) {
+            setInitialize(true);
             querySnapshot.forEach((doc) => {
               tempReviews.push({
                 name: doc.data().name,
@@ -58,18 +58,17 @@ function AllReviews({gameId}) {
               });
             });
             setReviews(tempReviews);
-            initialize = true;
           })
           .catch(function(error) {
             console.log('error: ', error);
           });
     }
-  }, [reviewsRef]);
+  }, [reviewsRef, initialize]);
 
   return (
     <div className='reviews'>
       <Box container="true" justify="center" alignItems="center">
-        <Typography variant="h3">
+        <Typography variant="h4">
           Reviews
         </Typography>
         <AuthCheck
