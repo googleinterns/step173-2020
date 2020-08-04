@@ -80,8 +80,10 @@ export default function AllFilters({setPaginationCount, setGames, value,
     setInitialize(false);
     setClear(true);
   };
-
-  function loadData () {
+  /**
+ * @return {undefined}
+ */
+  function loadData() {
     // using a hack to load data and reset filters when needed
     if (clear === true) {
       setMinAge(21);
@@ -117,8 +119,9 @@ export default function AllFilters({setPaginationCount, setGames, value,
           .get()
           .then(function(querySnapshot) {
             querySnapshot.forEach(function(doc) {
-              if (category !== 'All Games' && !doc.data()['categories'].includes(category)) {
-                return
+              if (category !== 'All Games' &&
+              !doc.data()['categories'].includes(category)) {
+                return;
               }
               if (doc.data()['minPlayer'] <= maxP &&
               minPlayer <= doc.data()['maxPlayer'] &&
@@ -152,7 +155,7 @@ export default function AllFilters({setPaginationCount, setGames, value,
           .catch(function(error) {
             console.log('Error getting documents: ', error);
           });
-    }   
+    }
   }
   /**
    * Load the games data according to filter
@@ -197,7 +200,8 @@ export default function AllFilters({setPaginationCount, setGames, value,
       <Filter
         label = "Categories"
         value={category}
-        menu={['Fantasy', 'Economic', 'Card Game', 'Ancient', 'Science Fiction', 'Wargame', 'All Games']}
+        menu={['Fantasy', 'Economic', 'Card Game', 'Ancient',
+        'Science Fiction', 'Wargame', 'All Games']}
         onChange={(v) => setCategory(v)}
       />
       <Filter
