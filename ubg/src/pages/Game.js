@@ -26,6 +26,7 @@ import TextField from '@material-ui/core/TextField';
 import PropTypes from 'prop-types';
 import Pagination from '@material-ui/lab/Pagination';
 import VideoCard from '../game/VideoCard';
+import NotFound from '../pages/NotFound';
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
@@ -77,52 +78,70 @@ export default function Game() {
     history.push(`/gameRoom/${roomId}`);
   }
 
-  return (
-    <div>
-      <Navbar />
-      <Box container='true' justify='center' alignItems='center' m={10}>
-        <Description games={games} createRoom={createRoom} />
-        <Spacer />
-        <Grid container spacing={5}>
-          <Grid item>
-            <Typography variant='h4'>
-              Play
-            </Typography>
-          </Grid>
-        </Grid>
-        <br />
-        <AuthCheck>
-          <Grid container spacing={3}>
-            <Grid item className={classes.roomJoin}>
-              <TextField
-                value={roomId}
-                onChange={(e) => {
-                  setRoomId(e.target.value);
-                }}
-                type='text'
-                variant='outlined'
-              />
-            </Grid>
-            <Grid item className={classes.section}>
-              <Button
-                variant='contained'
-                color='primary'
-                onClick={joinRoom}
-                m={5}>
-                  Join Room
-              </Button>
+  /**
+   * Check is obj is empty
+   * @param {object} obj 
+   */
+  function isEmpty(obj) {
+    for(var key in obj) {
+      if(obj.hasOwnProperty(key))
+        return false;
+    }
+    return true;
+  }
+
+  if (isEmpty(games)) {
+    return (
+      <NotFound />
+    );
+  } else {
+    return (
+      <div>
+        <Navbar />
+        <Box container='true' justify='center' alignItems='center' m={10}>
+          <Description games={games} createRoom={createRoom} />
+          <Spacer />
+          <Grid container spacing={5}>
+            <Grid item>
+              <Typography variant='h4'>
+                Play
+              </Typography>
             </Grid>
           </Grid>
-        </AuthCheck>
-        <Spacer />
-        <Videos
-          videos={paginateVideos(games)}
-        />
-        <Spacer />
-        <AllReviews gameId={gameId}/>
-      </Box>
-    </div>
-  );
+          <br />
+          <AuthCheck>
+            <Grid container spacing={3}>
+              <Grid item className={classes.roomJoin}>
+                <TextField
+                  value={roomId}
+                  onChange={(e) => {
+                    setRoomId(e.target.value);
+                  }}
+                  type='text'
+                  variant='outlined'
+                />
+              </Grid>
+              <Grid item className={classes.section}>
+                <Button
+                  variant='contained'
+                  color='primary'
+                  onClick={joinRoom}
+                  m={5}>
+                    Join Room
+                </Button>
+              </Grid>
+            </Grid>
+          </AuthCheck>
+          <Spacer />
+          <Videos
+            videos={paginateVideos(games.videos)}
+          />
+          <Spacer />
+          <AllReviews gameId={gameId}/>
+        </Box>
+      </div>
+    );
+  }
 }
 
 /**
@@ -269,7 +288,7 @@ function Videos({videos}) {
  * @param {array} videos Array of videos for game page
  * @return {array} Nested array for videos
  */
-function paginateVideos({videos}) {
+function paginateVideos(videos) {
   const allVideos = [];
   let list = [];
   videos.forEach((video) => {
