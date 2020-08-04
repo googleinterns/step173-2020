@@ -233,7 +233,7 @@ function FavoriteButton({usersCollection, game}) {
   const [favorite, setFavorite] = useState(inFavorites(userGames, game));
 
   return (
-    {user} ? 
+    {user} ?
     (
       <Button
         variant='contained'
