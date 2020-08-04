@@ -92,7 +92,7 @@ export default function Game() {
     return true;
   }
 
-  if (isEmpty(games)) {
+  if (isEmpty(game)) {
     return (
       <NotFound />
     );
