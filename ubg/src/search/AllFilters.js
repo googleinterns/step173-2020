@@ -201,7 +201,7 @@ export default function AllFilters({setPaginationCount, setGames, value,
         label = "Categories"
         value={category}
         menu={['Fantasy', 'Economic', 'Card Game', 'Ancient',
-        'Science Fiction', 'Wargame', 'All Games']}
+          'Science Fiction', 'Wargame', 'All Games']}
         onChange={(v) => setCategory(v)}
       />
       <Filter
