@@ -75,7 +75,7 @@ export default function AuthButtons() {
    * @return {void}
    */
   function toProfile() {
-    history.push(`/profile`);
+    history.push(`/profile/${user.uid}`);
   };
 
   return (

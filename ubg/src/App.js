@@ -47,7 +47,7 @@ function App() {
             <Route exact path="/gameRoom/:roomId">
               <WaitingRoom/>
             </Route>
-            <Route exact path="/profile">
+            <Route exact path="/profile/:userId">
               <Profile />
             </Route>
           </Switch>

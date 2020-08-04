@@ -233,13 +233,16 @@ function FavoriteButton({usersCollection, game}) {
   const [favorite, setFavorite] = useState(inFavorites(userGames, game));
 
   return (
-    <Button
-      variant='contained'
-      color='primary'
-      onClick={() => addFavorite(
-          userGames, usersCollection, game, favorite, setFavorite, user.uid)}>
-      {favorite ? 'Delete from favorites' : 'Add to favorites'}
-    </Button>
+    {user} ? 
+    (
+      <Button
+        variant='contained'
+        color='primary'
+        onClick={() => addFavorite(
+            userGames, usersCollection, game, favorite, setFavorite, user.uid)}>
+        {favorite ? 'Delete from favorites' : 'Add to favorites'}
+      </Button>
+    ) : ' '
   );
 }
 
