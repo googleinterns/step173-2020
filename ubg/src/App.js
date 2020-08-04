@@ -38,6 +38,9 @@ function App() {
             <Route exact path="/search">
               <Search />
             </Route>
+            <Route exact path="/search/:query">
+              <Search />
+            </Route>
             <Route exact path="/:gameId">
               <Game />
             </Route>
