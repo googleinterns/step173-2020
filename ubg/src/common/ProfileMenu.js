@@ -57,7 +57,7 @@ export default function AuthButtons() {
         });
       }
     }).catch(function(error) {
-      console.log("Error getting document:", error);
+      console.log('Error getting document:', error);
     });
   };
 

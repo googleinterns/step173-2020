@@ -20,7 +20,8 @@ const Review = (props) => {
 
   return (
     <div>
-      <ListItem key={props.review.name + props.review.timestamp} alignItems="flex-start">
+      <ListItem key={props.review.name + props.review.timestamp}
+        alignItems="flex-start">
         <ListItemText
           primary={
             <Typography className={classes.fonts} component={'span'}>

@@ -6,7 +6,7 @@ import {useFirestore, useFirestoreDocData} from 'reactfire';
 import NewReview from './NewReview';
 import {AuthCheck, useUser} from 'reactfire';
 import PropTypes from 'prop-types';
-import * as firebase from "firebase/app";
+import * as firebase from 'firebase/app';
 
 /**
  * Displays the review section of a game page and handles review input
@@ -31,7 +31,7 @@ function AllReviews({gameId}) {
     reviewsRef.add(review);
     userDoc.reviews.push(review);
     usersCollection.doc(user.uid).update({
-      reviews: firebase.firestore.FieldValue.arrayUnion(...userDoc.reviews)
+      reviews: firebase.firestore.FieldValue.arrayUnion(...userDoc.reviews),
     });
   };
 

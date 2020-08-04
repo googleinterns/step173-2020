@@ -5,8 +5,8 @@ import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Navbar from '../common/Navbar';
 import GameCard from '../search/GameCard';
-//import Reviews from '../reviews/Reviews';
 import {makeStyles} from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
@@ -28,8 +28,6 @@ export default function Profile() {
   const user = useUser();
   const classes = useStyles();
   const userCollection = useFirestore().collection('users');
-  // const userReviews = useFirestoreDocData(
-  //   useFirestore().collection('users').doc(user.uid)).reviews;
 
   return (
     <div>
@@ -42,16 +40,6 @@ export default function Profile() {
         {user ? (
           <div>
             <FavoriteGames userCollection={userCollection} uid={user.uid} />
-            {/* <Box>
-              <hr />
-              <Typography variant='h6'>
-                Reviews
-              </Typography>
-              <br />
-              <Grid container justify="flex-start" alignItems="stretch" spacing={4}>
-                <Reviews reviews={userReviews} />
-              </Grid>
-            </Box> */}
           </div>
         ) : ''}
       </Box>
@@ -59,9 +47,13 @@ export default function Profile() {
   );
 }
 
+/**
+ * @param {object} userCollection User collection
+ * @param {number} uid ID of current user
+ * @return {ReactElement} Grid containing favorite games of current user
+ */
 function FavoriteGames({userCollection, uid}) {
-  //const classes = useStyles();
-  let userGames = useFirestoreDocData(userCollection.doc(uid)).games;
+  const userGames = useFirestoreDocData(userCollection.doc(uid)).games;
 
   return (
     <Box>
@@ -95,3 +87,8 @@ function FavoriteGames({userCollection, uid}) {
     </Box>
   );
 }
+
+FavoriteGames.propTypes = {
+  userCollection: PropTypes.object,
+  uid: PropTypes.number,
+};
