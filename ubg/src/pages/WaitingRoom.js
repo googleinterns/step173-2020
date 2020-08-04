@@ -169,13 +169,15 @@ export default function WaitingRoom() {
   }
 
   /**
-   * Check is obj is empty
-   * @param {object} obj 
+   * Check if obj is empty
+   * @param {object} obj
+   * @return {boolean} if obj is empty
    */
   function isEmpty(obj) {
-    for(var key in obj) {
-      if (obj.hasOwnProperty(key))
+    for (let key in obj) {
+      if (obj.hasOwnProperty(key)) {
         return false;
+      }
     }
     return true;
   }
