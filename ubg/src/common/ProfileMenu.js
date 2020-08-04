@@ -8,6 +8,7 @@ import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import {useHistory} from 'react-router-dom';
 import {makeStyles} from '@material-ui/core/styles';
 
@@ -74,7 +75,7 @@ export default function AuthButtons() {
    * @return {void}
    */
   function toProfile() {
-    history.push(`/profile/${user.uid}`);
+    history.push(`/profile`);
   };
 
   return (
@@ -93,6 +94,8 @@ export default function AuthButtons() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
+          <AccountCircleIcon />
+          &nbsp;&nbsp;
           {user ? user.displayName : 'guest user'}
         </Button>
         <Popper
