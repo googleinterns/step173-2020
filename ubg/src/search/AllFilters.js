@@ -65,6 +65,7 @@ export default function AllFilters({setPaginationCount, setGames, value,
   const [maxPlayer, setMaxPlayer] = React.useState('8+');
   const [minTime, setMinTime] = React.useState(5);
   const [maxTime, setMaxTime] = React.useState('240+');
+  const [category, setCategory] = React.useState('All Games');
   const [sortBy, setSortBy] = React.useState('rating');
   /**
    * Get games that satisfy filter conditions
@@ -79,10 +80,8 @@ export default function AllFilters({setPaginationCount, setGames, value,
     setInitialize(false);
     setClear(true);
   };
-  /**
-   * Load the games data according to filter
-   */
-  useEffect(() => {
+
+  function loadData () {
     // using a hack to load data and reset filters when needed
     if (clear === true) {
       setMinAge(21);
@@ -91,6 +90,7 @@ export default function AllFilters({setPaginationCount, setGames, value,
       setMinTime(5);
       setMaxTime('240+');
       setClear(false);
+      setCategory('All Games');
     } else if (initialize === false) {
       setInitialize(true);
       const newGames = [];
@@ -117,6 +117,9 @@ export default function AllFilters({setPaginationCount, setGames, value,
           .get()
           .then(function(querySnapshot) {
             querySnapshot.forEach(function(doc) {
+              if (category !== 'All Games' && !doc.data()['categories'].includes(category)) {
+                return
+              }
               if (doc.data()['minPlayer'] <= maxP &&
               minPlayer <= doc.data()['maxPlayer'] &&
               doc.data()['minPlaytime'] <= maxT &&
@@ -149,10 +152,12 @@ export default function AllFilters({setPaginationCount, setGames, value,
           .catch(function(error) {
             console.log('Error getting documents: ', error);
           });
-    }
-  }, [ref, sortBy, setGames, setPaginationCount, initialize,
-    value, setInitialize, totalGames, setTotalGames, maxPlayer,
-    maxTime, minAge, minPlayer, minTime, setClear, clear]);
+    }   
+  }
+  /**
+   * Load the games data according to filter
+   */
+  useEffect(loadData, [clear, initialize]);
 
   return (
     <Box boxShadow={1} m={10} className={classes.box}>
@@ -160,6 +165,7 @@ export default function AllFilters({setPaginationCount, setGames, value,
         label = "Minimum Age"
         value={minAge}
         menu={[8, 10, 12, 14, 16, 21]}
+        append={'+'}
         onChange={(v) => setMinAge(v)}
       />
       <Filter
@@ -187,6 +193,12 @@ export default function AllFilters({setPaginationCount, setGames, value,
         menu={[15, 30, 60, 90, 120, '240+']}
         append={'min'}
         onChange={(v) => setMaxTime(v)}
+      />
+      <Filter
+        label = "Categories"
+        value={category}
+        menu={['Fantasy', 'Economic', 'Card Game', 'Ancient', 'Science Fiction', 'Wargame', 'All Games']}
+        onChange={(v) => setCategory(v)}
       />
       <Filter
         label = "Sort By"
