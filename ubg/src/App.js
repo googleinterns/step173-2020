@@ -39,13 +39,16 @@ function App() {
             <Route exact path="/search">
               <Search />
             </Route>
+            <Route exact path="/search/:query">
+              <Search />
+            </Route>
             <Route exact path="/:gameId">
               <Game />
             </Route>
             <Route exact path="/gameRoom/:roomId">
               <WaitingRoom/>
             </Route>
-            <Route exact path="/profile/:userId">
+            <Route exact path="/profile">
               <Profile />
             </Route>
             <Route path="/">
