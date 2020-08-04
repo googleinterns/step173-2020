@@ -35,9 +35,9 @@ function App() {
             <Route exact path="/">
               <Home />
             </Route>
-            {/* <Route exact path="/search">
+            <Route exact path="/search">
               <Search />
-            </Route> */}
+            </Route>
             <Route exact path="/search/:query">
               <Search />
             </Route>
