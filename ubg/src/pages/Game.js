@@ -229,7 +229,8 @@ function Description({usersCollection, game, createRoom}) {
  */
 function FavoriteButton({usersCollection, game}) {
   const user = useUser();
-  const userGames = useFirestoreDocData(usersCollection.doc((user && user.uid) || ' ')).games;
+  const userGames = useFirestoreDocData(
+      usersCollection.doc((user && user.uid) || ' ')).games;
   const [favorite, setFavorite] = useState(inFavorites(userGames, game));
 
   return (
