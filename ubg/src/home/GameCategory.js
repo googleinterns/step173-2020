@@ -40,25 +40,40 @@ export default function GameCategory({category, games}) {
   //         });
   //   }
   // }, [ref, initialize, sortBy, setGames]);
+  function loadGameCard(item, index) {
+    let display;
+    if (index < 3) {
+      display = 'block';
+    // } else if (index === 2) {
+    //   display = { xs: 'none',md: 'none', lg: 'block' };
+    } else if (index === 3) {
+      display = { xs: 'block' ,md: 'none', lg: 'block' };
+    } else if (index < 6) {
+      display = { xs: 'none',md: 'none', lg: 'none', xl: 'block' };
+    } else {
+      display = 'none';
+    }
+    return <Grid key={item['id']} item xs={12} sm={6} xl={2} lg={3} md={4}>
+      <Box display={display}>
+      <GameCard id={item['id']}
+        image={item['image']}
+        name={item['Name']}
+        year={item['year']}
+        minTime={item['minPlaytime']}
+        maxTime={item['maxPlaytime']}
+        minPlayer={item['minPlayer']}
+        maxPlayer={item['maxPlayer']}
+        rating={item['rating']}
+        minAge={item['minAge']}
+        weight={item['weight']} /></Box>
+    </Grid>
+  }
 
   return (
-    <Box>
+    <Box m={10}>
       <h1>{category}</h1>
       <Grid container justify="flex-start" alignItems="stretch" spacing={4}>
-      {games.map((item) =>
-          <Grid key={item['id']} item xs={12} sm={6} xl={2} lg={3} md={4}>
-            <GameCard id={item['id']}
-              image={item['image']}
-              name={item['Name']}
-              year={item['year']}
-              minTime={item['minPlaytime']}
-              maxTime={item['maxPlaytime']}
-              minPlayer={item['minPlayer']}
-              maxPlayer={item['maxPlayer']}
-              rating={item['rating']}
-              minAge={item['minAge']}
-              weight={item['weight']} />
-          </Grid>,
+      {games.map((item, index) => loadGameCard(item, index)
         )}
         </Grid>
     </Box>

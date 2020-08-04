@@ -25,7 +25,7 @@ export default function Home() {
   const classes = useStyles();
   const [games, setGames] = React.useState([]);
   const [fantasy, setFantasy] = React.useState([]);
-  const [Economic, setEconomic] = React.useState([]);
+  const [economic, setEconomic] = React.useState([]);
   const [cardGame, setCardGame] = React.useState([]);
   const [beginner, setBeginner] = React.useState([]);
   const ref = useFirestore().collection('games');
@@ -51,7 +51,7 @@ function loadData() {
           console.log('Error getting documents: ', error);
         });
     const beginnerArr = [];
-    ref.orderBy('weight').limit(12)
+    ref.orderBy('weight').limit(6)
         .get()
         .then((querySnapshot) => {
           // setInitialize(true);
@@ -64,17 +64,27 @@ function loadData() {
           console.log('Error getting documents: ', error);
         });
     const fantasyArr = [];
+    const economicArr = [];
+    const cardGameArr = [];
     ref.orderBy('rating')
         .get()
         .then((querySnapshot) => {
           // setInitialize(true);
           querySnapshot.forEach((doc) => {
-            if (doc.data()['categories'].includes('Fantasy') && fantasyArr.length < 11) {
+            if (doc.data()['categories'].includes('Fantasy') && fantasyArr.length < 6) {
               fantasyArr.push(doc.data());
+            }
+            if (doc.data()['categories'].includes('Economic') && economicArr.length < 6) {
+              economicArr.push(doc.data());
+            }
+            if (doc.data()['categories'].includes('Card Game') && cardGameArr.length < 6) {
+              cardGameArr.push(doc.data());
             }
             
           });
           setFantasy(fantasyArr);
+          setEconomic(economicArr);
+          setCardGame(cardGameArr);
         })
         .catch(function(error) {
           console.log('Error getting documents: ', error);
@@ -82,53 +92,6 @@ function loadData() {
   }
 }
 useEffect(loadData, [initialize]);
-
-  // useEffect(() => {
-    // if (initialize === false) {
-    //   const gameArr = [];
-    //   ref.orderBy(sortBy, 'desc').limit(10)
-    //       .get()
-    //       .then((querySnapshot) => {
-    //         setInitialize(true);
-    //         querySnapshot.forEach((doc) => {
-    //           gameArr.push(doc.data());
-    //         });
-    //         setGames(gameArr);
-    //       })
-    //       .catch(function(error) {
-    //         console.log('Error getting documents: ', error);
-    //       });
-    //   const beginnerArr = [];
-    //   ref.orderBy('weight').limit(10)
-    //       .get()
-    //       .then((querySnapshot) => {
-    //         setInitialize(true);
-    //         querySnapshot.forEach((doc) => {
-    //           beginnerArr.push(doc.data());
-    //         });
-    //         setGames(beginnerArr);
-    //       })
-    //       .catch(function(error) {
-    //         console.log('Error getting documents: ', error);
-    //       });
-    //   const fantasyArr = [];
-    //   ref.orderBy('rating')
-    //       .get()
-    //       .then((querySnapshot) => {
-    //         setInitialize(true);
-    //         querySnapshot.forEach((doc) => {
-    //           if (doc.data()['categories'].includes('Fantasy') && fantasyArr.length < 6) {
-    //             fantasyArr.push(doc.data());
-    //           }
-              
-    //         });
-    //         setGames(fantasyArr);
-    //       })
-    //       .catch(function(error) {
-    //         console.log('Error getting documents: ', error);
-    //       });
-    // }
-  // }, [ref, initialize, sortBy, setGames]);
 
   return (
     <div>
@@ -181,6 +144,8 @@ useEffect(loadData, [initialize]);
       </Box>
       <GameCategory category={'For Beginners'} games={beginner}/>
       <GameCategory category={'Fantasy'} games={fantasy}/>
+      <GameCategory category={'Economic'} games={economic}/>
+      <GameCategory category={'Card Game'} games={cardGame}/>
     </div>
   );
 }
