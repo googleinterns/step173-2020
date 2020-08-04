@@ -1,6 +1,6 @@
 import firebase from 'firebase/app';
 import React from 'react';
-import {AuthCheck, useAuth, useUser} from 'reactfire';
+import {AuthCheck, useAuth, useUser, useFirestore} from 'reactfire';
 import Button from '@material-ui/core/Button';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
@@ -8,6 +8,7 @@ import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import {useHistory} from 'react-router-dom';
 import {makeStyles} from '@material-ui/core/styles';
 
@@ -29,6 +30,8 @@ export default function AuthButtons() {
   const history = useHistory();
   const auth = useAuth();
   const user = useUser();
+  const ref = useFirestore()
+      .collection('users');
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -45,6 +48,18 @@ export default function AuthButtons() {
    */
   async function signIn() {
     await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    const currUser = firebase.auth().currentUser;
+    await ref.doc(currUser.uid).get().then((doc) => {
+      if (!doc.exists) {
+        ref.doc(currUser.uid).set({
+          displayName: currUser.displayName,
+          games: [],
+          reviews: [],
+        });
+      }
+    }).catch(function(error) {
+      console.log('Error getting document:', error);
+    });
   };
 
   /**
@@ -60,7 +75,7 @@ export default function AuthButtons() {
    * @return {void}
    */
   function toProfile() {
-    history.push(`/profile/${user.uid}`);
+    history.push(`/profile`);
   };
 
   return (
@@ -79,6 +94,8 @@ export default function AuthButtons() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
+          <AccountCircleIcon />
+          &nbsp;&nbsp;
           {user ? user.displayName : 'guest user'}
         </Button>
         <Popper

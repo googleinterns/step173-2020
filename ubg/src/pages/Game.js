@@ -24,6 +24,7 @@ import Face from '@material-ui/icons/Face';
 import SignalCellular3Bar from '@material-ui/icons/SignalCellular3Bar';
 import TextField from '@material-ui/core/TextField';
 import PropTypes from 'prop-types';
+import * as firebase from 'firebase/app';
 import Pagination from '@material-ui/lab/Pagination';
 import VideoCard from '../game/VideoCard';
 
@@ -58,9 +59,10 @@ export default function Game() {
   const history = useHistory();
   const [roomId, setRoomId] = useState('');
   const roomsCollection = useFirestore().collection('rooms');
-  const games = useFirestoreDocData(
-      useFirestore().collection('games').doc(gameId),
-  );
+  const usersCollection = useFirestore().collection('users');
+
+  const game = useFirestoreDocData(
+      useFirestore().collection('games').doc(gameId));
 
   /**
    * Creates a room in firebase and adds the current user as host
@@ -81,7 +83,12 @@ export default function Game() {
     <div>
       <Navbar />
       <Box container='true' justify='center' alignItems='center' m={10}>
-        <Description games={games} createRoom={createRoom} />
+        <Description
+          usersCollection={usersCollection}
+          game={game}
+          createRoom={createRoom}
+          user={user}
+        />
         <Spacer />
         <Grid container spacing={5}>
           <Grid item>
@@ -116,7 +123,7 @@ export default function Game() {
         </AuthCheck>
         <Spacer />
         <Videos
-          videos={paginateVideos(games)}
+          videos={paginateVideos(game)}
         />
         <Spacer />
         <AllReviews gameId={gameId}/>
@@ -139,52 +146,50 @@ function Spacer() {
 }
 
 /**
- * @param {object} games Reference to game doc
+ * @param {object} usersCollection User collection
+ * @param {object} game Reference to game doc
  * @param {func} createRoom Creates game room for current game
  * @return {ReactElement} Description of game
  */
-function Description({games, createRoom}) {
+function Description({usersCollection, game, createRoom}) {
   const classes = useStyles();
-  let description = 'Game is not available';
-  let playTime = games.minPlaytime + '-' + games.maxPlaytime;
-  let players = games.minPlayer + '-' + games.maxPlayer;
-  if (games.description !== undefined) {
-    description = games.description;
+  let playTime = game.minPlaytime + '-' + game.maxPlaytime;
+  let players = game.minPlayer + '-' + game.maxPlayer;
+  if (game.minPlaytime === game.maxPlaytime) {
+    playTime = game.minPlaytime;
   }
-  if (games.minPlaytime === games.maxPlaytime) {
-    playTime = games.minPlaytime;
+  if (game.minPlayer === game.maxPlayer) {
+    players = game.minPlayer;
   }
-  if (games.minPlayer === games.maxPlayer) {
-    players = games.minPlayer;
-  }
+
   return (
     <Grid container spacing={5}>
       <Grid item xs={2} className={classes.section}>
         <Card>
           <CardMedia
             component='img'
-            image={games.image}
-            title={games.Name}
+            image={game.image}
+            title={game.Name}
           />
         </Card>
       </Grid>
       <Grid item xs={10} className={classes.section}>
         <Grid item>
           <Typography variant='h2' className={classes.fonts}>
-            {games.Name}
+            {game.Name}
           </Typography>
           <br />
           <Typography variant='body1'>
-            {description}
+            {game.description}
           </Typography>
           <br />
           <Typography variant='body2' color='textSecondary' component='p'>
             <Icon aria-label='share'>
-              <Star />{games.rating.toFixed(2)}/10
+              <Star />{game.rating.toFixed(2)}/10
             </Icon>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <Icon aria-label='share'>
-              <Face />{games.minAge}+
+              <Face />{game.minAge}+
             </Icon>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <Icon aria-label='share'>
@@ -196,7 +201,7 @@ function Description({games, createRoom}) {
             </Icon>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <Icon aria-label='share'>
-              <SignalCellular3Bar />{games.weight.toFixed(2)}
+              <SignalCellular3Bar />{game.weight.toFixed(2)}
             </Icon>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <AuthCheck>
@@ -206,12 +211,35 @@ function Description({games, createRoom}) {
                 onClick={createRoom}>
                 Create Room
               </Button>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <FavoriteButton usersCollection={usersCollection} game={game}/>
             </AuthCheck>
           </Typography>
         </Grid>
         <br />
       </Grid>
     </Grid>
+  );
+}
+
+/**
+ * @param {object} usersCollection User collection
+ * @param {object} game Current game object containing game information
+ * @return {ReactElement} Button to add/delete game from favorites
+ */
+function FavoriteButton({usersCollection, game}) {
+  const user = useUser();
+  const userGames = useFirestoreDocData(usersCollection.doc(user.uid)).games;
+  const [favorite, setFavorite] = useState(inFavorites(userGames, game));
+
+  return (
+    <Button
+      variant='contained'
+      color='primary'
+      onClick={() => addFavorite(
+          userGames, usersCollection, game, favorite, setFavorite, user.uid)}>
+      {favorite ? 'Delete from favorites' : 'Add to favorites'}
+    </Button>
   );
 }
 
@@ -265,6 +293,71 @@ function Videos({videos}) {
 }
 
 /**
+ * Check if game is included in favorite games
+ * @param {array} userGames of current user's favorite games
+ * @param {object} game Firestore doc of current game
+ * @return {bool} whether game is in favorite games
+ */
+function inFavorites(userGames, game) {
+  for (let i = 0; i < userGames.length; i++) {
+    if (userGames[i].id === game.id) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Based on state of favorite, adds or deletes current game from favorites
+ * @param {array} userGames Array of current user's favorite games
+ * @param {object} usersCollection User collection
+ * @param {object} game Firestore doc of current game
+ * @param {bool} favorite Whether current game is in user's favorites
+ * @param {func} setFavorite Sets whether current game is in user's favorites
+ * @param {number} uid ID od current user
+ * @return {void}
+ */
+function addFavorite(userGames, usersCollection,
+    game, favorite, setFavorite, uid) {
+  if (favorite) {
+    for (let i = 0; i < userGames.length; i++) {
+      if (userGames[i].id === game.id) {
+        userGames.splice(i, 1);
+        if (userGames.length === 0) {
+          usersCollection.doc(uid).update({
+            games: [],
+          });
+        } else {
+          usersCollection.doc(uid).update({
+            games: userGames,
+          });
+        }
+        setFavorite(false);
+        return;
+      }
+    }
+  } else {
+    userGames.push({
+      id: game.id,
+      image: game.image,
+      name: game.Name,
+      year: game.year,
+      minPlaytime: game.minPlaytime,
+      maxPlaytime: game.maxPlaytime,
+      minPlayer: game.minPlayer,
+      maxPlayer: game.maxPlayer,
+      rating: game.rating,
+      minAge: game.minAge,
+      weight: game.weight,
+    });
+    usersCollection.doc(uid).update({
+      games: firebase.firestore.FieldValue.arrayUnion(...userGames),
+    });
+    setFavorite(true);
+  }
+}
+
+/**
  * Sets up array of videos for pagination
  * @param {array} videos Array of videos for game page
  * @return {array} Nested array for videos
@@ -286,8 +379,9 @@ function paginateVideos({videos}) {
 }
 
 Description.propTypes = {
+  usersCollection: PropTypes.object,
   createRoom: PropTypes.func,
-  games: PropTypes.shape({
+  game: PropTypes.shape({
     minPlayer: PropTypes.number,
     maxPlayer: PropTypes.number,
     minPlaytime: PropTypes.number,
@@ -303,4 +397,11 @@ Description.propTypes = {
 
 Videos.propTypes = {
   videos: PropTypes.array,
+};
+
+FavoriteButton.propTypes = {
+  usersCollection: PropTypes.object,
+  game: PropTypes.shape({
+    id: PropTypes.number,
+  }),
 };
