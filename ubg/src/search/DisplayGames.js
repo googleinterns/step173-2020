@@ -19,15 +19,20 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @param {object} games all the games that satisfy filter condition
  * @param {number} paginationCount number of page
+ * @param {number} totalGames number of games in total
  * @return {ReactElement} Display all the games that satisfy conditions
  */
-export default function DisplayGames({games, paginationCount}) {
+export default function DisplayGames({games, paginationCount, totalGames}) {
   const classes = useStyles();
   const [page, setPage] = React.useState(1);
+  let total = totalGames;
+  if (games.length < 1 || games === undefined) {
+    total = 0;
+  }
   return (
     <Box m={10}>
       <Grid container justify="flex-start" alignItems="stretch" spacing={4}>
-        {games[page-1].map((item) =>
+        {total === 0 ? null : games[page-1].map((item) =>
           <Grid key={item['id']} item xs={12} sm={6} xl={2} lg={3} md={4}>
             <GameCard id={item['id']}
               image={item['image']}
@@ -56,4 +61,5 @@ export default function DisplayGames({games, paginationCount}) {
 DisplayGames.propTypes = {
   games: PropTypes.array,
   paginationCount: PropTypes.number,
+  totalGames: PropTypes.number,
 };
