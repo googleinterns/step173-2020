@@ -51,9 +51,9 @@ export default function AuthButtons() {
     await ref.doc(currUser.uid).get().then((doc) => {
       if (!doc.exists) {
         ref.doc(currUser.uid).set({
-          uid: currUser.uid,
           displayName: currUser.displayName,
           games: [],
+          reviews: [],
         });
       }
     }).catch(function(error) {

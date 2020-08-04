@@ -16,6 +16,9 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import firebase from 'firebase/app';
+import Paper from '@material-ui/core/Paper';
+import ChatIcon from '@material-ui/icons/Chat';
+import Chat from '../common/Chat';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -37,6 +40,9 @@ const useStyles = makeStyles((theme) => ({
   game: {
     margin: '10px 35px',
     flexGrow: 1,
+    overflow: 'scroll',
+    // Hacky fix for scroll with flexGrow
+    height: '200px',
   },
   table: {
     height: '300px',
@@ -58,9 +64,13 @@ const useStyles = makeStyles((theme) => ({
   btn: {
     margin: '5px',
   },
-  inRoomBtns: {
+  flexColumn: {
     display: 'flex',
     flexDirection: 'column',
+    height: '100%',
+  },
+  grow: {
+    flexGrow: 1,
   },
   signInContainer: {
     height: '100vh',
@@ -68,6 +78,16 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  chatHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    background: '#e0e0e0',
+    color: 'black',
+    borderRadius: '4px 4px 0 0',
+  },
+  sideMargin10px: {
+    margin: '0 10px',
   },
 }));
 
@@ -88,6 +108,7 @@ export default function WaitingRoom() {
       useFirestore().collection('games').doc(roomData.gameId),
   );
   const [open, setOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
   const [message, setMessage] = useState('');
 
   /**
@@ -158,11 +179,9 @@ export default function WaitingRoom() {
                 </Typography>
               </div>
               <div className={classes.game}>
-                <div>
-                  <Typography variant='body1'>
-                    {game.description}
-                  </Typography>
-                </div>
+                <Typography variant='body1'>
+                  {game.description}
+                </Typography>
               </div>
               <div className={classes.actionBtns}>
                 {
@@ -193,16 +212,35 @@ export default function WaitingRoom() {
               </div>
             </Grid>
             <Grid className={classes.video} item xs={3}>
-              {
-                usersData.map((u) => {
-                  return (
-                    <UserVideo
-                      key={u.uid}
-                      user={u.displayName}
-                    />
-                  );
-                })
-              }
+              <div className={classes.flexColumn}>
+                <div className={classes.grow}>
+                  {
+                    usersData.map((u) => {
+                      return (
+                        <UserVideo
+                          key={u.uid}
+                          user={u.displayName}
+                        />
+                      );
+                    })
+                  }
+                </div>
+                <Paper>
+                  <div
+                    className={classes.chatHeader}
+                    onClick={() => setChatOpen(!chatOpen)}
+                  >
+                    <ChatIcon className={classes.sideMargin10px}/>
+                    <Typography variant="h6">Chat</Typography>
+                  </div>
+                  <Chat
+                    open={chatOpen}
+                    messages={roomData.chat}
+                    roomId={roomId}
+                    user={user.displayName}
+                  />
+                </Paper>
+              </div>
             </Grid>
           </Grid>
           <Snackbar

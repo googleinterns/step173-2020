@@ -5,11 +5,19 @@ import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Navbar from '../common/Navbar';
 import GameCard from '../search/GameCard';
+//import Reviews from '../reviews/Reviews';
 import {makeStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
     fontWeight: 'bold',
+  },
+  pagination: {
+    '& > *': {
+      margin: theme.spacing(2),
+      display: 'flex',
+      justifyContent: 'center',
+    },
   },
 }));
 
@@ -19,8 +27,9 @@ const useStyles = makeStyles((theme) => ({
 export default function Profile() {
   const user = useUser();
   const classes = useStyles();
-  const userGames = useFirestoreDocData(
-    useFirestore().collection('users').doc(user ? user.uid : '0')).games;
+  const userCollection = useFirestore().collection('users');
+  // const userReviews = useFirestoreDocData(
+  //   useFirestore().collection('users').doc(user.uid)).reviews;
 
   return (
     <div>
@@ -31,34 +40,58 @@ export default function Profile() {
         </Typography>
         <br />
         {user ? (
-          <Box>
-            <hr />
-            <Typography variant='h6'>
-              Favorite Games
-            </Typography>
-            <br />
-            <Grid container justify="flex-start" alignItems="stretch" spacing={4}>
-              {userGames.map((game) =>
-                <Grid item key={game.id} xs={12} sm={6} xl={2} lg={3} md={4}>
-                  <GameCard
-                    id={game.id}
-                    image={game.image}
-                    name={game.Name}
-                    year={game.year}
-                    minTime={game.minPlaytime}
-                    maxTime={game.maxPlaytime}
-                    minPlayer={game.minPlayer}
-                    maxPlayer={game.maxPlayer}
-                    rating={game.rating}
-                    minAge={game.minAge}
-                    weight={game.weight}
-                  />
-                </Grid>
-              )}
-            </Grid>
-          </Box>
+          <div>
+            <FavoriteGames userCollection={userCollection} uid={user.uid} />
+            {/* <Box>
+              <hr />
+              <Typography variant='h6'>
+                Reviews
+              </Typography>
+              <br />
+              <Grid container justify="flex-start" alignItems="stretch" spacing={4}>
+                <Reviews reviews={userReviews} />
+              </Grid>
+            </Box> */}
+          </div>
         ) : ''}
       </Box>
     </div>
+  );
+}
+
+function FavoriteGames({userCollection, uid}) {
+  //const classes = useStyles();
+  let userGames = useFirestoreDocData(userCollection.doc(uid)).games;
+
+  return (
+    <Box>
+      <hr />
+      <Typography variant='h6'>
+        Favorite Games
+      </Typography>
+      <br />
+      <Grid container justify="flex-start" alignItems="stretch" spacing={4}>
+        {userGames.map((game) => {
+          return (
+            <Grid item key={game.id} xs={12} sm={6} xl={2} lg={3} md={4}>
+              <GameCard
+                id={game.id}
+                image={game.image}
+                name={game.name}
+                year={game.year}
+                minTime={game.minPlaytime}
+                maxTime={game.maxPlaytime}
+                minPlayer={game.minPlayer}
+                maxPlayer={game.maxPlayer}
+                rating={game.rating}
+                minAge={game.minAge}
+                weight={game.weight}
+              />
+            </Grid>
+          );
+        })}
+      </Grid>
+      <br />
+    </Box>
   );
 }

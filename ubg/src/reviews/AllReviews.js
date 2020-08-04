@@ -2,10 +2,11 @@ import React, {useState, useEffect} from 'react';
 import Box from '@material-ui/core/Box';
 import Reviews from './Reviews';
 import Typography from '@material-ui/core/Typography';
-import {useFirestore} from 'reactfire';
+import {useFirestore, useFirestoreDocData} from 'reactfire';
 import NewReview from './NewReview';
 import {AuthCheck, useUser} from 'reactfire';
 import PropTypes from 'prop-types';
+import * as firebase from "firebase/app";
 
 /**
  * Displays the review section of a game page and handles review input
@@ -13,19 +14,25 @@ import PropTypes from 'prop-types';
  * @return {ReactElement} Box containing review section
  */
 function AllReviews({gameId}) {
+  const user = useUser();
+  const [reviews, setReviews] = useState([]);
+  const [initialize, setInitialize] = useState(false);
   const reviewsRef = useFirestore()
       .collection('gameReviews')
       .doc(gameId)
       .collection('reviews');
-  const user = useUser();
-  const [reviews, setReviews] = useState([]);
-  const [initialize, setInitialize] = useState(false);
-
+  const userDoc = useFirestoreDocData(
+      useFirestore().collection('users').doc(user ? user.uid : '0'));
+  const usersCollection = useFirestore().collection('users');
   const handleAddReview = (review) => {
     const tempReviews = [...reviews];
     tempReviews.unshift(review);
     setReviews(tempReviews);
     reviewsRef.add(review);
+    userDoc.reviews.push(review);
+    usersCollection.doc(user.uid).update({
+      reviews: firebase.firestore.FieldValue.arrayUnion(...userDoc.reviews)
+    });
   };
 
   /**

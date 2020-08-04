@@ -23,9 +23,10 @@ import People from '@material-ui/icons/People';
 import Face from '@material-ui/icons/Face';
 import SignalCellular3Bar from '@material-ui/icons/SignalCellular3Bar';
 import TextField from '@material-ui/core/TextField';
-import ReactPlayer from 'react-player';
 import PropTypes from 'prop-types';
 import * as firebase from "firebase/app";
+import Pagination from '@material-ui/lab/Pagination';
+import VideoCard from '../game/VideoCard';
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
@@ -39,67 +40,36 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  pagination: {
+    '& > *': {
+      margin: theme.spacing(2),
+      display: 'flex',
+      justifyContent: 'center',
+    },
+  },
 }));
 
 /**
  * @return {ReactElement} Game details page
  */
 export default function Game() {
+  const classes = useStyles();
   const user = useUser();
   const {gameId} = useParams();
   const history = useHistory();
   const [roomId, setRoomId] = useState('');
   const roomsCollection = useFirestore().collection('rooms');
   const usersCollection = useFirestore().collection('users');
-  const userDoc = useFirestoreDocData(
-    useFirestore().collection('users').doc(user ? user.uid : '0'));
+
   const games = useFirestoreDocData(
-      useFirestore().collection('games').doc(gameId),
-  );
-  const [favorite, setFavorite] = useState(inFavorites());
-  
-  /**
-   * check if game is included in favorite games
-   * @return {bool} whether game is in favorite games
-   */
-  function inFavorites() {
-    for(let i = 0; i < userDoc.games.length; i++) {
-      if(userDoc.games[i].id === games.id) {
-        return true;
-      }
-    }
-    return false;
-  }
-  /**
-   * @return {void}
-   */
-  function addFavorite() {
-    if (favorite) {
-      for(let i = 0; i < userDoc.games.length; i++) {
-        if(userDoc.games[i].id === games.id) {
-          userDoc.games.splice(i, 1);
-          console.log(userDoc.games);
-          usersCollection.doc(user.uid).update({
-            games: firebase.firestore.FieldValue.arrayUnion(...userDoc.games)
-          });
-          break;
-        }
-      }
-      setFavorite(false);
-    } else {
-      userDoc.games.push(games);
-      usersCollection.doc(user.uid).update({
-        games: firebase.firestore.FieldValue.arrayUnion(...userDoc.games)
-      });
-      setFavorite(true);
-    }
-  }
+      useFirestore().collection('games').doc(gameId));
+
   /**
    * Creates a room in firebase and adds the current user as host
    */
   async function createRoom() {
     const newRoom = await roomsCollection.doc();
-    newRoom.set({gameId, host: user.uid});
+    newRoom.set({gameId, host: user.uid, chat: []});
     history.push(`/gameRoom/${newRoom.id}`);
   }
   /**
@@ -109,13 +79,16 @@ export default function Game() {
     history.push(`/gameRoom/${roomId}`);
   }
 
-  const classes = useStyles();
-
   return (
     <div>
       <Navbar />
       <Box container='true' justify='center' alignItems='center' m={10}>
-        <Description favorite={favorite} games={games} createRoom={createRoom} addFavorite={addFavorite} />
+        <Description
+          usersCollection={usersCollection}
+          games={games}
+          createRoom={createRoom}
+          user={user}
+        />
         <Spacer />
         <Grid container spacing={5}>
           <Grid item>
@@ -149,7 +122,9 @@ export default function Game() {
           </Grid>
         </AuthCheck>
         <Spacer />
-        <Rules videos={games.videos}/>
+        <Videos
+          videos={paginateVideos(games)}
+        />
         <Spacer />
         <AllReviews gameId={gameId}/>
       </Box>
@@ -175,14 +150,10 @@ function Spacer() {
  * @param {func} createRoom Creates game room for current game
  * @return {ReactElement} Description of game
  */
-function Description({games, createRoom, favorite, addFavorite}) {
+function Description({usersCollection, games, createRoom, user}) {
   const classes = useStyles();
-  let description = 'Game is not available';
   let playTime = games.minPlaytime + '-' + games.maxPlaytime;
   let players = games.minPlayer + '-' + games.maxPlayer;
-  if (games.description !== undefined) {
-    description = games.description;
-  }
   if (games.minPlaytime === games.maxPlaytime) {
     playTime = games.minPlaytime;
   }
@@ -208,7 +179,7 @@ function Description({games, createRoom, favorite, addFavorite}) {
           </Typography>
           <br />
           <Typography variant='body1'>
-            {description}
+            {games.description}
           </Typography>
           <br />
           <Typography variant='body2' color='textSecondary' component='p'>
@@ -240,12 +211,7 @@ function Description({games, createRoom, favorite, addFavorite}) {
                 Create Room
               </Button>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button
-                variant='contained'
-                color='primary'
-                onClick={addFavorite}>
-                {favorite ? 'Delete from favorites' : 'Add to favorites'}
-              </Button>
+              <FavoriteButton usersCollection={usersCollection} games={games}/>
             </AuthCheck>
           </Typography>
         </Grid>
@@ -255,34 +221,144 @@ function Description({games, createRoom, favorite, addFavorite}) {
   );
 }
 
-/**
- * @param {object} videos Object containing all rules videos
- * @return {ReactElement} Videos describing rules for game
- */
-function Rules({videos}) {
+function FavoriteButton({usersCollection, games}) {
+  const user = useUser();
+  const userGames = useFirestoreDocData(usersCollection.doc(user.uid)).games;
+  const [favorite, setFavorite] = useState(inFavorites(userGames, games));
+
   return (
-    <div>
-      <Grid container>
-        <Grid item>
-          <Typography variant='h4'>
-            Rules
-          </Typography>
-        </Grid>
-      </Grid>
-      <br />
-      <Grid container spacing={3}>
-        {Array.from(videos).slice(0, 3).map((video) => {
-          return (
-            <Grid item key={video.link}>
-              <ReactPlayer
-                url={video.link}
-              />
-            </Grid>
-          );
-        })}
-      </Grid>
-    </div>
+    <Button
+      variant='contained'
+      color='primary'
+      onClick={() => addFavorite(userGames, usersCollection, games, favorite, setFavorite, user.uid)}>
+      {favorite ? 'Delete from favorites' : 'Add to favorites'}
+    </Button>
   );
+}
+
+/**
+ * @param {object} videos Object containing all videos
+ * @return {ReactElement} Videos describing the game
+ */
+function Videos({videos}) {
+  const classes = useStyles();
+  const [page, setPage] = React.useState(1);
+  if (Object.keys(videos).length === 0) {
+    return (
+      <Typography variant='h4'>
+        No videos available
+      </Typography>
+    );
+  }
+  return (
+    <Box>
+      <Box>
+        <Grid container>
+          <Grid item>
+            <Typography variant='h4'>
+              Videos
+            </Typography>
+          </Grid>
+        </Grid>
+        <br />
+        <Grid container justify="flex-start" alignItems="stretch" spacing={4}>
+          {videos[page-1].map((video) => {
+            return (
+              <Grid item
+                key={video.link}
+                className={classes.section}
+                xs={12} sm={6} xl={2} lg={3} md={4}
+              >
+                <VideoCard video={video} />
+              </Grid>
+            );
+          })}
+        </Grid>
+      </Box>
+      <Pagination
+        count={videos.length}
+        boundaryCount={2}
+        onChange={(e, p) => setPage(p)}
+        className={classes.pagination}
+      />
+    </Box>
+  );
+}
+
+/**
+ * check if game is included in favorite games
+ * @return {bool} whether game is in favorite games
+ */
+function inFavorites(userGames, games) {
+  for(let i = 0; i < userGames.length; i++) {
+    if(userGames[i].id === games.id) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * @return {void}
+ */
+function addFavorite(userGames, usersCollection, games, favorite, setFavorite, uid) {
+  if (favorite) {
+    for(let i = 0; i < userGames.length; i++) {
+      if(userGames[i].id === games.id) {
+        userGames.splice(i, 1);
+        if (userGames.length === 0) {
+          usersCollection.doc(uid).update({
+            games: []
+          });
+        } else {
+          usersCollection.doc(uid).update({
+            games: userGames,
+          });
+        }
+        setFavorite(false);
+        return;
+      }
+    }
+  } else {
+    userGames.push({
+      id: games.id,
+      image: games.image,
+      name: games.Name,
+      year: games.year,
+      minPlaytime: games.minPlaytime,
+      maxPlaytime: games.maxPlaytime,
+      minPlayer: games.minPlayer,
+      maxPlayer: games.maxPlayer,
+      rating: games.rating,
+      minAge: games.minAge,
+      weight: games.weight,
+    });
+    usersCollection.doc(uid).update({
+      games: firebase.firestore.FieldValue.arrayUnion(...userGames)
+    });
+    setFavorite(true);
+  }
+}
+
+/**
+ * Sets up array of videos for pagination
+ * @param {array} videos Array of videos for game page
+ * @return {array} Nested array for videos
+ */
+function paginateVideos({videos}) {
+  const allVideos = [];
+  let list = [];
+  videos.forEach((video) => {
+    list.push(video);
+    if (list.length === 12) {
+      allVideos.push(list);
+      list = [];
+    }
+  });
+  if (list.length !== 0) {
+    allVideos.push(list);
+  }
+  return allVideos;
 }
 
 Description.propTypes = {
@@ -301,6 +377,6 @@ Description.propTypes = {
   }),
 };
 
-Rules.propTypes = {
+Videos.propTypes = {
   videos: PropTypes.array,
 };
