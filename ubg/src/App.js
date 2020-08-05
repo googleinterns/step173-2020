@@ -41,14 +41,14 @@ function App() {
             <Route exact path="/search/:query">
               <Search />
             </Route>
+            <Route exact path="/profile">
+              <Profile />
+            </Route>
             <Route exact path="/:gameId">
               <Game />
             </Route>
             <Route exact path="/gameRoom/:roomId">
               <Room />
-            </Route>
-            <Route exact path="/profile">
-              <Profile />
             </Route>
             <Route path="/">
               <NotFound />
