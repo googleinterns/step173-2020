@@ -19,6 +19,7 @@ import firebase from 'firebase/app';
 import Paper from '@material-ui/core/Paper';
 import ChatIcon from '@material-ui/icons/Chat';
 import Chat from '../common/Chat';
+import NotFound from '../pages/NotFound';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -105,7 +106,7 @@ export default function WaitingRoom() {
   const usersData = useFirestoreCollectionData(usersCollection);
   const prevUsersData = usePrevious(usersData);
   const game = useFirestoreDocData(
-      useFirestore().collection('games').doc(roomData.gameId),
+      useFirestore().collection('games').doc(roomData.gameId || ' '),
   );
   const [open, setOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
@@ -167,117 +168,137 @@ export default function WaitingRoom() {
     usersCollection.doc(user.uid).delete();
   }
 
-  return (
-    <div>
-      { user ?
-        <div>
-          <Grid className={classes.main} container>
-            <Grid className={classes.gameContainer} item xs={9}>
-              <div className={classes.title}>
-                <Typography variant="h3" className={classes.fonts}>
-                  {game.Name}
-                </Typography>
-              </div>
-              <div className={classes.game}>
-                <Typography variant='body1'>
-                  {game.description}
-                </Typography>
-              </div>
-              <div className={classes.actionBtns}>
-                {
-                  usersData.some((u) => u.uid === user.uid) ?
-                    (
-                      <div className={classes.inRoomBtns}>
-                        { roomData.host === user.uid ?
+  /**
+   * Check if obj is empty
+   * @param {object} obj
+   * @return {boolean} if obj is empty
+   */
+  function isEmpty(obj) {
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  if (isEmpty(roomData)) {
+    return (
+      <NotFound />
+    );
+  } else {
+    return (
+      <div>
+        { user ?
+          <div>
+            <Grid className={classes.main} container>
+              <Grid className={classes.gameContainer} item xs={9}>
+                <div className={classes.title}>
+                  <Typography variant="h3" className={classes.fonts}>
+                    {game.Name}
+                  </Typography>
+                </div>
+                <div className={classes.game}>
+                  <Typography variant='body1'>
+                    {game.description}
+                  </Typography>
+                </div>
+                <div className={classes.actionBtns}>
+                  {
+                    usersData.some((u) => u.uid === user.uid) ?
+                      (
+                        <div className={classes.inRoomBtns}>
+                          { roomData.host === user.uid ?
+                            <Button
+                              className={classes.btn}
+                              variant="contained"
+                              color="primary"
+                            >Start Game</Button> :
+                            'Waiting for the host'}
                           <Button
                             className={classes.btn}
                             variant="contained"
-                            color="primary"
-                          >Start Game</Button> :
-                          'Waiting for the host'}
-                        <Button
-                          className={classes.btn}
-                          variant="contained"
-                          onClick={leaveRoom}
-                        >Leave Room</Button>
-                      </div>
-                    ) :
-                    <Button
-                      className={classes.btn}
-                      variant="contained"
-                      color="primary"
-                      onClick={joinRoom}
-                    >Join Room</Button>
-                }
-              </div>
-            </Grid>
-            <Grid className={classes.video} item xs={3}>
-              <div className={classes.flexColumn}>
-                <div className={classes.grow}>
-                  {
-                    usersData.map((u) => {
-                      return (
-                        <UserVideo
-                          key={u.uid}
-                          user={u.displayName}
-                        />
-                      );
-                    })
+                            onClick={leaveRoom}
+                          >Leave Room</Button>
+                        </div>
+                      ) :
+                      <Button
+                        className={classes.btn}
+                        variant="contained"
+                        color="primary"
+                        onClick={joinRoom}
+                      >Join Room</Button>
                   }
                 </div>
-                <Paper>
-                  <div
-                    className={classes.chatHeader}
-                    onClick={() => setChatOpen(!chatOpen)}
-                  >
-                    <ChatIcon className={classes.sideMargin10px}/>
-                    <Typography variant="h6">Chat</Typography>
+              </Grid>
+              <Grid className={classes.video} item xs={3}>
+                <div className={classes.flexColumn}>
+                  <div className={classes.grow}>
+                    {
+                      usersData.map((u) => {
+                        return (
+                          <UserVideo
+                            key={u.uid}
+                            user={u.displayName}
+                          />
+                        );
+                      })
+                    }
                   </div>
-                  <Chat
-                    open={chatOpen}
-                    messages={roomData.chat}
-                    roomId={roomId}
-                    user={user.displayName}
-                  />
-                </Paper>
-              </div>
+                  <Paper>
+                    <div
+                      className={classes.chatHeader}
+                      onClick={() => setChatOpen(!chatOpen)}
+                    >
+                      <ChatIcon className={classes.sideMargin10px}/>
+                      <Typography variant="h6">Chat</Typography>
+                    </div>
+                    <Chat
+                      open={chatOpen}
+                      messages={roomData.chat}
+                      roomId={roomId}
+                      user={user.displayName}
+                    />
+                  </Paper>
+                </div>
+              </Grid>
             </Grid>
-          </Grid>
-          <Snackbar
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
-            }}
-            open={open}
-            autoHideDuration={2000}
-            onClose={() => setOpen(false)}
-            message={message}
-            action={
-              <IconButton
-                size="small"
-                aria-label="close"
-                color="inherit"
-                onClick={() => setOpen(false)}
-              >
-                <CloseIcon fontSize="small" />
-              </IconButton>
-            }
-          />
-        </div> :
-        <div className={classes.signInContainer}>
-          <Button
-            onClick={signIn}
-            variant="contained"
-            color="primary"
-            className={classes.btn}
-          >
-            Sign In
-          </Button>
-          <Typography variant="subtitle1">
-            You must sign in to join a game room
-          </Typography>
-        </div>
-      }
-    </div>
-  );
+            <Snackbar
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              open={open}
+              autoHideDuration={2000}
+              onClose={() => setOpen(false)}
+              message={message}
+              action={
+                <IconButton
+                  size="small"
+                  aria-label="close"
+                  color="inherit"
+                  onClick={() => setOpen(false)}
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              }
+            />
+          </div> :
+          <div className={classes.signInContainer}>
+            <Button
+              onClick={signIn}
+              variant="contained"
+              color="primary"
+              className={classes.btn}
+            >
+              Sign In
+            </Button>
+            <Typography variant="subtitle1">
+              You must sign in to join a game room
+            </Typography>
+          </div>
+        }
+      </div>
+    );
+  }
 }
