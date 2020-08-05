@@ -43,7 +43,6 @@ function loadData() {
           querySnapshot.forEach((doc) => {
             topRatedArr.push(doc.data());
           });
-          // setGames(gameArr);
           setTopRated(topRatedArr);
         })
         .catch(function(error) {
@@ -68,16 +67,15 @@ function loadData() {
         .get()
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
-            if (doc.data()['categories'].includes('Fantasy') && fantasyArr.length < 6) {
+            if (doc.data()['categories'].includes('Fantasy') && fantasyArr.length < 12) {
               fantasyArr.push(doc.data());
             }
-            if (doc.data()['categories'].includes('Economic') && economicArr.length < 6) {
+            if (doc.data()['categories'].includes('Economic') && economicArr.length < 12) {
               economicArr.push(doc.data());
             }
-            if (doc.data()['categories'].includes('Card Game') && cardGameArr.length < 6) {
+            if (doc.data()['categories'].includes('Card Game') && cardGameArr.length < 12) {
               cardGameArr.push(doc.data());
             }
-            
           });
           setFantasy(fantasyArr);
           setEconomic(economicArr);
