@@ -48,7 +48,7 @@ export default function GameCategory({category, games}) {
   );
 }
 
-GameCard.propTypes = {
+GameCategory.propTypes = {
   category: PropTypes.string,
   games: PropTypes.array,
 };
