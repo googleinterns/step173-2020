@@ -1,60 +1,66 @@
 import React, {useEffect} from 'react';
+import {makeStyles} from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import GameCard from '../search/GameCard';
+import IconButton from '@material-ui/core/IconButton';
+import ExpandMore from '@material-ui/icons/ExpandMore';
 
-// const useStyles = makeStyles((theme) => ({
-//   box: {
-//     justify: 'center',
-//   },
+const useStyles = makeStyles((theme) => ({
+  expand: {
+        marginLeft: 'calc(50% - 23px)',
+    marginRight: '50vw',
+  },
 //   header: {
 //     fontWeight: 'bold',
 //     textAlign: 'center',
 //   },
-// }));
+}));
 
 /**
  * @return {ReactElement} Home page which is also landing page
  */
 export default function GameCategory({category, games}) {
-  // const classes = useStyles();
-  // const [games, setGames] = React.useState([]);
-  // const ref = useFirestore().collection('games');
-  // const [initialize, setInitialize] = React.useState(false);
-  // const [sortBy] = React.useState('rating');
+  const classes = useStyles();
+  const [expand, setExpand] = React.useState(false);
+  const [display, setDisplay] = React.useState('none');
 
-  // useEffect(() => {
-  //   if (initialize === false) {
-  //     const gameArr = [];
-  //     ref.orderBy(sortBy, 'desc').limit(10)
-  //         .get()
-  //         .then((querySnapshot) => {
-  //           setInitialize(true);
-  //           querySnapshot.forEach((doc) => {
-  //             gameArr.push(doc.data());
-  //           });
-  //           setGames(gameArr);
-  //         })
-  //         .catch(function(error) {
-  //           console.log('Error getting documents: ', error);
-  //         });
+  // function modifyDisplay() {
+  //   // console.log(expand);
+  //   console.log(display);
+  //   if (expand === true) {
+  //     setDisplay('block');
+  //   } else {
+  //     setDisplay('none');
   //   }
-  // }, [ref, initialize, sortBy, setGames]);
+  // }
+  // useEffect(modifyDisplay, [expand]);
+
+  const handleExpandClick = () => {
+    setExpand(!expand);
+    console.log('click');
+  };
+
   function loadGameCard(item, index) {
-    let display;
+    
+    let displayCard;
+    if (expand === false) {
     if (index < 3) {
-      display = 'block';
+      displayCard = 'block';
     // } else if (index === 2) {
     //   display = { xs: 'none',md: 'none', lg: 'block' };
     } else if (index === 3) {
-      display = { xs: 'block' ,md: 'none', lg: 'block' };
+      displayCard = { xs: 'block' ,md: 'none', lg: 'block' };
     } else if (index < 6) {
-      display = { xs: 'none',md: 'none', lg: 'none', xl: 'block' };
+      displayCard = { xs: 'none', md: 'none', lg: 'none', xl: 'block' };
     } else {
-      display = 'none';
+      displayCard = 'none';
     }
-    return <Grid key={item['id']} item xs={12} sm={6} xl={2} lg={3} md={4}>
-      <Box display={display}>
+  } else {
+    displayCard = 'block';
+  }
+    const component= <Grid key={item['id']} item xs={12} sm={6} xl={2} lg={3} md={4}>
+      <Box display={displayCard}>
       <GameCard id={item['id']}
         image={item['image']}
         name={item['Name']}
@@ -67,6 +73,11 @@ export default function GameCategory({category, games}) {
         minAge={item['minAge']}
         weight={item['weight']} /></Box>
     </Grid>
+    if (index === 5) {
+      console.log(component);
+    }
+    
+    return component
   }
 
   return (
@@ -75,6 +86,12 @@ export default function GameCategory({category, games}) {
       <Grid container justify="flex-start" alignItems="stretch" spacing={4}>
       {games.map((item, index) => loadGameCard(item, index)
         )}
+        {/* <div onClick={() => setExpand(!expand)}> */}
+        {/* <div onClick={console.log('click')}> */}
+        <IconButton className={classes.expand} onClick={handleExpandClick}>
+          <ExpandMore />
+        </IconButton>
+        {/* </div> */}
         </Grid>
     </Box>
     );
