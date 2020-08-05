@@ -42,23 +42,27 @@ export default function GameCategory({category, games}) {
   };
 
   function loadGameCard(item, index) {
+    let display = 'none';
+    if (expand === true) {
+      display = 'block';
+    }
     
     let displayCard;
-    if (expand === false) {
+    // if (expand === false) {
     if (index < 3) {
       displayCard = 'block';
     // } else if (index === 2) {
     //   display = { xs: 'none',md: 'none', lg: 'block' };
     } else if (index === 3) {
-      displayCard = { xs: 'block' ,md: 'none', lg: 'block' };
+      displayCard = { xs: 'block' ,md: display, lg: 'block' };
     } else if (index < 6) {
-      displayCard = { xs: 'none', md: 'none', lg: 'none', xl: 'block' };
+      displayCard = { xs: display, md: display, lg: display, xl: 'block' };
     } else {
-      displayCard = 'none';
+      displayCard = display;
     }
-  } else {
-    displayCard = 'block';
-  }
+  // } else {
+  //   displayCard = 'block';
+  // }
     const component= <Grid key={item['id']} item xs={12} sm={6} xl={2} lg={3} md={4}>
       <Box display={displayCard}>
       <GameCard id={item['id']}
