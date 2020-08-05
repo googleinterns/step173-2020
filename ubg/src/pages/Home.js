@@ -4,8 +4,7 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import {useFirestore} from 'reactfire';
-import GameCard from '../search/GameCard';
-import Carousel from 'react-elastic-carousel';
+import GameCategory from '../home/GameCategory';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -22,28 +21,75 @@ const useStyles = makeStyles((theme) => ({
  */
 export default function Home() {
   const classes = useStyles();
-  const [games, setGames] = React.useState([]);
+  const [topRated, setTopRated] = React.useState([]);
+  const [fantasy, setFantasy] = React.useState([]);
+  const [economic, setEconomic] = React.useState([]);
+  const [cardGame, setCardGame] = React.useState([]);
+  const [beginner, setBeginner] = React.useState([]);
   const ref = useFirestore().collection('games');
   const [initialize, setInitialize] = React.useState(false);
   const [sortBy] = React.useState('rating');
 
-  useEffect(() => {
+  /**
+   * @return {undefined}
+   */
+  function loadData() {
     if (initialize === false) {
-      const gameArr = [];
-      ref.orderBy(sortBy, 'desc').limit(10)
+      const topRatedArr = [];
+      setInitialize(true);
+      ref.orderBy(sortBy, 'desc').limit(12)
           .get()
           .then((querySnapshot) => {
-            setInitialize(true);
             querySnapshot.forEach((doc) => {
-              gameArr.push(doc.data());
+              topRatedArr.push(doc.data());
             });
-            setGames(gameArr);
+            setTopRated(topRatedArr);
+          })
+          .catch(function(error) {
+            console.log('Error getting documents: ', error);
+          });
+      const beginnerArr = [];
+      ref.orderBy('weight').limit(12)
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              beginnerArr.push(doc.data());
+            });
+            setBeginner(beginnerArr);
+          })
+          .catch(function(error) {
+            console.log('Error getting documents: ', error);
+          });
+      const fantasyArr = [];
+      const economicArr = [];
+      const cardGameArr = [];
+      ref.orderBy('rating')
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              if (doc.data()['categories'].includes('Fantasy') &&
+              fantasyArr.length < 12) {
+                fantasyArr.push(doc.data());
+              }
+              if (doc.data()['categories'].includes('Economic') &&
+              economicArr.length < 12) {
+                economicArr.push(doc.data());
+              }
+              if (doc.data()['categories'].includes('Card Game') &&
+              cardGameArr.length < 12) {
+                cardGameArr.push(doc.data());
+              }
+            });
+            setFantasy(fantasyArr);
+            setEconomic(economicArr);
+            setCardGame(cardGameArr);
           })
           .catch(function(error) {
             console.log('Error getting documents: ', error);
           });
     }
-  }, [ref, initialize, sortBy, setGames]);
+  }
+  useEffect(loadData, [initialize]);
 
   return (
     <div>
@@ -60,40 +106,11 @@ export default function Home() {
           Welcome to UltimateBoardGame!
         </Typography>
       </Box>
-      <Box
-        className={classes.box}
-        container='true'
-        m={10}
-      >
-        <Typography variant='h5'>
-          Top-Rated Games
-        </Typography>
-        <br />
-        <Carousel
-          itemPadding={[10, 15]}
-          itemsToShow={5}
-          itemsToScroll={5}
-        >
-          {games.map((game) => {
-            return (
-              <GameCard className={classes.card}
-                key={game.id}
-                id={game.id}
-                image={game.image}
-                name={game.Name}
-                year={game.year}
-                minTime={game.minPlaytime}
-                maxTime={game.maxPlaytime}
-                minPlayer={game.minPlayer}
-                maxPlayer={game.maxPlayer}
-                rating={game.rating}
-                minAge={game.minAge}
-                weight={game.weight}
-              />
-            );
-          })}
-        </Carousel>
-      </Box>
+      <GameCategory category={'Top Rated'} games={topRated}/>
+      <GameCategory category={'For Beginners'} games={beginner}/>
+      <GameCategory category={'Fantasy'} games={fantasy}/>
+      <GameCategory category={'Card Game'} games={cardGame}/>
+      <GameCategory category={'Economic'} games={economic}/>
     </div>
   );
 }
