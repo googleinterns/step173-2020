@@ -2,6 +2,7 @@ import React from 'react';
 import Box from '@material-ui/core/Box';
 import GameCard from '../search/GameCard';
 import Carousel from 'react-elastic-carousel';
+import PropTypes from 'prop-types';
 
 const breakPoints = [
   {width: 1, itemsToShow: 1},
@@ -21,12 +22,12 @@ export default function GameCategory({category, games}) {
     <Box m={10} container='true'>
       <h1>{category}</h1>
       <Carousel
-       itemPadding={[10, 15]}
+        itemPadding={[10, 15]}
         breakPoints={breakPoints}
       >
         {games.map((game) => {
           return (
-            <GameCard 
+            <GameCard
               key={game.id}
               id={game.id}
               image={game.image}
