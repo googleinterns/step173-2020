@@ -20,6 +20,12 @@ import Paper from '@material-ui/core/Paper';
 import ChatIcon from '@material-ui/icons/Chat';
 import Chat from '../common/Chat';
 import NotFound from '../pages/NotFound';
+import Modal from '@material-ui/core/Modal';
+// import Select from '@material-ui/core/Select';
+// import InputLabel from '@material-ui/core/InputLabel';
+// import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import TextField from '@material-ui/core/TextField';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -90,6 +96,27 @@ const useStyles = makeStyles((theme) => ({
   sideMargin10px: {
     margin: '0 10px',
   },
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  paper: {
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  root: {
+    '& > *': {
+      margin: theme.spacing(1),
+      width: '25ch',
+    },
+  },
 }));
 
 /**
@@ -108,9 +135,29 @@ export default function WaitingRoom() {
   const game = useFirestoreDocData(
       useFirestore().collection('games').doc(roomData.gameId || ' '),
   );
+  const minPlayers = 4;
+  const minRole = 1;
+  const [numPlayers, setNumPlayers] = useState(usersData.length);
   const [open, setOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [message, setMessage] = useState('');
+  const [mafia, setMafia] = useState(0);
+  const [villager, setVillager] = useState(0);
+  const [doctor, setDoctor] = useState(0);
+  const [detective, setDetective] = useState(0);
+  const handleVillager = (event) => {
+    setVillager(event.target.value);
+  };
+  const handleMafia = (event) => {
+    setMafia(event.target.value);
+  };
+  const handleDoctor = (event) => {
+    setDoctor(event.target.value);
+  };
+  const handleDetective = (event) => {
+    setDetective(event.target.value);
+  };
 
   /**
    * Get previous value of variable
@@ -151,6 +198,7 @@ export default function WaitingRoom() {
       email: user.email,
       uid: user.uid,
     });
+    setNumPlayers(usersData.length);
   }
 
   /**
@@ -166,6 +214,82 @@ export default function WaitingRoom() {
    */
   function leaveRoom() {
     usersCollection.doc(user.uid).delete();
+    setNumPlayers(usersData.length);
+  }
+
+  function AssignRoles() {
+    // loop through all users and randomly assign a role
+    leaveRoom();
+  }
+
+  function Settings() {
+    setNumPlayers(usersData.length);
+
+    return (
+      <div>
+        <Typography variant='h4' className={classes.fonts}>
+          SETTINGS
+        </Typography>
+        <br />
+        <Typography variant='body1'>
+          Number of players: {numPlayers}
+        </Typography>
+        <br />
+        <FormControl className={classes.formControl}>
+          <TextField
+            error
+            id="villager-text"
+            label="Villagers"
+            variant="outlined"
+            type='number'
+            defaultValue={villager}
+            onChange={handleVillager}
+            helperText='Must be at least 1'
+          />
+        </FormControl>
+        <FormControl className={classes.formControl}>
+          <TextField
+            id="mafia-text"
+            label="Mafia"
+            variant="outlined"
+            type='number'
+            defaultValue={mafia}
+            onChange={handleMafia}
+          />
+        </FormControl>
+        <FormControl className={classes.formControl}>
+          <TextField
+            id="detective-text"
+            label="Detective"
+            variant="outlined"
+            type='number'
+            defaultValue={detective}
+            onChange={handleDetective}
+          />
+        </FormControl>
+        <FormControl className={classes.formControl}>
+          <TextField
+            id="doctor-text"
+            label="Doctor"
+            variant="outlined"
+            type='number'
+            defaultValue={doctor}
+            onChange={handleDoctor}
+          />
+        </FormControl>
+        <br /> <br />
+        {numPlayers != villager + mafia + detective + doctor ? (
+          <Typography variant='body1'>
+            Not a valid combination
+          </Typography>
+        ) : null}
+        <br /> <br />
+        <form onSubmit={AssignRoles}>
+            <Button variant="contained" color="primary" type="submit">
+                Start Game</Button>
+          </form>
+      </div>
+    );
   }
 
   /**
@@ -209,11 +333,26 @@ export default function WaitingRoom() {
                       (
                         <div className={classes.inRoomBtns}>
                           { roomData.host === user.uid ?
-                            <Button
-                              className={classes.btn}
-                              variant="contained"
-                              color="primary"
-                            >Start Game</Button> :
+                            <div>
+                              <Button
+                                disabled={minPlayers <= numPlayers}
+                                className={classes.btn}
+                                variant="contained"
+                                color="primary"
+                                onClick={() => setSettingsOpen(true)}
+                              >Start Game</Button>
+                              <Modal
+                                open={settingsOpen}
+                                onClose={() => setSettingsOpen(false)}
+                                aria-labelledby="simple-modal-title"
+                                aria-describedby="simple-modal-description"
+                                className={classes.modal}
+                              >
+                                <div className={classes.paper}>
+                                  <Settings />
+                                </div>
+                              </Modal>
+                            </div> :
                             'Waiting for the host'}
                           <Button
                             className={classes.btn}
