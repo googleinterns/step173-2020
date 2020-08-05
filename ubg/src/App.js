@@ -6,9 +6,8 @@ import {
 } from 'react-router-dom';
 import Home from './pages/Home';
 import Game from './pages/Game';
-// import Room from './pages/Room';
 import Search from './pages/Search';
-import WaitingRoom from './pages/WaitingRoom';
+import Room from './pages/Room';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
 import {FirebaseAppProvider} from 'reactfire';
@@ -46,7 +45,7 @@ function App() {
               <Game />
             </Route>
             <Route exact path="/gameRoom/:roomId">
-              <WaitingRoom/>
+              <Room />
             </Route>
             <Route exact path="/profile">
               <Profile />

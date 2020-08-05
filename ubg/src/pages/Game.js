@@ -70,7 +70,7 @@ export default function Game() {
    */
   async function createRoom() {
     const newRoom = await roomsCollection.doc();
-    newRoom.set({gameId, host: user.uid, chat: []});
+    newRoom.set({gameId, host: user.uid, chat: [], started: false});
     history.push(`/gameRoom/${newRoom.id}`);
   }
   /**

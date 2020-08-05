@@ -2,11 +2,10 @@ import React from 'react';
 import Slide from '@material-ui/core/Slide';
 import {makeStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import Paper from '@material-ui/core/Paper';
 
 const useStyles = makeStyles((theme) => ({
   rules: {
-    background: 'white',
-    borderRadius: '5%',
     borderTop: '1px solid black',
     textAlign: 'left',
   },
@@ -22,9 +21,9 @@ export default function RulesDrawer({open, rules}) {
 
   return (
     <Slide direction="up" in={open} mountOnEnter unmountOnExit>
-      <div className={classes.rules}>
+      <Paper className={classes.rules}>
         {rules}
-      </div>
+      </Paper>
     </Slide>
   );
 }
