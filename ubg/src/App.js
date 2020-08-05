@@ -10,6 +10,7 @@ import Game from './pages/Game';
 import Search from './pages/Search';
 import WaitingRoom from './pages/WaitingRoom';
 import Profile from './pages/Profile';
+import NotFound from './pages/NotFound';
 import {FirebaseAppProvider} from 'reactfire';
 
 const firebaseConfig = {
@@ -49,6 +50,9 @@ function App() {
             </Route>
             <Route exact path="/gameRoom/:roomId">
               <WaitingRoom/>
+            </Route>
+            <Route path="/">
+              <NotFound />
             </Route>
           </Switch>
         </Router>
