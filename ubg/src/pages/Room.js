@@ -99,7 +99,10 @@ export default function Room() {
     return ref.current;
   }
 
-  function openSnackbar() {
+  /**
+   * Open snackbar when user joins or leaves
+   */
+  function userSnackbar() {
     if (prevUsersData) {
       const usersJoined = usersData.filter((x) => !prevUsersData.includes(x));
       const usersLeft = prevUsersData.filter((x) => !usersData.includes(x));
@@ -120,7 +123,7 @@ export default function Room() {
     }
   }
 
-  useEffect(openSnackbar, [usersData, prevUsersData]);
+  useEffect(userSnackbar, [usersData, prevUsersData]);
 
   /**
    * Add user to the users collection in the room
