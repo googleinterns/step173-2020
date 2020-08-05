@@ -20,6 +20,11 @@ import Paper from '@material-ui/core/Paper';
 import ChatIcon from '@material-ui/icons/Chat';
 import Chat from '../common/Chat';
 import NotFound from '../pages/NotFound';
+import Modal from '@material-ui/core/Modal';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -90,6 +95,21 @@ const useStyles = makeStyles((theme) => ({
   sideMargin10px: {
     margin: '0 10px',
   },
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  paper: {
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
 }));
 
 /**
@@ -110,7 +130,24 @@ export default function WaitingRoom() {
   );
   const [open, setOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [message, setMessage] = useState('');
+  const [mafia, setMafia] = useState(0);
+  const [villager, setVillager] = useState(0);
+  const [doctor, setDoctor] = useState(0);
+  const [detective, setDetective] = useState(0);
+  const handleVillager = (event) => {
+    setVillager(event.target.value);
+  };
+  const handleMafia = (event) => {
+    setMafia(event.target.value);
+  };
+  const handleDoctor = (event) => {
+    setDoctor(event.target.value);
+  };
+  const handleDetective = (event) => {
+    setDetective(event.target.value);
+  };
 
   /**
    * Get previous value of variable
@@ -168,6 +205,74 @@ export default function WaitingRoom() {
     usersCollection.doc(user.uid).delete();
   }
 
+  function Settings() {
+    return (
+      <div>
+        <Typography variant='h4' className={classes.fonts}>
+          SETTINGS
+        </Typography>
+        <br />
+        <FormControl className={classes.formControl}>
+          <InputLabel id="villager-label">Villagers</InputLabel>
+          <Select
+            labelId="villager-label"
+            id="villager-select"
+            value={villager}
+            onChange={handleVillager}
+          >
+            <MenuItem value={1}>1</MenuItem>
+            <MenuItem value={2}>2</MenuItem>
+            <MenuItem value={3}>3</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl className={classes.formControl}>
+          <InputLabel id="mafia-label">Mafia</InputLabel>
+          <Select
+            labelId="mafia-label"
+            id="mafia-select"
+            value={mafia}
+            onChange={handleMafia}
+          >
+            <MenuItem value={1}>1</MenuItem>
+            <MenuItem value={2}>2</MenuItem>
+            <MenuItem value={3}>3</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl className={classes.formControl}>
+          <InputLabel id="detective-label">Detective</InputLabel>
+          <Select
+            labelId="detective-label"
+            id="detective-select"
+            value={detective}
+            onChange={handleDetective}
+          >
+            <MenuItem value={1}>1</MenuItem>
+            <MenuItem value={2}>2</MenuItem>
+            <MenuItem value={3}>3</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl className={classes.formControl}>
+          <InputLabel id="doctor-label">Doctor</InputLabel>
+          <Select
+            labelId="doctor-label"
+            id="doctor-select"
+            value={doctor}
+            onChange={handleDoctor}
+          >
+            <MenuItem value={1}>1</MenuItem>
+            <MenuItem value={2}>2</MenuItem>
+            <MenuItem value={3}>3</MenuItem>
+          </Select>
+        </FormControl>
+        <br /> <br />
+        <form onSubmit={leaveRoom}>
+            <Button variant="contained" color="primary" type="submit">
+                Start Game</Button>
+          </form>
+      </div>
+    );
+  }
+
   /**
    * Check if obj is empty
    * @param {object} obj
@@ -209,11 +314,25 @@ export default function WaitingRoom() {
                       (
                         <div className={classes.inRoomBtns}>
                           { roomData.host === user.uid ?
-                            <Button
-                              className={classes.btn}
-                              variant="contained"
-                              color="primary"
-                            >Start Game</Button> :
+                            <div>
+                              <Button
+                                className={classes.btn}
+                                variant="contained"
+                                color="primary"
+                                onClick={() => setSettingsOpen(true)}
+                              >Start Game</Button>
+                              <Modal
+                                open={settingsOpen}
+                                onClose={() => setSettingsOpen(false)}
+                                aria-labelledby="simple-modal-title"
+                                aria-describedby="simple-modal-description"
+                                className={classes.modal}
+                              >
+                                <div className={classes.paper}>
+                                  <Settings />
+                                </div>
+                              </Modal>
+                            </div> :
                             'Waiting for the host'}
                           <Button
                             className={classes.btn}
