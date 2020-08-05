@@ -56,7 +56,7 @@ export default function WaitingRoom({gameName, gameDescription,
         </Typography>
       </div>
       <div className={classes.game}>
-        <Typography variant='body1'>
+        <Typography variant="body1">
           {gameDescription}
         </Typography>
       </div>

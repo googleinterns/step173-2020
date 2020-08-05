@@ -99,22 +99,28 @@ export default function Room() {
     return ref.current;
   }
 
-  useEffect(() => {
+  function openSnackbar() {
     if (prevUsersData) {
       const usersJoined = usersData.filter((x) => !prevUsersData.includes(x));
       const usersLeft = prevUsersData.filter((x) => !usersData.includes(x));
       if (usersJoined.length > 0) {
-        setOpen(false);
+        if (open) {
+          setOpen(false);
+        }
         setMessage(`${usersJoined[0].displayName} joined the room`);
         setOpen(true);
       }
       if (usersLeft.length > 0) {
-        setOpen(false);
+        if (open) {
+          setOpen(false);
+        }
         setMessage(`${usersLeft[0].displayName} left the room`);
         setOpen(true);
       }
     }
-  }, [usersData, prevUsersData]);
+  }
+
+  useEffect(openSnackbar, [usersData, prevUsersData]);
 
   /**
    * Add user to the users collection in the room
