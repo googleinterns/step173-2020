@@ -21,10 +21,8 @@ import ChatIcon from '@material-ui/icons/Chat';
 import Chat from '../common/Chat';
 import NotFound from '../pages/NotFound';
 import Modal from '@material-ui/core/Modal';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
+import TextField from '@material-ui/core/TextField';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -110,6 +108,12 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     minWidth: 120,
   },
+  root: {
+    '& > *': {
+      margin: theme.spacing(1),
+      width: '25ch',
+    },
+  },
 }));
 
 /**
@@ -128,12 +132,14 @@ export default function WaitingRoom() {
   const game = useFirestoreDocData(
       useFirestore().collection('games').doc(roomData.gameId || ' '),
   );
+  const minPlayers = 4;
+  const [numPlayers, setNumPlayers] = useState(usersData.length);
   const [open, setOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [message, setMessage] = useState('');
-  const [mafia, setMafia] = useState(0);
-  const [villager, setVillager] = useState(0);
+  const [mafia, setMafia] = useState(1);
+  const [villager, setVillager] = useState(1);
   const [doctor, setDoctor] = useState(0);
   const [detective, setDetective] = useState(0);
   const handleVillager = (event) => {
@@ -188,6 +194,7 @@ export default function WaitingRoom() {
       email: user.email,
       uid: user.uid,
     });
+    setNumPlayers(usersData.length);
   }
 
   /**
@@ -203,70 +210,70 @@ export default function WaitingRoom() {
    */
   function leaveRoom() {
     usersCollection.doc(user.uid).delete();
+    setNumPlayers(usersData.length);
   }
 
   function Settings() {
+    setNumPlayers(usersData.length);
+
     return (
       <div>
         <Typography variant='h4' className={classes.fonts}>
           SETTINGS
         </Typography>
         <br />
+        <Typography variant='body1'>
+          Number of players: {numPlayers}
+        </Typography>
+        <br />
         <FormControl className={classes.formControl}>
-          <InputLabel id="villager-label">Villagers</InputLabel>
-          <Select
-            labelId="villager-label"
-            id="villager-select"
-            value={villager}
+          <TextField
+            id="villager-text"
+            label="Villagers"
+            variant="outlined"
+            type='number'
+            defaultValue={villager}
             onChange={handleVillager}
-          >
-            <MenuItem value={1}>1</MenuItem>
-            <MenuItem value={2}>2</MenuItem>
-            <MenuItem value={3}>3</MenuItem>
-          </Select>
+          />
         </FormControl>
         <FormControl className={classes.formControl}>
-          <InputLabel id="mafia-label">Mafia</InputLabel>
-          <Select
-            labelId="mafia-label"
-            id="mafia-select"
-            value={mafia}
+          <TextField
+            id="mafia-text"
+            label="Mafia"
+            variant="outlined"
+            type='number'
+            defaultValue={mafia}
             onChange={handleMafia}
-          >
-            <MenuItem value={1}>1</MenuItem>
-            <MenuItem value={2}>2</MenuItem>
-            <MenuItem value={3}>3</MenuItem>
-          </Select>
+          />
         </FormControl>
         <FormControl className={classes.formControl}>
-          <InputLabel id="detective-label">Detective</InputLabel>
-          <Select
-            labelId="detective-label"
-            id="detective-select"
-            value={detective}
+          <TextField
+            id="detective-text"
+            label="Detective"
+            variant="outlined"
+            type='number'
+            defaultValue={detective}
             onChange={handleDetective}
-          >
-            <MenuItem value={1}>1</MenuItem>
-            <MenuItem value={2}>2</MenuItem>
-            <MenuItem value={3}>3</MenuItem>
-          </Select>
+          />
         </FormControl>
         <FormControl className={classes.formControl}>
-          <InputLabel id="doctor-label">Doctor</InputLabel>
-          <Select
-            labelId="doctor-label"
-            id="doctor-select"
-            value={doctor}
+          <TextField
+            id="doctor-text"
+            label="Doctor"
+            variant="outlined"
+            type='number'
+            defaultValue={doctor}
             onChange={handleDoctor}
-          >
-            <MenuItem value={1}>1</MenuItem>
-            <MenuItem value={2}>2</MenuItem>
-            <MenuItem value={3}>3</MenuItem>
-          </Select>
+          />
         </FormControl>
         <br /> <br />
         <form onSubmit={leaveRoom}>
-            <Button variant="contained" color="primary" type="submit">
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              // disabled={numPlayers !== villager + mafia + detective + doctor}
+            >
                 Start Game</Button>
           </form>
       </div>
@@ -316,6 +323,7 @@ export default function WaitingRoom() {
                           { roomData.host === user.uid ?
                             <div>
                               <Button
+                                disabled={minPlayers <= numPlayers}
                                 className={classes.btn}
                                 variant="contained"
                                 color="primary"
