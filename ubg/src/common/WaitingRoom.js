@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Waiting room element
  */
-export default function WaitingRoom({gameName, gameDescription, 
+export default function WaitingRoom({gameName, gameDescription,
   leaveRoom, joinRoom, inRoom, isHost}) {
   const classes = useStyles();
 
