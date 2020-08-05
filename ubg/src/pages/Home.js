@@ -35,7 +35,8 @@ export default function Home() {
    */
   function loadData() {
     if (initialize === false) {
-      const topRatedArr = [];setInitialize(true);
+      const topRatedArr = [];
+      setInitialize(true);
       ref.orderBy(sortBy, 'desc').limit(12)
           .get()
           .then((querySnapshot) => {
