@@ -31,62 +31,64 @@ export default function Home() {
   const [sortBy] = React.useState('rating');
 
   /**
- * @return {undefined}
- */
-function loadData() {
-  if (initialize === false) {
-    const topRatedArr = [];setInitialize(true);
-    ref.orderBy(sortBy, 'desc').limit(12)
-        .get()
-        .then((querySnapshot) => {
-          
-          querySnapshot.forEach((doc) => {
-            topRatedArr.push(doc.data());
+   * @return {undefined}
+   */
+  function loadData() {
+    if (initialize === false) {
+      const topRatedArr = [];setInitialize(true);
+      ref.orderBy(sortBy, 'desc').limit(12)
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              topRatedArr.push(doc.data());
+            });
+            setTopRated(topRatedArr);
+          })
+          .catch(function(error) {
+            console.log('Error getting documents: ', error);
           });
-          setTopRated(topRatedArr);
-        })
-        .catch(function(error) {
-          console.log('Error getting documents: ', error);
-        });
-    const beginnerArr = [];
-    ref.orderBy('weight').limit(12)
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            beginnerArr.push(doc.data());
+      const beginnerArr = [];
+      ref.orderBy('weight').limit(12)
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              beginnerArr.push(doc.data());
+            });
+            setBeginner(beginnerArr);
+          })
+          .catch(function(error) {
+            console.log('Error getting documents: ', error);
           });
-          setBeginner(beginnerArr);
-        })
-        .catch(function(error) {
-          console.log('Error getting documents: ', error);
-        });
-    const fantasyArr = [];
-    const economicArr = [];
-    const cardGameArr = [];
-    ref.orderBy('rating')
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            if (doc.data()['categories'].includes('Fantasy') && fantasyArr.length < 12) {
-              fantasyArr.push(doc.data());
-            }
-            if (doc.data()['categories'].includes('Economic') && economicArr.length < 12) {
-              economicArr.push(doc.data());
-            }
-            if (doc.data()['categories'].includes('Card Game') && cardGameArr.length < 12) {
-              cardGameArr.push(doc.data());
-            }
+      const fantasyArr = [];
+      const economicArr = [];
+      const cardGameArr = [];
+      ref.orderBy('rating')
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              if (doc.data()['categories'].includes('Fantasy') &&
+              fantasyArr.length < 12) {
+                fantasyArr.push(doc.data());
+              }
+              if (doc.data()['categories'].includes('Economic') &&
+              economicArr.length < 12) {
+                economicArr.push(doc.data());
+              }
+              if (doc.data()['categories'].includes('Card Game') &&
+              cardGameArr.length < 12) {
+                cardGameArr.push(doc.data());
+              }
+            });
+            setFantasy(fantasyArr);
+            setEconomic(economicArr);
+            setCardGame(cardGameArr);
+          })
+          .catch(function(error) {
+            console.log('Error getting documents: ', error);
           });
-          setFantasy(fantasyArr);
-          setEconomic(economicArr);
-          setCardGame(cardGameArr);
-        })
-        .catch(function(error) {
-          console.log('Error getting documents: ', error);
-        });
+    }
   }
-}
-useEffect(loadData, [initialize]);
+  useEffect(loadData, [initialize]);
 
   return (
     <div>
