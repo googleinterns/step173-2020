@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Player({name}) {
   const classes = useStyles();
   return (
-    <Grid  item xs={12} sm={6} xl={2} lg={3} md={4}>
+    <Grid item xs={12} sm={6} xl={2} lg={3} md={4}>
       <Card className={classes.card} >
         <CardActionArea>
           <CardContent>
