@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Waiting room element
  */
 export default function WaitingRoom({usersData, gameName, gameDescription,
-  leaveRoom, joinRoom, inRoom, isHost, roomData, usersCollection, startGame}) {
+  leaveRoom, joinRoom, inRoom, isHost, usersCollection, startGame, roomData}) {
   const classes = useStyles();
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -81,31 +81,32 @@ export default function WaitingRoom({usersData, gameName, gameDescription,
               <div className={classes.inRoomBtns}>
                 { isHost ?
                   <div>
-                  <Button
-                    className={classes.btn}
-                    variant="contained"
-                    color="primary"
-                    onClick={() => setSettingsOpen(true)}
-                  >
-                    Start Game
-                  </Button>
-                  <Modal
-                    open={settingsOpen}
-                    onClose={() => setSettingsOpen(false)}
-                    aria-labelledby="simple-modal-title"
-                    aria-describedby="simple-modal-description"
-                    className={classes.modal}
-                  >
-                    <div className={classes.paper}>
-                      <SettingsModal
-                        usersData={usersData}
-                        roomData={roomData}
-                        usersCollection={usersCollection}
-                        startGame={startGame}
-                      />
-                    </div>
-                  </Modal>
-                </div> :
+                    <Button
+                      className={classes.btn}
+                      variant="contained"
+                      color="primary"
+                      onClick={() => {
+                        roomData.gameId === '925' && setSettingsOpen(true)
+                      }}
+                    >
+                      Start Game
+                    </Button>
+                    <Modal
+                      open={settingsOpen}
+                      onClose={() => setSettingsOpen(false)}
+                      aria-labelledby="simple-modal-title"
+                      aria-describedby="simple-modal-description"
+                      className={classes.modal}
+                    >
+                      <div className={classes.paper}>
+                        <SettingsModal
+                          usersData={usersData}
+                          usersCollection={usersCollection}
+                          startGame={startGame}
+                        />
+                      </div>
+                    </Modal>
+                  </div> :
                   'Waiting for the host'}
                 <Button
                   className={classes.btn}
@@ -133,4 +134,8 @@ WaitingRoom.propTypes = {
   joinRoom: PropTypes.func,
   inRoom: PropTypes.bool,
   isHost: PropTypes.bool,
+  usersData: PropTypes.object,
+  usersCollection: PropTypes.object,
+  startGame: PropTypes.func,
+  roomData: PropTypes.object,
 };

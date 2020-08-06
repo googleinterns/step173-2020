@@ -154,6 +154,9 @@ export default function Room() {
     usersCollection.doc(user.uid).delete();
   }
 
+  /**
+   * Update the game to start
+   */
   function startGame() {
     room.update({
       started: true,
@@ -200,9 +203,9 @@ export default function Room() {
                     joinRoom={joinRoom}
                     inRoom={usersData.some((u) => u.uid === user.uid)}
                     isHost={roomData.host === user.uid}
-                    roomData={roomData}
                     usersCollection={usersCollection}
                     startGame={startGame}
+                    roomData={roomData}
                   />
                 }
               </Grid>

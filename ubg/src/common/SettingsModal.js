@@ -5,6 +5,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import {useState, useEffect} from 'react';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
@@ -17,11 +18,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Settings({usersData, roomData, usersCollection, startGame}) {
+/**
+ * @param {object} usersData User collection data
+ * @param {object} usersCollection Users collection
+ * @param {func} startGame Updates the game to start
+ * @return {ReactElement} Mafia modal element
+ */
+export default function Settings({usersData, usersCollection, startGame}) {
   const classes = useStyles();
-  //  const minPlayers = 4;
-  // const indices = [0, 1];
-  let users = [];
+  //  const minPlayers = 4;  for when we have enough players
+  const users = [];
   let cutoff = 0;
   let prevCutoff = 0;
   const [villager, setVillager] = useState(usersData.length);
@@ -30,42 +36,35 @@ export default function Settings({usersData, roomData, usersCollection, startGam
   const [doctor, setDoctor] = useState(0);
   const [disabled, setDisabled] = useState(false);
 
+  /**
+   * Retrieves users from db in random ordering, assigns roles, and starts game
+   * @param {*} event
+   */
   function assignRoles(event) {
     event.preventDefault();
 
-    // for (let i = 0; i < usersData.length; i++) {
-    //   const temp = Math.floor(Math.random() * usersData.length);
-    //   if (indices.indexOf(temp) === -1 && temp !== 0) {
-    //     indices.push(temp);
-    //   } else {
-    //     i--;
-    //   }
-    // };
-    // usersData.forEach((user) => {
-    //   let index = Math.floor(Math.random() * usersData.length);
-    //   while (indices[index] !== undefined) {
-    //     index = Math.floor(Math.random() * usersData.length);
-    //   }
-    //   users = [...users.slice(0, index),
-    //               ...user,
-    //               ...users.slice(index)]
-    // });
-
+    // order by order property assigned upon joining room
     usersCollection.orderBy('order')
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((user) => {
-          users.push(user.data().uid);
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((user) => {
+            users.push(user.data().uid);
+          });
+        })
+        .then(() => {
+          assignRole(villager, 1);
+          assignRole(mafia, 2);
+          assignRole(detective, 3);
+          assignRole(doctor, 4);
+          startGame();
         });
-      });
-
-    assignRole(villager, 1);
-    assignRole(mafia, 2);
-    assignRole(detective, 3);
-    assignRole(doctor, 4);
-    startGame();
   }
 
+  /**
+   * Assigns individual role
+   * @param {string} role Current role being assigned
+   * @param {number} roleNum Assigned number to current role
+   */
   function assignRole(role, roleNum) {
     for (let i = cutoff; i < parseInt(role) + prevCutoff; i++) {
       usersCollection.doc(users[i]).update({
@@ -74,13 +73,13 @@ export default function Settings({usersData, roomData, usersCollection, startGam
       cutoff++;
     };
     prevCutoff = cutoff;
-  } 
+  }
 
   useEffect(() => {
     setDisabled(
         (usersData.length !== parseInt(villager) + parseInt(mafia) +
       parseInt(detective) + parseInt(doctor)),
-        //  ||
+        //  ||  for when we have enough players
         //  (usersData.length < minPlayers) ||
         //  (parseInt(villager) < 1) ||
         //  (parseInt(mafia) < 1)
@@ -155,3 +154,9 @@ export default function Settings({usersData, roomData, usersCollection, startGam
     </div>
   );
 }
+
+Settings.propTypes = {
+  usersData: PropTypes.object,
+  usersCollection: PropTypes.object,
+  startGame: PropTypes.func,
+};
