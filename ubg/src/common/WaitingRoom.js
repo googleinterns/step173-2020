@@ -86,7 +86,7 @@ export default function WaitingRoom({usersData, gameName, gameDescription,
                       variant="contained"
                       color="primary"
                       onClick={() => {
-                        roomData.gameId === '925' && setSettingsOpen(true)
+                        roomData.gameId === '925' && setSettingsOpen(true);
                       }}
                     >
                       Start Game
