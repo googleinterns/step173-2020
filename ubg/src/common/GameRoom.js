@@ -4,6 +4,8 @@ import RulesDrawer from './RulesDrawer';
 import IconButton from '@material-ui/core/IconButton';
 import UpIcon from '@material-ui/icons/ExpandLess';
 import DownIcon from '@material-ui/icons/ExpandMore';
+import MafiaGame from '../mafia/MafiaGame';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -28,14 +30,21 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Game room element
  */
-export default function Room() {
+export default function GameRoom({gameRules, roomData}) {
   const [openRules, setOpenRules] = useState(false);
   const classes = useStyles();
 
   return (
     <div className={classes.main}>
       <div className={classes.game}>
-        Game
+        {/* Check if gamId is mafia
+        (not sure if 925 id mafia) */}
+        { roomData.gameId === '925' ?
+          <MafiaGame
+            day={roomData.day}
+          /> :
+          'no game'
+        }
       </div>
       <div className={classes.rules}>
         <IconButton onClick={() => setOpenRules(!openRules)} >
@@ -43,9 +52,14 @@ export default function Room() {
         </IconButton>
         <RulesDrawer
           open={openRules}
-          rules="Here is the game description"
+          rules={gameRules}
         />
       </div>
     </div>
   );
 }
+
+GameRoom.propTypes = {
+  gameRules: PropTypes.string,
+  roomData: PropTypes.object,
+};
