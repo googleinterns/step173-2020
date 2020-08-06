@@ -134,7 +134,8 @@ export default function Room() {
       email: user.email,
       uid: user.uid,
       role: null,
-      alive: true, 
+      alive: true,
+      order: Math.floor(Math.random() * 20),
     });
   }
 

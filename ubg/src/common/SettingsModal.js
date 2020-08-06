@@ -20,8 +20,8 @@ const useStyles = makeStyles((theme) => ({
 export default function Settings({usersData, roomData, usersCollection, startGame}) {
   const classes = useStyles();
   //  const minPlayers = 4;
-  const indices = [0, 1];
-  const users = [];
+  // const indices = [0, 1];
+  let users = [];
   let cutoff = 0;
   let prevCutoff = 0;
   const [villager, setVillager] = useState(usersData.length);
@@ -41,9 +41,23 @@ export default function Settings({usersData, roomData, usersCollection, startGam
     //     i--;
     //   }
     // };
-    usersData.forEach((user) => {
-      users.push(user.uid);
-    });
+    // usersData.forEach((user) => {
+    //   let index = Math.floor(Math.random() * usersData.length);
+    //   while (indices[index] !== undefined) {
+    //     index = Math.floor(Math.random() * usersData.length);
+    //   }
+    //   users = [...users.slice(0, index),
+    //               ...user,
+    //               ...users.slice(index)]
+    // });
+
+    usersCollection.orderBy('order')
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((user) => {
+          users.push(user.data().uid);
+        });
+      });
 
     assignRole(villager, 1);
     assignRole(mafia, 2);
@@ -54,7 +68,7 @@ export default function Settings({usersData, roomData, usersCollection, startGam
 
   function assignRole(role, roleNum) {
     for (let i = cutoff; i < parseInt(role) + prevCutoff; i++) {
-      usersCollection.doc(users[indices[i]]).update({
+      usersCollection.doc(users[i]).update({
         role: roleNum,
       });
       cutoff++;
