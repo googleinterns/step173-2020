@@ -159,6 +159,9 @@ export default function Room() {
    */
   function startGame() {
     room.update({
+      day: false,
+      doctorSave: null,
+      mafiaKill: null,
       started: true,
     }).catch(function(error) {
       console.error('Error starting game: ', error);
