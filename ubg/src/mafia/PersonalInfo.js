@@ -26,11 +26,15 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @param {string} name name of player
  * @param {string} role role of player
- * @param {string} state alive or dead
+ * @param {boolean} alive alive or dead
  * @return {ReactElement} Card with infomation of player's role
  */
-export default function PersonalInfo({name, role, state}) {
+export default function PersonalInfo({name, role, alive}) {
   const classes = useStyles();
+  let state = 'alive';
+  if (alive === false) {
+    state = 'dead';
+  }
 
   return (
     <Card className={classes.root}>
@@ -60,5 +64,5 @@ export default function PersonalInfo({name, role, state}) {
 PersonalInfo.propTypes = {
   name: PropTypes.string,
   role: PropTypes.string,
-  state: PropTypes.string,
+  alive: PropTypes.bool,
 };
