@@ -8,5 +8,5 @@ export default function MafiaNight() {
     <div>
       night
     </div>
-  )
+  );
 }
