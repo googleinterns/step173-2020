@@ -101,14 +101,14 @@ export default function Room() {
 
   /**
    * Find first difference in arrays
-   * @param {Array} array1 
-   * @param {Array} array2 
-   * @return {string} user's name or null if no difference exists 
+   * @param {Array} array1
+   * @param {Array} array2
+   * @return {string} user's name or null if no difference exists
    */
   function findDifference(array1, array2) {
     let difference = true;
     for (let i = 0; i < array1.length; i++) {
-      for( let j = 0; j < array2.length; j++) {
+      for ( let j = 0; j < array2.length; j++) {
         if (array1[i].uid === array2[j].uid) {
           difference = false;
         }
