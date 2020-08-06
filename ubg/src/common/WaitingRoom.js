@@ -1,7 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import Modal from '@material-ui/core/Modal';
+import SettingsModal from '../mafia/SettingsModal';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
@@ -39,14 +41,26 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  paper: {
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
 }));
 
 /**
  * @return {ReactElement} Waiting room element
  */
-export default function WaitingRoom({gameName, gameDescription,
-  leaveRoom, joinRoom, inRoom, isHost}) {
+export default function WaitingRoom({usersData, gameName, gameDescription,
+  leaveRoom, joinRoom, inRoom, isHost, usersCollection, startGame, roomData}) {
   const classes = useStyles();
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
     <div className={classes.main}>
@@ -66,11 +80,33 @@ export default function WaitingRoom({gameName, gameDescription,
             (
               <div className={classes.inRoomBtns}>
                 { isHost ?
-                  <Button
-                    className={classes.btn}
-                    variant="contained"
-                    color="primary"
-                  >Start Game</Button> :
+                  <div>
+                    <Button
+                      className={classes.btn}
+                      variant="contained"
+                      color="primary"
+                      onClick={() => {
+                        roomData.gameId === '925' && setSettingsOpen(true);
+                      }}
+                    >
+                      Start Game
+                    </Button>
+                    <Modal
+                      open={settingsOpen}
+                      onClose={() => setSettingsOpen(false)}
+                      aria-labelledby="simple-modal-title"
+                      aria-describedby="simple-modal-description"
+                      className={classes.modal}
+                    >
+                      <div className={classes.paper}>
+                        <SettingsModal
+                          usersData={usersData}
+                          usersCollection={usersCollection}
+                          startGame={startGame}
+                        />
+                      </div>
+                    </Modal>
+                  </div> :
                   'Waiting for the host'}
                 <Button
                   className={classes.btn}
@@ -98,4 +134,8 @@ WaitingRoom.propTypes = {
   joinRoom: PropTypes.func,
   inRoom: PropTypes.bool,
   isHost: PropTypes.bool,
+  usersData: PropTypes.object,
+  usersCollection: PropTypes.object,
+  startGame: PropTypes.func,
+  roomData: PropTypes.object,
 };
