@@ -100,24 +100,46 @@ export default function Room() {
   }
 
   /**
+   * Find first difference in arrays
+   * @param {Array} array1 
+   * @param {Array} array2 
+   * @return {string} user's name or null if no difference exists 
+   */
+  function findDifference(array1, array2) {
+    let difference = true;
+    for (let i = 0; i < array1.length; i++) {
+      for( let j = 0; j < array2.length; j++) {
+        if (array1[i].uid === array2[j].uid) {
+          difference = false;
+        }
+      }
+      if (difference) {
+        return array1[i].displayName;
+      }
+      difference = true;
+    }
+    return null;
+  }
+
+  /**
    * Open snackbar when user joins or leaves
    */
   function userSnackbar() {
     if (prevUsersData) {
-      const usersJoined = usersData.filter((x) => !prevUsersData.includes(x));
-      const usersLeft = prevUsersData.filter((x) => !usersData.includes(x));
-      if (usersJoined.length > 0) {
+      const userJoined = findDifference(usersData, prevUsersData);
+      const userLeft = findDifference(prevUsersData, usersData);
+      if (userJoined) {
         if (open) {
           setOpen(false);
         }
-        setMessage(`${usersJoined[0].displayName} joined the room`);
+        setMessage(`${userJoined} joined the room`);
         setOpen(true);
       }
-      if (usersLeft.length > 0) {
+      if (userLeft) {
         if (open) {
           setOpen(false);
         }
-        setMessage(`${usersLeft[0].displayName} left the room`);
+        setMessage(`${userLeft} left the room`);
         setOpen(true);
       }
     }
