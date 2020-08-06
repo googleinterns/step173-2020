@@ -177,7 +177,10 @@ export default function Room() {
             <Grid className={classes.main} container>
               <Grid className={classes.gameContainer} item xs={9}>
                 { roomData.started ?
-                  <GameRoom /> :
+                  <GameRoom
+                    gameRules={game.description}
+                    roomData={roomData}
+                  /> :
                   <WaitingRoom
                     gameName={game.Name}
                     gameDescription={game.description}
