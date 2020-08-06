@@ -155,6 +155,9 @@ export default function Room() {
       displayName: user.displayName,
       email: user.email,
       uid: user.uid,
+      role: null,
+      alive: true,
+      order: Math.floor(Math.random() * 20),
     });
   }
 
@@ -171,6 +174,17 @@ export default function Room() {
    */
   function leaveRoom() {
     usersCollection.doc(user.uid).delete();
+  }
+
+  /**
+   * Update the game to start
+   */
+  function startGame() {
+    room.update({
+      started: true,
+    }).catch(function(error) {
+      console.error('Error starting game: ', error);
+    });
   }
 
   /**
@@ -204,12 +218,16 @@ export default function Room() {
                     roomData={roomData}
                   /> :
                   <WaitingRoom
+                    usersData={usersData}
                     gameName={game.Name}
                     gameDescription={game.description}
                     leaveRoom={leaveRoom}
                     joinRoom={joinRoom}
                     inRoom={usersData.some((u) => u.uid === user.uid)}
                     isHost={roomData.host === user.uid}
+                    usersCollection={usersCollection}
+                    startGame={startGame}
+                    roomData={roomData}
                   />
                 }
               </Grid>
