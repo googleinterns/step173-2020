@@ -75,6 +75,11 @@ export default function MafiaNight() {
    * Load the all the mafia related data
    */
   useEffect(loadNightData, [initialize]);
+
+  function handleClick(u) {
+    console.log('You choose ' + u.displayName);
+  }
+
   return (
     <Grid className={classes.gameContainer} item>
       <PersonalInfo
@@ -92,7 +97,8 @@ export default function MafiaNight() {
               return (
                 <Player
                   key={u.uid}
-                  name={u.displayName}
+                  player={u}
+                  handleClick={handleClick}
                 />
               );
             })

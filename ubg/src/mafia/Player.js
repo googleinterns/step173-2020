@@ -14,18 +14,19 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 /**
- * @param {string} name name of player
+ * @param {object} player information of player
+ * @param {object} handleClick function when card is clicked
  * @return {ReactElement} Card with different names to choose
  */
-export default function Player({name}) {
+export default function Player({player, handleClick}) {
   const classes = useStyles();
   return (
     <Grid item xs={12} sm={6} xl={2} lg={3} md={4}>
       <Card className={classes.card}>
-        <CardActionArea>
+        <CardActionArea onClick={() => handleClick(player)}>
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">
-              {name}
+              {player.displayName}
             </Typography>
           </CardContent>
         </CardActionArea>
@@ -35,5 +36,6 @@ export default function Player({name}) {
 }
 
 Player.propTypes = {
-  name: PropTypes.string,
+  name: PropTypes.object,
+  handleClick: PropTypes.func,
 };
