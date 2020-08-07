@@ -36,6 +36,6 @@ export default function Player({player, handleClick}) {
 }
 
 Player.propTypes = {
-  name: PropTypes.object,
+  player: PropTypes.object,
   handleClick: PropTypes.func,
 };
