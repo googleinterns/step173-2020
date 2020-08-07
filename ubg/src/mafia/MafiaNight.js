@@ -1,15 +1,10 @@
 import React, {useEffect} from 'react';
-import {useParams} from 'react-router-dom';
-import {
-  useFirestore,
-  useUser,
-  useFirestoreCollectionData,
-} from 'reactfire';
 import {makeStyles} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Player from './Player';
 import PersonalInfo from './PersonalInfo';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -32,17 +27,12 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Mafia night element
  */
-export default function MafiaNight() {
+export default function MafiaNight({user, usersData, room, mafiaKill, DoctorSave}) {
   const classes = useStyles();
-  const user = useUser();
   const [initialize, setInitialize] = React.useState(false);
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
   const [roleText, setRoleText] = React.useState('');
-  const {roomId} = useParams();
-  const room = useFirestore().collection('rooms').doc(roomId);
-  const usersCollection = room.collection('users');
-  const usersData = useFirestoreCollectionData(usersCollection);
 
   /**
    * @return {undefined}
@@ -114,3 +104,10 @@ export default function MafiaNight() {
   );
 }
 
+MafiaNight.propTypes = {
+  user: PropTypes.object,
+  usersData: PropTypes.array,
+  room: PropTypes.object,
+  mafiaKill: PropTypes.object,
+  DoctorSave: PropTypes.object,
+};
