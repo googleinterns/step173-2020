@@ -21,7 +21,7 @@ export default function Player({name}) {
   const classes = useStyles();
   return (
     <Grid item xs={12} sm={6} xl={2} lg={3} md={4}>
-      <Card className={classes.card} >
+      <Card className={classes.card}>
         <CardActionArea>
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">

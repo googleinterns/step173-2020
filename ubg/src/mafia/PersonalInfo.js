@@ -2,7 +2,6 @@ import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import PropTypes from 'prop-types';
 
@@ -25,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
 
 /**
  * @param {string} name name of player
- * @param {string} role role of player
+ * @param {number} role role of player
  * @param {boolean} alive alive or dead
  * @return {ReactElement} Card with infomation of player's role
  */
@@ -59,12 +58,6 @@ export default function PersonalInfo({name, role, alive}) {
           </Typography>
         </CardContent>
       </div>
-      {/* <CardMedia
-        className={classes.cover}
-        component="img"
-        alt="Random Image"
-        title="Random Image"
-      /> */}
     </Card>
   );
 }
