@@ -30,7 +30,6 @@ const useStyles = makeStyles((theme) => ({
 export default function MafiaNight({roomData, user, usersData, room,
   mafiaKill, doctorSave}) {
   const classes = useStyles();
-  const [initialize, setInitialize] = React.useState(false);
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
   const [roleText, setRoleText] = React.useState('');
@@ -39,28 +38,25 @@ export default function MafiaNight({roomData, user, usersData, room,
    * @return {undefined}
    */
   function loadNightData() {
-    if (initialize === false) {
-      setInitialize(true);
-      const allPlayers = [];
-      usersData.forEach(function(u) {
-        if (u.alive === true) {
-          allPlayers.push(u);
+    const allPlayers = [];
+    usersData.forEach(function(u) {
+      if (u.alive === true) {
+        allPlayers.push(u);
+      }
+      if (u.uid === user.uid) {
+        setUserInfo(u);
+        if ( u.role=== 1) {
+          setRoleText('Pretend to be clicking or thinking :)');
+        } else if (u.role === 2) {
+          setRoleText('Mafia, pick someone to kill.');
+        } else if (u.role === 3) {
+          setRoleText('Detective, who do you want to check tonight?');
+        } else if (u.role === 4) {
+          setRoleText('Doctor, who do you want to save tonight?');
         }
-        if (u.uid === user.uid) {
-          setUserInfo(u);
-          if ( u.role=== 1) {
-            setRoleText('Pretend to be clicking or thinking :)');
-          } else if (u.role === 2) {
-            setRoleText('Mafia, pick someone to kill.');
-          } else if (u.role === 3) {
-            setRoleText('Detective, who do you want to check tonight?');
-          } else if (u.role === 4) {
-            setRoleText('Doctor, who do you want to save tonight?');
-          }
-        }
-      });
-      setPlayers(allPlayers);
-    }
+      }
+    });
+    setPlayers(allPlayers);
   }
   /**
    * Load the all the mafia related data
