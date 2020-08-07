@@ -57,18 +57,18 @@ export default function MafiaNight() {
         }
         if (u.uid === user.uid) {
           setUserInfo(u);
+          if ( u.role=== 1) {
+            setRoleText('Pretend to be clicking or thinking :)');
+          } else if (u.role === 2) {
+            setRoleText('Mafia, pick someone to kill.');
+          } else if (u.role === 3) {
+            setRoleText('Detective, who do you want to check tonight?');
+          } else if (u.role === 4) {
+            setRoleText('Doctor, who do you want to save tonight?');
+          }
         }
       });
       setPlayers(allPlayers);
-      if (userInfo.role === 1) {
-        setRoleText('Pretend to be clicking or thinking :)');
-      } else if (userInfo.role === 2) {
-        setRoleText('Mafia, pick someone to kill.');
-      } else if (userInfo.role === 3) {
-        setRoleText('Detective, who do you want to check tonight?');
-      } else if (userInfo.role === 4) {
-        setRoleText('Doctor, who do you want to save tonight?');
-      }
     }
   }
   /**
@@ -94,19 +94,21 @@ export default function MafiaNight() {
         <Box className={classes.text} my={15} justify="center" mx="auto">
           <h2>{roleText}</h2>
         </Box>
-        <Grid container justify="center" alignItems="center" spacing={4}>
-          {
-            players.map((u) => {
-              return (
-                <Player
-                  key={u.uid}
-                  player={u}
-                  handleClick={handleClick}
-                />
-              );
-            })
-          }
-        </Grid>
+        {userInfo.role === 1 ? null :
+          <Grid container justify="center" alignItems="center" spacing={4}>
+            {
+              players.map((u) => {
+                return (
+                  <Player
+                    key={u.uid}
+                    player={u}
+                    handleClick={handleClick}
+                  />
+                );
+              })
+            }
+          </Grid>
+        }
       </Box>
     </Grid>
   );
