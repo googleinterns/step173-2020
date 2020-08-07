@@ -32,17 +32,19 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Mafia night element
  */
-export default function MafiaNight() {
+export default function MafiaNight({user, room, usersData, usersCollection}) {
   const classes = useStyles();
   const user = useUser();
   const [initialize, setInitialize] = React.useState(false);
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
   const [roleText, setRoleText] = React.useState('');
+  const [message, setMessage] = React.useState('');
   const {roomId} = useParams();
   const room = useFirestore().collection('rooms').doc(roomId);
   const usersCollection = room.collection('users');
   const usersData = useFirestoreCollectionData(usersCollection);
+  
 
   /**
    * @return {undefined}
@@ -74,12 +76,28 @@ export default function MafiaNight() {
   /**
    * Load the all the mafia related data
    */
-  useEffect(loadNightData, [initialize]);
+  useEffect(loadNightData, []);
   /**
    * @param {object} player information of player
    * @return {undefined}
    */
   function handleClick(player) {
+    if (userInfo.role === 2) {
+      if (room.mafiaKill === '') {
+        room.update({mafiaKill:player.uid});
+      } else if (room.mafiaKill !== player.uid) {
+        setMessage('Mafias have already chosen the person to kill. which is .')
+      }
+    }
+    if (userInfo.role === 3) {
+      if (player.role === 2) {
+        setMessage('This person is bad.');
+      } else {
+        setMessage('This person is good.');
+      }
+    } else if (userInfo.role === 4) {
+      room.update({doctorSave:player.uid});
+    }
     console.log('You choose ' + player.displayName);
   }
 
@@ -93,6 +111,7 @@ export default function MafiaNight() {
       <Box m={10}>
         <Box className={classes.text} my={15} justify="center" mx="auto">
           <h2>{roleText}</h2>
+          <h2>{message}</h2>
         </Box>
         {userInfo.role === 1 ? null :
           <Grid container justify="center" alignItems="center" spacing={4}>
