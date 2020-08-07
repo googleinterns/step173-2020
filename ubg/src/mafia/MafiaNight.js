@@ -76,10 +76,11 @@ export default function MafiaNight() {
    */
   useEffect(loadNightData, [initialize]);
   /**
+   * @param {object} player information of player
    * @return {undefined}
    */
-  function handleClick(u) {
-    console.log('You choose ' + u.displayName);
+  function handleClick(player) {
+    console.log('You choose ' + player.displayName);
   }
 
   return (
