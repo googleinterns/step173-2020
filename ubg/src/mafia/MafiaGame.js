@@ -14,7 +14,8 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Mafia game element
  */
-export default function MafiaGame({day, user, usersData, room, mafiaKill, DoctorSave}) {
+export default function MafiaGame({day, user, usersData,
+  room, mafiaKill, DoctorSave}) {
   const classes = useStyles();
   return (
     <div className={classes.root}>

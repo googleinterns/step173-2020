@@ -183,8 +183,8 @@ export default function Room() {
   function startGame() {
     room.update({
       day: false,
-      doctorSave: {'uid':'','displayName':''},
-      mafiaKill: {'uid':'','displayName':''},
+      doctorSave: {'uid': '', 'displayName': ''},
+      mafiaKill: {'uid': '', 'displayName': ''},
       started: true,
     }).catch(function(error) {
       console.error('Error starting game: ', error);

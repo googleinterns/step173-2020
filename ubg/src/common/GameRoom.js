@@ -30,7 +30,8 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Game room element
  */
-export default function GameRoom({gameRules, roomData, user, usersData, room, mafiaKill, DoctorSave}) {
+export default function GameRoom({gameRules, roomData, user,
+  usersData, room, mafiaKill, DoctorSave}) {
   const [openRules, setOpenRules] = useState(false);
   const classes = useStyles();
 
