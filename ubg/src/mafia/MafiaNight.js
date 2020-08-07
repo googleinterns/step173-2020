@@ -43,7 +43,7 @@ export default function MafiaNight() {
   const room = useFirestore().collection('rooms').doc(roomId);
   const usersCollection = room.collection('users');
   const usersData = useFirestoreCollectionData(usersCollection);
-  
+
   /**
    * @return {undefined}
    */
@@ -53,22 +53,22 @@ export default function MafiaNight() {
       const allPlayers = [];
       usersData.forEach(function(u) {
         if (u.alive === true) {
-            allPlayers.push(u);
+          allPlayers.push(u);
         }
         if (u.uid === user.uid) {
           setUserInfo(u);
         }
-    });
-    setPlayers(allPlayers);
-    if (userInfo.role === 1) {
-      setRoleText('Pretend to be clicking or thinking :)');
-    } else if (userInfo.role === 2) {
-      setRoleText('Mafia, pick someone to kill.');
-    } else if (userInfo.role === 3) {
-      setRoleText('Detective, who do you want to check tonight?');
-    } else if (userInfo.role === 4) {
-      setRoleText('Doctor, who do you want to save tonight?');
-    }
+      });
+      setPlayers(allPlayers);
+      if (userInfo.role === 1) {
+        setRoleText('Pretend to be clicking or thinking :)');
+      } else if (userInfo.role === 2) {
+        setRoleText('Mafia, pick someone to kill.');
+      } else if (userInfo.role === 3) {
+        setRoleText('Detective, who do you want to check tonight?');
+      } else if (userInfo.role === 4) {
+        setRoleText('Doctor, who do you want to save tonight?');
+      }
     }
   }
   /**
