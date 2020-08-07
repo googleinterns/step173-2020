@@ -60,6 +60,7 @@ export default function MafiaNight() {
   const roomData = useFirestoreDocData(room);
   const usersCollection = room.collection('users');
   const usersData = useFirestoreCollectionData(usersCollection);
+  const [roleText, setRoleText] = React.useState('Pretend to be clicking or thinking :)');
 
   /**
  * @return {undefined}
@@ -80,6 +81,13 @@ function loadData() {
       }
   });
   setPlayers(allPlayers);
+  if (userInfo.role === 2) {
+    setRoleText('Mafia, pick someone to kill.');
+  } else if (userInfo.role === 3) {
+    setRoleText('Detective, who do you want to check tonight?');
+  } else if (userInfo.role === 4) {
+    setRoleText('Doctor, who do you want to save tonight?');
+  }
   }
 }
 /**
@@ -92,7 +100,7 @@ useEffect(loadData, [initialize]);
                 <PersonalInfo name={userInfo.displayName} role={userInfo.role} alive={userInfo.alive}/>
                 <Box m={10}>
                   <Box className={classes.text} my={15} justify="center" mx="auto">
-                    <h2>Choose a person to kill...</h2>
+                    <h2>{roleText}</h2>
                     
                   </Box>
                   <Grid container justify="center" alignItems="center" spacing={4}>
