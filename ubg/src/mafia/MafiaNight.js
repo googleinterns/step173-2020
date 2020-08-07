@@ -3,7 +3,7 @@ import {useParams} from 'react-router-dom';
 import {
   useFirestore,
   useFirestoreDocData,
-  // useUser,
+  useUser,
   useFirestoreCollectionData,
   // useAuth,
 } from 'reactfire';
@@ -50,9 +50,11 @@ const useStyles = makeStyles((theme) => ({
  */
 export default function MafiaNight() {
   const classes = useStyles();
+  const user = useUser();
   const ref = useFirestore().collection('games');
   const [initialize, setInitialize] = React.useState(false);
   const [players, setPlayers] = React.useState([]);
+  const [userInfo, setUserInfo] = React.useState('');
   const {roomId} = useParams();
   const room = useFirestore().collection('rooms').doc(roomId);
   const roomData = useFirestoreDocData(room);
@@ -69,9 +71,12 @@ function loadData() {
     console.log(roomData);
     console.log(usersData);
     const allPlayers = [];
-    usersData.forEach(function(user) {
-      if (user.alive === true) {
-          allPlayers.push(user);
+    usersData.forEach(function(u) {
+      if (u.alive === true) {
+          allPlayers.push(u);
+      }
+      if (u.uid == user.uid) {
+        setUserInfo(u);
       }
   });
   setPlayers(allPlayers);
@@ -84,7 +89,7 @@ useEffect(loadData, [initialize]);
   return (
     <Grid className={classes.gameContainer} item >
 
-                <PersonalInfo name={'shiyue'} role={'detective'} alive={true}/>
+                <PersonalInfo name={userInfo.displayName} role={userInfo.role} alive={userInfo.alive}/>
                 <Box m={10}>
                   <Box className={classes.text} my={15} justify="center" mx="auto">
                     <h2>Choose a person to kill...</h2>
@@ -102,16 +107,6 @@ useEffect(loadData, [initialize]);
                         );
                       })
                     }
-                  {/* <Player name={'shiyue'}/>
-                  <Player name={'shandy'} />
-                  <Player name={'daniel'} />
-                  <Player name={'jingya'} />
-                  <Player name={'morgan'} />
-                  <Player name={'shiyue'}/>
-                  <Player name={'shandy'} />
-                  <Player name={'daniel'} />
-                  <Player name={'jingya'} />
-                  <Player name={'morgan'} /> */}
                   </Grid>
                 </Box>
               </Grid>

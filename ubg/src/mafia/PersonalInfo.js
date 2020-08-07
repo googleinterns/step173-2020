@@ -35,6 +35,14 @@ export default function PersonalInfo({name, role, alive}) {
   if (alive === false) {
     state = 'dead';
   }
+  let roleName = 'villager';
+  if (role === 2) {
+    roleName = 'mafia';
+  } else if (role === 3) {
+    roleName = 'detective';
+  } else if (role === 4) {
+    roleName = 'doctor';
+  }
 
   return (
     <Card className={classes.root}>
@@ -44,25 +52,25 @@ export default function PersonalInfo({name, role, alive}) {
             {name}
           </Typography>
           <Typography variant="subtitle1" color="textSecondary">
-            Role: {role}
+            Role: {roleName}
           </Typography>
           <Typography variant="subtitle1" color="textSecondary">
             {state}
           </Typography>
         </CardContent>
       </div>
-      <CardMedia
+      {/* <CardMedia
         className={classes.cover}
         component="img"
         alt="Random Image"
         title="Random Image"
-      />
+      /> */}
     </Card>
   );
 }
 
 PersonalInfo.propTypes = {
   name: PropTypes.string,
-  role: PropTypes.string,
+  role: PropTypes.number,
   alive: PropTypes.bool,
 };
