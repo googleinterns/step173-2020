@@ -14,8 +14,8 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Mafia game element
  */
-export default function MafiaGame({day, user, usersData,
-  room, mafiaKill, DoctorSave}) {
+export default function MafiaGame({day, roomData, user, usersData,
+  room, mafiaKill, doctorSave}) {
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -23,11 +23,12 @@ export default function MafiaGame({day, user, usersData,
         day ?
         <MafiaDay /> :
         <MafiaNight
+          roomData={roomData}
           user={user}
           usersData={usersData}
           room={room}
           mafiaKill={mafiaKill}
-          DoctorSave={DoctorSave}
+          doctorSave={doctorSave}
         />
       }
     </div>
@@ -36,9 +37,10 @@ export default function MafiaGame({day, user, usersData,
 
 MafiaGame.propTypes = {
   day: PropTypes.bool,
+  roomData: PropTypes.object,
   user: PropTypes.object,
   usersData: PropTypes.array,
   room: PropTypes.object,
   mafiaKill: PropTypes.object,
-  DoctorSave: PropTypes.object,
+  doctorSave: PropTypes.object,
 };

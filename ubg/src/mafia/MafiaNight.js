@@ -27,8 +27,8 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Mafia night element
  */
-export default function MafiaNight({user, usersData, room,
-  mafiaKill, DoctorSave}) {
+export default function MafiaNight({roomData, user, usersData, room,
+  mafiaKill, doctorSave}) {
   const classes = useStyles();
   const [initialize, setInitialize] = React.useState(false);
   const [players, setPlayers] = React.useState([]);
@@ -106,9 +106,10 @@ export default function MafiaNight({user, usersData, room,
 }
 
 MafiaNight.propTypes = {
+  roomData: PropTypes.object,
   user: PropTypes.object,
   usersData: PropTypes.array,
   room: PropTypes.object,
   mafiaKill: PropTypes.object,
-  DoctorSave: PropTypes.object,
+  doctorSave: PropTypes.object,
 };
