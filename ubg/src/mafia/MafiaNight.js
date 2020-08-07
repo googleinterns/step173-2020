@@ -74,7 +74,7 @@ export default function MafiaNight() {
   /**
    * Load the all the mafia related data
    */
-  useEffect(loadNightData, [initialize]);
+  useEffect(loadNightData, []);
   /**
    * @param {object} player information of player
    * @return {undefined}
