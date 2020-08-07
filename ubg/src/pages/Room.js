@@ -22,6 +22,9 @@ import Chat from '../common/Chat';
 import NotFound from '../pages/NotFound';
 import GameRoom from '../common/GameRoom';
 import WaitingRoom from '../common/WaitingRoom';
+import {setCurrentUser} from '../redux/actions/currentUserActions';
+import {setRoomData} from '../redux/actions/roomDataActions';
+import {setUsersData} from '../redux/actions/usersDataActions';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -147,6 +150,18 @@ export default function Room() {
   }
 
   useEffect(userSnackbar, [usersData, prevUsersData]);
+
+  useEffect(() => {
+    setUsersData(usersData);
+  }, [usersData]);
+
+  useEffect(() => {
+    setCurrentUser(user);
+  }, [user]);
+
+  useEffect(() => {
+    setRoomData(roomData);
+  }, [roomData]);
 
   /**
    * Add user to the users collection in the room
