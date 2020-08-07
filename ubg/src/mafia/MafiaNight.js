@@ -75,7 +75,9 @@ export default function MafiaNight() {
    * Load the all the mafia related data
    */
   useEffect(loadNightData, [initialize]);
-
+  /**
+   * @return {undefined}
+   */
   function handleClick(u) {
     console.log('You choose ' + u.displayName);
   }
