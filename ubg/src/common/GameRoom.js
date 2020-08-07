@@ -43,7 +43,6 @@ export default function GameRoom({gameRules, roomData, user,
         { roomData.gameId === '925' ?
           <MafiaGame
             day={roomData.day}
-            roomData={roomData}
             user={user}
             usersData={usersData}
             room={room}
