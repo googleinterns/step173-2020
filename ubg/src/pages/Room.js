@@ -187,6 +187,7 @@ export default function Room() {
       mafiaKill: {'uid': '', 'displayName': ''},
       detectiveCheck: {'uid': '', 'displayName': ''},
       started: true,
+      dayVote: [],
     }).catch(function(error) {
       console.error('Error starting game: ', error);
     });
@@ -227,6 +228,7 @@ export default function Room() {
                     mafiaKill={usersCollection['mafiaKill']}
                     doctorSave={usersCollection['doctorSave']}
                     detectiveCheck={usersCollection['detectiveCheck']}
+                    usersCollection={usersCollection}
                   /> :
                   <WaitingRoom
                     usersData={usersData}

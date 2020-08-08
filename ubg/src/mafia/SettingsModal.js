@@ -156,7 +156,7 @@ export default function Settings({usersData, usersCollection, startGame}) {
 }
 
 Settings.propTypes = {
-  usersData: PropTypes.object,
+  usersData: PropTypes.array,
   usersCollection: PropTypes.object,
   startGame: PropTypes.func,
 };

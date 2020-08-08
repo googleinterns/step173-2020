@@ -14,14 +14,22 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Mafia game element
  */
-export default function MafiaGame({day, user, usersData,
-  room, mafiaKill, doctorSave, detectiveCheck}) {
+export default function MafiaGame({day, user, usersData, room,
+  roomData, mafiaKill, doctorSave, detectiveCheck, usersCollection}) {
   const classes = useStyles();
   return (
     <div className={classes.root}>
       {
         day ?
-        <MafiaDay /> :
+        <MafiaDay
+          mafiaKill={mafiaKill}
+          doctorSave={doctorSave}
+          usersData={usersData}
+          usersCollection={usersCollection}
+          user={user}
+          room={room}
+          roomData={roomData}
+        /> :
         <MafiaNight
           user={user}
           usersData={usersData}

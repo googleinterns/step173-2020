@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Game room element
  */
 export default function GameRoom({gameRules, roomData, user,
-  usersData, room, mafiaKill, doctorSave, detectiveCheck}) {
+  usersData, room, mafiaKill, doctorSave, detectiveCheck, usersCollection}) {
   const [openRules, setOpenRules] = useState(false);
   const classes = useStyles();
 
@@ -45,7 +45,9 @@ export default function GameRoom({gameRules, roomData, user,
             day={roomData.day}
             user={user}
             usersData={usersData}
+            usersCollection={usersCollection}
             room={room}
+            roomData={roomData}
             mafiaKill={mafiaKill}
             doctorSave={doctorSave}
             detectiveCheck={detectiveCheck}

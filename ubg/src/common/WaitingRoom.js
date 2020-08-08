@@ -134,7 +134,7 @@ WaitingRoom.propTypes = {
   joinRoom: PropTypes.func,
   inRoom: PropTypes.bool,
   isHost: PropTypes.bool,
-  usersData: PropTypes.object,
+  usersData: PropTypes.array,
   usersCollection: PropTypes.object,
   startGame: PropTypes.func,
   roomData: PropTypes.object,
