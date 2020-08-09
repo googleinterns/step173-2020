@@ -27,7 +27,8 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Mafia night element
  */
-export default function MafiaNight({user, room, usersData, usersCollection}) {
+export default function MafiaNight({user, usersData, room,
+  mafiaKill, doctorSave, detectiveCheck}) {
   const classes = useStyles();
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
@@ -67,6 +68,7 @@ export default function MafiaNight({user, room, usersData, usersCollection}) {
    * @return {undefined}
    */
   function handleClick(player) {
+    console.log(detectiveCheck);
     if (userInfo.role === 2) {
       if (room.mafiaKill === '') {
         room.update({mafiaKill:player.uid});
@@ -124,4 +126,5 @@ MafiaNight.propTypes = {
   room: PropTypes.object,
   mafiaKill: PropTypes.object,
   doctorSave: PropTypes.object,
+  detectiveCheck: PropTypes.object,
 };
