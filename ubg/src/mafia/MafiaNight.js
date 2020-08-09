@@ -71,9 +71,9 @@ export default function MafiaNight({user, usersData, room,
     if (userInfo.role === 2) {
       if (mafiaKill['uid'] === '') {
         room.update({mafiaKill:{uid:player.uid, displayName: player.displayName}});
-        setMessage('You have killed ' + player.displayName + ' tonight');
+        setMessage('You have killed ' + player.displayName + ' tonight.');
       } else if (room.mafiaKill !== player.uid) {
-        setMessage('Mafias have already chosen the person to kill. which is ' + mafiaKill['displayName']);
+        setMessage('You have already chosen ' + mafiaKill['displayName'] + ' to kill tonight.');
       }
     }
     if (userInfo.role === 3) {
@@ -85,10 +85,15 @@ export default function MafiaNight({user, usersData, room,
         }
         room.update({detectiveCheck:{uid:player.uid, displayName: player.displayName}});
       } else {
-        setMessage('You can only check once each night');
+        setMessage('You can only check once each night.');
       }
     } else if (userInfo.role === 4) {
-      room.update({doctorSave:player.uid});
+      if (doctorSave['uid'] === '') {
+        room.update({doctorSave:{uid:player.uid, displayName: player.displayName}});
+        setMessage('You have saved ' + player.displayName + ' tonight.');
+      } else if (room.doctorSave !== player.uid) {
+        setMessage('You have already chosen ' + doctorSave['displayName'] + ' to save tonight.');
+      }
     }
   }
 
