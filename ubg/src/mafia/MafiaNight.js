@@ -47,7 +47,7 @@ export default function MafiaNight({user, usersData, room,
       if (u.uid === user.uid) {
         setUserInfo(u);
         if ( u.role=== 1) {
-          setRoleText('Pretend to be clicking or thinking :)');
+          setRoleText('Pretend to be clicking, tapping or thinking :)');
         } else if (u.role === 2) {
           setRoleText('Mafia, pick someone to kill.');
         } else if (u.role === 3) {
@@ -77,10 +77,15 @@ export default function MafiaNight({user, usersData, room,
       }
     }
     if (userInfo.role === 3) {
-      if (player.role === 2) {
-        setMessage('This person is bad.');
+      if (detectiveCheck['uid'] === ''){
+        if (player.role === 2) {
+          setMessage('This person is bad.');
+        } else {
+          setMessage('This person is good.');
+        }
+        room.update({detectiveCheck:{uid:player.uid, displayName: player.displayName}});
       } else {
-        setMessage('This person is good.');
+        setMessage('You can only check once each night');
       }
     } else if (userInfo.role === 4) {
       room.update({doctorSave:player.uid});
