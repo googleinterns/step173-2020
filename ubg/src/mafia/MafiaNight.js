@@ -68,12 +68,12 @@ export default function MafiaNight({user, usersData, room,
    * @return {undefined}
    */
   function handleClick(player) {
-    console.log(detectiveCheck);
     if (userInfo.role === 2) {
-      if (room.mafiaKill === '') {
-        room.update({mafiaKill:player.uid});
+      if (mafiaKill['uid'] === '') {
+        room.update({mafiaKill:{uid:player.uid, displayName: player.displayName}});
+        setMessage('You have killed ' + player.displayName + ' tonight');
       } else if (room.mafiaKill !== player.uid) {
-        setMessage('Mafias have already chosen the person to kill. which is .')
+        setMessage('Mafias have already chosen the person to kill. which is ' + mafiaKill['displayName']);
       }
     }
     if (userInfo.role === 3) {
@@ -90,7 +90,6 @@ export default function MafiaNight({user, usersData, room,
     } else if (userInfo.role === 4) {
       room.update({doctorSave:player.uid});
     }
-    console.log('You choose ' + player.displayName);
   }
 
   return (
