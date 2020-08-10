@@ -30,44 +30,111 @@ const useStyles = makeStyles((theme) => ({
 export default function MafiaNight({user, usersData, room,
   mafiaKill, doctorSave, detectiveCheck}) {
   const classes = useStyles();
+  const [initialize, setInitialize] = React.useState(false);
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
   const [roleText, setRoleText] = React.useState('');
+  const [message, setMessage] = React.useState('');
 
   /**
    * @return {undefined}
    */
   function loadNightData() {
-    const allPlayers = [];
-    usersData.forEach(function(u) {
-      if (u.alive === true) {
-        allPlayers.push(u);
-      }
-      if (u.uid === user.uid) {
-        setUserInfo(u);
-        if ( u.role=== 1) {
-          setRoleText('Pretend to be clicking or thinking :)');
-        } else if (u.role === 2) {
-          setRoleText('Mafia, pick someone to kill.');
-        } else if (u.role === 3) {
-          setRoleText('Detective, who do you want to check tonight?');
-        } else if (u.role === 4) {
-          setRoleText('Doctor, who do you want to save tonight?');
+    if (mafiaKill.uid !== '' &&
+    doctorSave.uid !== '' &&
+    detectiveCheck.uid !== '') {
+      room.update({day: true});
+    }
+    if (initialize === false) {
+      setInitialize(true);
+      const roles = new Set();
+      const allPlayers = [];
+      usersData.forEach(function(u) {
+        if (u.alive === true) {
+          roles.add(u.role);
+          allPlayers.push(u);
         }
+        if (u.uid === user.uid) {
+          setUserInfo(u);
+          switch (u.role) {
+            case 1:
+              setRoleText('Pretend to be clicking, tapping or thinking :)');
+              break;
+            case 2:
+              setRoleText('Mafia, pick someone to kill.');
+              break;
+            case 3:
+              setRoleText('Detective, who do you want to check tonight?');
+              break;
+            case 4:
+              setRoleText('Doctor, who do you want to save tonight?');
+              break;
+            default:
+              setMessage('Role is invalid.');
+          }
+        }
+      });
+      if (!roles.has(2)) {
+        room.update({mafiaKill: {uid: '#', displayName: ''}});
       }
-    });
-    setPlayers(allPlayers);
+      if (!roles.has(3)) {
+        room.update({detectiveCheck: {uid: '#', displayName: ''}});
+      }
+      if (!roles.has(4)) {
+        room.update({doctorSave: {uid: '#', displayName: ''}});
+      }
+      setPlayers(allPlayers);
+    }
   }
   /**
    * Load the all the mafia related data
    */
-  useEffect(loadNightData, []);
+  useEffect(loadNightData, [mafiaKill, doctorSave, detectiveCheck]);
+
+
   /**
    * @param {object} player information of player
    * @return {undefined}
    */
   function handleClick(player) {
-    console.log('You choose ' + player.displayName);
+    switch (userInfo.role) {
+      case 2:
+        if (mafiaKill.uid === '') {
+          room.update(
+              {mafiaKill: {uid: player.uid, displayName: player.displayName}});
+          setMessage('You have killed ' + player.displayName + ' tonight.');
+        } else if (room.mafiaKill !== player.uid) {
+          setMessage('You have already chosen ' +
+          mafiaKill.displayName + ' to kill tonight.');
+        }
+        break;
+      case 3:
+        if (detectiveCheck.uid === '') {
+          if (player.role === 2) {
+            setMessage('This person is bad.');
+          } else {
+            setMessage('This person is good.');
+          }
+          room.update(
+              {detectiveCheck:
+              {uid: player.uid, displayName: player.displayName}});
+        } else {
+          setMessage('You can only check once each night.');
+        }
+        break;
+      case 4:
+        if (doctorSave.uid === '') {
+          room.update(
+              {doctorSave: {uid: player.uid, displayName: player.displayName}});
+          setMessage('You have saved ' + player.displayName + ' tonight.');
+        } else if (room.doctorSave !== player.uid) {
+          setMessage('You have already chosen ' +
+          doctorSave.displayName + ' to save tonight.');
+        }
+        break;
+      default:
+        setMessage('Role is invalid.');
+    }
   }
 
   return (
@@ -80,6 +147,7 @@ export default function MafiaNight({user, usersData, room,
       <Box m={10}>
         <Box className={classes.text} my={15} justify="center" mx="auto">
           <h2>{roleText}</h2>
+          <h2>{message}</h2>
         </Box>
         {userInfo.role === 1 ? null :
           <Grid container justify="center" alignItems="center" spacing={4}>
