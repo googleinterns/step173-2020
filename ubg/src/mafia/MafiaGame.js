@@ -15,13 +15,16 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Mafia game element
  */
-function MafiaGame({day, room}) {
+function MafiaGame({day, room, usersCollection}) {
   const classes = useStyles();
   return (
     <div className={classes.root}>
       {
         day ?
-        <MafiaDay /> :
+        <MafiaDay
+          usersCollection={usersCollection}
+          room={room}
+        /> :
         <MafiaNight
           room={room}
         />
@@ -33,6 +36,7 @@ function MafiaGame({day, room}) {
 MafiaGame.propTypes = {
   day: PropTypes.bool,
   room: PropTypes.object,
+  usersCollection: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
