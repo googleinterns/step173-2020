@@ -74,7 +74,7 @@ export default function MafiaDay({mafiaKill, doctorSave,
    * @return {undefined}
    */
   function startNight() {
-    if (roomData.dayVote.length === 1) {
+    if (roomData.dayVote.length === usersData.length) {
       let voteMap = new Map();
       let executedPlayer = [];
       roomData.dayVote.forEach((vote) => {
