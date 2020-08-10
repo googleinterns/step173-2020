@@ -42,10 +42,6 @@ export default function MafiaDay({mafiaKill, doctorSave,
   const [deathText, setDeathText] = useState('');
   const [choice, setChoice] = useState('');
   const [voted, setVoted] = useState(false);
-  let maxVote = {
-    player: '',
-    count: 0,
-  };
 
   /**
    * Sets up daytime data and logistics
@@ -80,31 +76,28 @@ export default function MafiaDay({mafiaKill, doctorSave,
   function startNight() {
     if (roomData.dayVote.length === 1) {
       let voteMap = new Map();
-      let executedPlayer = {player: null, count: 0};
-      let counter = 0;
+      let executedPlayer = [];
       roomData.dayVote.forEach((vote) => {
         if (!voteMap.has(vote)) {
           voteMap.set(vote, 0);
         }
         voteMap.set(vote, voteMap.get(vote) + 1);
-        if (executedPlayer.count < voteMap.get(vote)) {
-          executedPlayer.player = vote;
-          executedPlayer.count = voteMap.get(vote);
-        }
       });
-      usersData.forEach((user) => {
-        if (user.uid === executedPlayer.player.uid) {
-          usersData[counter].alive = false;
-          usersCollection.doc(executedPlayer.player.uid).update({
-            alive: false,
-          });
-        }
-        counter++;
+      console.log(voteMap);
+      executedPlayer = [...voteMap.entries()].reduce((playerOne, playerTwo) =>
+        (playerOne[0].value === playerTwo[0].value ?
+          (playerOne[0].key.order > playerTwo[0].key.order ?
+            playerOne : playerTwo) :
+          (playerOne[0].value > playerTwo[0].value ?
+            playerOne : playerTwo)));
+      usersCollection.doc(executedPlayer[0].uid).update({
+        alive: false,
       });
+      alert(executedPlayer[0].displayName + ' was executed.');
+      alert(executedPlayer[0].role === 2 ? 'They were mafia.' : 'They were a townsperson.');
       room.update({
         day: false,
       })
-      alert(executedPlayer.displayName + ' was executed. They were ' + executedPlayer.role === 2 ? 'mafia.' : 'not mafia.');
     }
   }
 
