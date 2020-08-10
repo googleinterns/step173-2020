@@ -224,9 +224,9 @@ export default function Room() {
                     user={user}
                     usersData={usersData}
                     room={room}
-                    mafiaKill={roomData['mafiaKill']}
-                    doctorSave={roomData['doctorSave']}
-                    detectiveCheck={roomData['detectiveCheck']}
+                    mafiaKill={roomData.mafiaKill}
+                    doctorSave={roomData.doctorSave}
+                    detectiveCheck={roomData.detectiveCheck}
                   /> :
                   <WaitingRoom
                     usersData={usersData}
