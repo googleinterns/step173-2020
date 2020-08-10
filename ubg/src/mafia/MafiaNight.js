@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia night element
  */
 export default function MafiaNight({user, usersData, room,
-  mafiaKill, doctorSave, detectiveCheck}) {
+  mafiaKill, doctorSave, detectiveCheck, showResult}) {
   const classes = useStyles();
   const [initialize, setInitialize] = React.useState(false);
   const [players, setPlayers] = React.useState([]);
@@ -102,7 +102,7 @@ export default function MafiaNight({user, usersData, room,
         if (mafiaKill.uid === '') {
           room.update(
               {mafiaKill: {uid: player.uid, displayName: player.displayName}});
-          setMessage('You have killed ' + player.displayName + ' tonight.');
+          showResult('You have killed ' + player.displayName + ' tonight.');
         } else if (room.mafiaKill !== player.uid) {
           setMessage('You have already chosen ' +
           mafiaKill.displayName + ' to kill tonight.');
@@ -111,9 +111,9 @@ export default function MafiaNight({user, usersData, room,
       case 3:
         if (detectiveCheck.uid === '') {
           if (player.role === 2) {
-            setMessage('This person is bad.');
+            showResult('This person is bad.');
           } else {
-            setMessage('This person is good.');
+            showResult('This person is good.');
           }
           room.update(
               {detectiveCheck:
@@ -126,7 +126,7 @@ export default function MafiaNight({user, usersData, room,
         if (doctorSave.uid === '') {
           room.update(
               {doctorSave: {uid: player.uid, displayName: player.displayName}});
-          setMessage('You have saved ' + player.displayName + ' tonight.');
+          showResult('You have saved ' + player.displayName + ' tonight.');
         } else if (room.doctorSave !== player.uid) {
           setMessage('You have already chosen ' +
           doctorSave.displayName + ' to save tonight.');
