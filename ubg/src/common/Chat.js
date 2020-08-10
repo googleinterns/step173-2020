@@ -7,6 +7,7 @@ import {useFirestore} from 'reactfire';
 import Message from './Message';
 import SendIcon from '@material-ui/icons/Send';
 import IconButton from '@material-ui/core/IconButton';
+import {connect} from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   chatContainer: {
@@ -37,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
  * @param {array} messages Messages in chat
  * @return {ReactElement} Drawer with chat
  */
-export default function Chat({open, messages, roomId, user}) {
+function Chat({open, messages, roomId, displayName}) {
   const classes = useStyles();
   const fieldValue = firebase.firestore.FieldValue;
   const roomDoc = useFirestore().collection('rooms').doc(roomId);
@@ -53,7 +54,7 @@ export default function Chat({open, messages, roomId, user}) {
     const minutes = ('0' + today.getMinutes()).slice(-2);
     const time = `${hours}:${minutes}`;
     roomDoc.update(
-        {chat: fieldValue.arrayUnion({text: newMessage, user, time})},
+        {chat: fieldValue.arrayUnion({text: newMessage, user: displayName, time})},
     );
     setNewMessage('');
   }
@@ -73,17 +74,18 @@ export default function Chat({open, messages, roomId, user}) {
     <Slide direction="up" in={open} mountOnEnter unmountOnExit>
       <div className={classes.chatContainer}>
         <div className={classes.chatMessages}>
-          {
-            messages.map((message, index) => {
-              return (
-                <Message
-                  key={index}
-                  user={message.user}
-                  text={message.text}
-                  time={message.time}
-                />
-              );
-            })
+          { messages ?
+              messages.map((message, index) => {
+                return (
+                  <Message
+                    key={index}
+                    user={message.user}
+                    text={message.text}
+                    time={message.time}
+                  />
+                );
+              }) :
+              null
           }
           <div ref={messagesEndRef} />
         </div>
@@ -120,5 +122,15 @@ Chat.propTypes = {
   open: PropTypes.bool,
   messages: PropTypes.array,
   roomId: PropTypes.string,
-  user: PropTypes.string,
+  displayName: PropTypes.string,
 };
+
+const mapStateToProps = state => ({
+  displayName: state.currentUser.displayName,
+  messages: state.roomData.chat,
+});
+
+export default connect(
+  mapStateToProps,
+  {},
+)(Chat);
