@@ -328,6 +328,6 @@ Room.propTypes = {
 };
 
 export default connect(
-  null,
-  {setCurrentUser, setRoomData, setUsersData,},
+    null,
+    {setCurrentUser, setRoomData, setUsersData},
 )(Room);

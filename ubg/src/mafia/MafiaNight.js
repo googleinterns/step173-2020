@@ -180,7 +180,7 @@ MafiaNight.propTypes = {
   detectiveCheck: PropTypes.object,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   userUid: state.currentUser.uid,
   usersData: state.usersData,
   mafiaKill: state.roomData.mafiaKill,
@@ -189,6 +189,6 @@ const mapStateToProps = state => ({
 });
 
 export default connect(
-  mapStateToProps,
-  {},
+    mapStateToProps,
+    {},
 )(MafiaNight);

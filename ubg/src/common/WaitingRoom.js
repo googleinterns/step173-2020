@@ -139,11 +139,11 @@ WaitingRoom.propTypes = {
   gameId: PropTypes.string,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   gameId: state.roomData.gameId,
 });
 
 export default connect(
-  mapStateToProps,
-  {},
+    mapStateToProps,
+    {},
 )(WaitingRoom);

@@ -54,7 +54,9 @@ function Chat({open, messages, roomId, displayName}) {
     const minutes = ('0' + today.getMinutes()).slice(-2);
     const time = `${hours}:${minutes}`;
     roomDoc.update(
-        {chat: fieldValue.arrayUnion({text: newMessage, user: displayName, time})},
+        {chat: fieldValue.arrayUnion(
+          {text: newMessage, user: displayName, time}
+        )},
     );
     setNewMessage('');
   }
@@ -125,12 +127,12 @@ Chat.propTypes = {
   displayName: PropTypes.string,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   displayName: state.currentUser.displayName,
   messages: state.roomData.chat,
 });
 
 export default connect(
-  mapStateToProps,
-  {},
+    mapStateToProps,
+    {},
 )(Chat);

@@ -157,16 +157,16 @@ function SettingsModal({usersDataLength, usersCollection, startGame}) {
 }
 
 SettingsModal.propTypes = {
-  usersData: PropTypes.object,
   usersCollection: PropTypes.object,
   startGame: PropTypes.func,
+  usersDataLength: PropTypes.number
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   usersDataLength: state.usersData.length,
 });
 
 export default connect(
-  mapStateToProps,
-  {},
+    mapStateToProps,
+    {},
 )(SettingsModal);

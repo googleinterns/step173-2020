@@ -35,11 +35,11 @@ MafiaGame.propTypes = {
   room: PropTypes.object,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   day: state.roomData.day,
 });
 
 export default connect(
-  mapStateToProps,
-  {},
+    mapStateToProps,
+    {},
 )(MafiaGame);

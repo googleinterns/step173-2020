@@ -2,7 +2,7 @@ import {
   createStore,
   applyMiddleware,
   compose,
-  combineReducers
+  combineReducers,
 } from 'redux';
 import thunk from 'redux-thunk';
 import currentUserReducer from './reducers/currentUserReducer';
@@ -16,12 +16,12 @@ const allReducers = combineReducers({
 });
 
 const store = createStore(
-  allReducers,
-  {},
-  compose(
-    applyMiddleware(thunk),
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-  )
+    allReducers,
+    {},
+    compose(
+        applyMiddleware(thunk),
+        window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+    ),
 );
 
 export default store;
