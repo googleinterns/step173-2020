@@ -204,6 +204,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
       mafiaKill: {'uid': '', 'displayName': ''},
       detectiveCheck: {'uid': '', 'displayName': ''},
       started: true,
+      mafiaChat: [],
     }).catch(function(error) {
       console.error('Error starting game: ', error);
     });
@@ -274,8 +275,11 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                       <Typography variant="h6">Chat</Typography>
                     </div>
                     <Chat
+                      mafia={false}
+                      messages={roomData.chat}
                       open={chatOpen}
-                      roomId={roomId}
+                      room={room}
+                      direction="up"
                     />
                   </Paper>
                 </div>
