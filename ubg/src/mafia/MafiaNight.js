@@ -74,18 +74,14 @@ export default function MafiaNight({user, usersData, room,
           }
         }
       });
-      // This is probably not best practice, tell me if you have better idea
-      // I think this should probably be done in Room.js?
-      for (let i = 2; i < 5; i++) {
-        if (!roles.has(i)) {
-          if (i === 2) {
-            room.update({mafiaKill: {uid: '#', displayName: ''}});
-          } else if (i === 3) {
-            room.update({detectiveCheck: {uid: '#', displayName: ''}});
-          } else {
-            room.update({doctorSave: {uid: '#', displayName: ''}});
-          }
-        }
+      if (!roles.has(2)) {
+        room.update({mafiaKill: {uid: '#', displayName: ''}});
+      }
+      if (!roles.has(3)) {
+        room.update({detectiveCheck: {uid: '#', displayName: ''}});
+      }
+      if (!roles.has(4)) {
+        room.update({doctorSave: {uid: '#', displayName: ''}});
       }
       setPlayers(allPlayers);
     }
