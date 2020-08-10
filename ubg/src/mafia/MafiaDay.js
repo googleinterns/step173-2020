@@ -86,6 +86,7 @@ export default function MafiaDay({mafiaKill, doctorSave,
       console.log(voteMap);
       executedPlayer = [...voteMap.entries()].reduce((playerOne, playerTwo) =>
         (playerOne[0].value === playerTwo[0].value ?
+          console.log(playerOne[0])
           (playerOne[0].key.order > playerTwo[0].key.order ?
             playerOne : playerTwo) :
           (playerOne[0].value > playerTwo[0].value ?
@@ -110,10 +111,14 @@ export default function MafiaDay({mafiaKill, doctorSave,
    */
   function confirmVote() {
     if (!voted) {
-      roomData.dayVote.push(choice);
+      const tempRoomData = roomData.dayVote;
+      tempRoomData.push(choice);
+      //roomData.dayVote.push(choice);
+      console.log(tempRoomData)
       room.update({
-        dayVote: roomData.dayVote,
+        dayVote: tempRoomData, //roomData.dayVote,
       })
+      console.log(room.dayVote);
       setVoted(true);
     } else {
       alert('You have voted for ' + choice.displayName);
@@ -133,7 +138,6 @@ export default function MafiaDay({mafiaKill, doctorSave,
             <h3>You may discuss and vote on who to execute</h3>
         </Grid>
         <br />
-        {userInfo.role === 1 ? null :
           <Grid container justify="center" alignItems="center" spacing={4}>
             {
               players.map((u) => {
@@ -147,7 +151,6 @@ export default function MafiaDay({mafiaKill, doctorSave,
               })
             }
           </Grid>
-        }
         <br /> <br />
         <Grid container justify="center" alignItems="center">
           <Button
