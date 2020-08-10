@@ -56,14 +56,21 @@ export default function MafiaNight({user, usersData, room,
         }
         if (u.uid === user.uid) {
           setUserInfo(u);
-          if ( u.role=== 1) {
-            setRoleText('Pretend to be clicking, tapping or thinking :)');
-          } else if (u.role === 2) {
-            setRoleText('Mafia, pick someone to kill.');
-          } else if (u.role === 3) {
-            setRoleText('Detective, who do you want to check tonight?');
-          } else if (u.role === 4) {
-            setRoleText('Doctor, who do you want to save tonight?');
+          switch (u.role) {
+            case 1:
+              setRoleText('Pretend to be clicking, tapping or thinking :)');
+              break;
+            case 2:
+              setRoleText('Mafia, pick someone to kill.');
+              break;
+            case 3:
+              setRoleText('Detective, who do you want to check tonight?');
+              break;
+            case 4:
+              setRoleText('Doctor, who do you want to save tonight?');
+              break;
+            default:
+              setMessage('Role is invalid.');
           }
         }
       });
