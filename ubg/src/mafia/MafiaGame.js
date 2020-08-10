@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia game element
  */
 
-function MafiaGame({day, room}) {
+function MafiaGame({day, room, usersCollection}) {
     const [alert, setAlert] = React.useState(null);
   function showResult(message) {
     console.log(message);
@@ -30,7 +30,10 @@ function MafiaGame({day, room}) {
       {alert}
       {
         day ?
-        <MafiaDay /> :
+        <MafiaDay
+          usersCollection={usersCollection}
+          room={room}
+        /> :
         <MafiaNight
           room={room}
           showResult={showResult}
@@ -43,6 +46,7 @@ function MafiaGame({day, room}) {
 MafiaGame.propTypes = {
   day: PropTypes.bool,
   room: PropTypes.object,
+  usersCollection: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({

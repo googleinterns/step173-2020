@@ -204,6 +204,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
       mafiaKill: {'uid': '', 'displayName': ''},
       detectiveCheck: {'uid': '', 'displayName': ''},
       started: true,
+      dayVote: [],
     }).catch(function(error) {
       console.error('Error starting game: ', error);
     });
@@ -238,6 +239,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                   <GameRoom
                     gameRules={game.description}
                     room={room}
+                    usersCollection={usersCollection}
                   /> :
                   <WaitingRoom
                     gameName={game.Name}
