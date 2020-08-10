@@ -198,8 +198,9 @@ export default function Room() {
   function startGame() {
     room.update({
       day: false,
-      doctorSave: null,
-      mafiaKill: null,
+      doctorSave: {'uid': '', 'displayName': ''},
+      mafiaKill: {'uid': '', 'displayName': ''},
+      detectiveCheck: {'uid': '', 'displayName': ''},
       started: true,
     }).catch(function(error) {
       console.error('Error starting game: ', error);
@@ -235,6 +236,12 @@ export default function Room() {
                   <GameRoom
                     gameRules={game.description}
                     roomData={roomData}
+                    user={user}
+                    usersData={usersData}
+                    room={room}
+                    mafiaKill={roomData.mafiaKill}
+                    doctorSave={roomData.doctorSave}
+                    detectiveCheck={roomData.detectiveCheck}
                   /> :
                   <WaitingRoom
                     usersData={usersData}
