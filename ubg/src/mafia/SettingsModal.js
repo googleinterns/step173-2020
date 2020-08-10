@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
@@ -19,18 +20,18 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 /**
- * @param {object} usersData User collection data
+ * @param {object} usersDataLength Length of user collection data
  * @param {object} usersCollection Users collection
  * @param {func} startGame Updates the game to start
  * @return {ReactElement} Mafia modal element
  */
-export default function Settings({usersData, usersCollection, startGame}) {
+function SettingsModal({usersDataLength, usersCollection, startGame}) {
   const classes = useStyles();
   //  const minPlayers = 4;  for when we have enough players
   const users = [];
   let cutoff = 0;
   let prevCutoff = 0;
-  const [villager, setVillager] = useState(usersData.length);
+  const [villager, setVillager] = useState(usersDataLength);
   const [mafia, setMafia] = useState(0);
   const [detective, setDetective] = useState(0);
   const [doctor, setDoctor] = useState(0);
@@ -77,14 +78,14 @@ export default function Settings({usersData, usersCollection, startGame}) {
 
   useEffect(() => {
     setDisabled(
-        (usersData.length !== parseInt(villager) + parseInt(mafia) +
+        (usersDataLength !== parseInt(villager) + parseInt(mafia) +
       parseInt(detective) + parseInt(doctor)),
         //  ||  for when we have enough players
         //  (usersData.length < minPlayers) ||
         //  (parseInt(villager) < 1) ||
         //  (parseInt(mafia) < 1)
     );
-  }, [villager, mafia, detective, doctor, usersData.length]);
+  }, [villager, mafia, detective, doctor, usersDataLength]);
 
   return (
     <div>
@@ -93,7 +94,7 @@ export default function Settings({usersData, usersCollection, startGame}) {
       </Typography>
       <br />
       <Typography variant='body1'>
-        Number of players: {usersData.length}
+        Number of players: {usersDataLength}
       </Typography>
       <br />
       <form onSubmit={assignRoles}>
@@ -155,8 +156,17 @@ export default function Settings({usersData, usersCollection, startGame}) {
   );
 }
 
-Settings.propTypes = {
-  usersData: PropTypes.object,
+SettingsModal.propTypes = {
   usersCollection: PropTypes.object,
   startGame: PropTypes.func,
+  usersDataLength: PropTypes.number,
 };
+
+const mapStateToProps = (state) => ({
+  usersDataLength: state.usersData.length,
+});
+
+export default connect(
+    mapStateToProps,
+    {},
+)(SettingsModal);
