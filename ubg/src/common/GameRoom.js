@@ -73,6 +73,7 @@ GameRoom.propTypes = {
   roomData: PropTypes.object,
   user: PropTypes.object,
   usersData: PropTypes.array,
+  usersCollection: PropTypes.object,
   room: PropTypes.object,
   mafiaKill: PropTypes.object,
   doctorSave: PropTypes.object,
