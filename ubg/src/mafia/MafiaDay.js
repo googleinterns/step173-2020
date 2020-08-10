@@ -2,10 +2,10 @@ import React, {useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
 import Player from './Player';
 import PersonalInfo from './PersonalInfo';
 import PropTypes from 'prop-types';
-import * as firebase from 'firebase/app';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -23,6 +23,12 @@ const useStyles = makeStyles((theme) => ({
   card: {
     width: '100%',
   },
+  voteBtn: {
+    width: '100%',
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+  }
 }));
 
 /**
@@ -34,7 +40,12 @@ export default function MafiaDay({mafiaKill, doctorSave,
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
   const [deathText, setDeathText] = useState('');
+  const [choice, setChoice] = useState('');
   const [voted, setVoted] = useState(false);
+  let maxVote = {
+    player: '',
+    count: 0,
+  };
 
   /**
    * Sets up daytime data and logistics
@@ -67,12 +78,33 @@ export default function MafiaDay({mafiaKill, doctorSave,
    * @return {undefined}
    */
   function startNight() {
-    if (roomData.dayVote.length === usersData.length) {
-      // most voted person is executed
-      // if tie, show message that says it's a tie
+    if (roomData.dayVote.length === 1) {
+      let voteMap = new Map();
+      let executedPlayer = {player: null, count: 0};
+      let counter = 0;
+      roomData.dayVote.forEach((vote) => {
+        if (!voteMap.has(vote)) {
+          voteMap.set(vote, 0);
+        }
+        voteMap.set(vote, voteMap.get(vote) + 1);
+        if (executedPlayer.count < voteMap.get(vote)) {
+          executedPlayer.player = vote;
+          executedPlayer.count = voteMap.get(vote);
+        }
+      });
+      usersData.forEach((user) => {
+        if (user.uid === executedPlayer.player.uid) {
+          usersData[counter].alive = false;
+          usersCollection.doc(executedPlayer.player.uid).update({
+            alive: false,
+          });
+        }
+        counter++;
+      });
       room.update({
         day: false,
       })
+      alert(executedPlayer.displayName + ' was executed. They were ' + executedPlayer.role === 2 ? 'mafia.' : 'not mafia.');
     }
   }
 
@@ -83,36 +115,16 @@ export default function MafiaDay({mafiaKill, doctorSave,
    * Sets the voting choice for current user
    * @param {object} player Clicked on user object
    */
-  function setVote(player) {
-    const prevVote = roomData.dayVote.find(u => u.player === user.uid);
-    // if (!voted) {
-      // if (roomData.dayVote.some(e => e.player === player.uid)) {
-      //   roomData.dayVote.find(user => user.player === player.uid).count += 1;
-      //   room.update({
-      //     dayVote: roomData.dayVote,
-      //   })
-      //   console.log(roomData.dayVote);
-      // } else {
-      //   roomData.dayVote.push({
-      //     player: player.uid,
-      //     count: 1,
-      //   });
-      //   room.update({
-      //     dayVote: firebase.firestore.FieldValue.arrayUnion(...roomData.dayVote),
-      //   });
-      // }
-      if (prevVote) {
-        roomData.dayVote.splice(prevVote, 1);
-      }
-      roomData.dayVote.push({
-        player: (user.uid),
-        vote: (player.uid),
-      })
+  function confirmVote() {
+    if (!voted) {
+      roomData.dayVote.push(choice);
       room.update({
         dayVote: roomData.dayVote,
-      });
-    //   setVoted(true);
-    // }
+      })
+      setVoted(true);
+    } else {
+      alert('You have voted for ' + choice.displayName);
+    }
   }
 
   return (
@@ -123,9 +135,11 @@ export default function MafiaDay({mafiaKill, doctorSave,
         alive={userInfo.alive}
       />
       <Box m={10}>
-        <Box className={classes.text} my={15} justify="center" mx="auto">
-          <h2>{deathText}</h2>
-        </Box>
+        <Grid container justify="center" alignItems="center">
+            <h2>{deathText}</h2>
+            <h3>You may discuss and vote on who to execute</h3>
+        </Grid>
+        <br />
         {userInfo.role === 1 ? null :
           <Grid container justify="center" alignItems="center" spacing={4}>
             {
@@ -134,13 +148,23 @@ export default function MafiaDay({mafiaKill, doctorSave,
                   <Player
                     key={u.uid}
                     player={u}
-                    handleClick={setVote}
+                    handleClick={() => setChoice(u)}
                   />
                 );
               })
             }
           </Grid>
         }
+        <br /> <br />
+        <Grid container justify="center" alignItems="center">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={confirmVote}
+          >
+            Confirm Vote
+          </Button>
+        </Grid>
       </Box>
     </Grid>
   );
