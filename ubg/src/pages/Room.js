@@ -22,6 +22,11 @@ import Chat from '../common/Chat';
 import NotFound from '../pages/NotFound';
 import GameRoom from '../common/GameRoom';
 import WaitingRoom from '../common/WaitingRoom';
+import {connect} from 'react-redux';
+import {setCurrentUser} from '../redux/actions/currentUserActions';
+import {setRoomData} from '../redux/actions/roomDataActions';
+import {setUsersData} from '../redux/actions/usersDataActions';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -69,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Room element
  */
-export default function Room() {
+function Room({setUsersData, setCurrentUser, setRoomData}) {
   const classes = useStyles();
   const user = useUser();
   const auth = useAuth();
@@ -148,6 +153,18 @@ export default function Room() {
 
   useEffect(userSnackbar, [usersData, prevUsersData]);
 
+  useEffect(() => {
+    setUsersData(usersData);
+  }, [usersData, setUsersData]);
+
+  useEffect(() => {
+    setCurrentUser(user);
+  }, [user, setCurrentUser]);
+
+  useEffect(() => {
+    setRoomData(roomData);
+  }, [roomData, setRoomData]);
+
   /**
    * Add user to the users collection in the room
    */
@@ -221,17 +238,10 @@ export default function Room() {
                 { roomData.started ?
                   <GameRoom
                     gameRules={game.description}
-                    roomData={roomData}
-                    user={user}
-                    usersData={usersData}
                     room={room}
-                    mafiaKill={usersCollection.mafiaKill}
-                    doctorSave={usersCollection.doctorSave}
-                    detectiveCheck={usersCollection.detectiveCheck}
                     usersCollection={usersCollection}
                   /> :
                   <WaitingRoom
-                    usersData={usersData}
                     gameName={game.Name}
                     gameDescription={game.description}
                     leaveRoom={leaveRoom}
@@ -240,7 +250,6 @@ export default function Room() {
                     isHost={roomData.host === user.uid}
                     usersCollection={usersCollection}
                     startGame={startGame}
-                    roomData={roomData}
                   />
                 }
               </Grid>
@@ -268,9 +277,7 @@ export default function Room() {
                     </div>
                     <Chat
                       open={chatOpen}
-                      messages={roomData.chat}
                       roomId={roomId}
-                      user={user.displayName}
                     />
                   </Paper>
                 </div>
@@ -315,3 +322,14 @@ export default function Room() {
     );
   }
 }
+
+Room.propTypes = {
+  setCurrentUser: PropTypes.func,
+  setRoomData: PropTypes.func,
+  setUsersData: PropTypes.func,
+};
+
+export default connect(
+    null,
+    {setCurrentUser, setRoomData, setUsersData},
+)(Room);

@@ -7,6 +7,7 @@ import Player from './Player';
 import PersonalInfo from './PersonalInfo';
 import PropTypes from 'prop-types';
 import * as firebase from 'firebase/app';
+import {connect} from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -35,8 +36,8 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Mafia day element
  */
-export default function MafiaDay({mafiaKill, doctorSave,
-  usersData, usersCollection, user, room, roomData}) {
+function MafiaDay({mafiaKill, doctorSave, usersData,
+  usersCollection, userUid, userName, room, dayVote}) {
   const classes = useStyles();
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
@@ -60,7 +61,7 @@ export default function MafiaDay({mafiaKill, doctorSave,
       if (u.alive === true) {
         allPlayers.push(u);
       }
-      if (u.uid === user.uid) {
+      if (u.uid === userUid) {
         setUserInfo(u);
       }
     });
@@ -75,16 +76,15 @@ export default function MafiaDay({mafiaKill, doctorSave,
    * @return {undefined}
    */
   function startNight() {
-    if (roomData.dayVote.length === usersData.length) {
+    if (dayVote.length === usersData.length) {
       const voteMap = new Map();
       let executedPlayer = [];
-      roomData.dayVote.forEach((vote) => {
+      dayVote.forEach((vote) => {
         if (!voteMap.has(vote.vote)) {
           voteMap.set(vote.vote, 0);
         }
         voteMap.set(vote.vote, voteMap.get(vote.vote) + 1);
       });
-      console.log(voteMap);
       executedPlayer = [...voteMap.entries()].reduce((playerOne, playerTwo) =>
         // if tie, choose player with highest ordering
         (playerOne[1] === playerTwo[1] ?
@@ -105,7 +105,7 @@ export default function MafiaDay({mafiaKill, doctorSave,
   }
 
   useEffect(startDay, []);
-  useEffect(startNight, [roomData.dayVote]);
+  useEffect(startNight, [dayVote]);
 
   /**
    * Sets the voting choice for current user
@@ -114,7 +114,7 @@ export default function MafiaDay({mafiaKill, doctorSave,
   function confirmVote() {
     if (!voted) {
       const newVote = {
-        player: user.displayName,
+        player: userName,
         vote: {
           uid: choice.uid,
           name: choice.displayName,
@@ -172,11 +172,27 @@ export default function MafiaDay({mafiaKill, doctorSave,
 }
 
 MafiaDay.propTypes = {
-  user: PropTypes.object,
+  userUid: PropTypes.string,
+  userName: PropTypes.string,
   usersData: PropTypes.array,
   usersCollection: PropTypes.object,
   room: PropTypes.object,
-  roomData: PropTypes.object,
+  dayVote: PropTypes.array,
   mafiaKill: PropTypes.object,
   doctorSave: PropTypes.object,
 };
+
+const mapStateToProps = (state) => ({
+  userUid: state.currentUser.uid,
+  userName: state.currentUser.displayName,
+  usersData: state.usersData,
+  dayVote: state.roomData.dayVote,
+  mafiaKill: state.roomData.mafiaKill,
+  doctorSave: state.roomData.doctorSave,
+});
+
+export default connect(
+    mapStateToProps,
+    {},
+)(MafiaDay);
+

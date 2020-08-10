@@ -5,6 +5,7 @@ import Box from '@material-ui/core/Box';
 import Player from './Player';
 import PersonalInfo from './PersonalInfo';
 import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -27,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Mafia night element
  */
-export default function MafiaNight({user, usersData, room,
+function MafiaNight({userUid, usersData, room,
   mafiaKill, doctorSave, detectiveCheck}) {
   const classes = useStyles();
   const [initialize, setInitialize] = React.useState(false);
@@ -40,11 +41,6 @@ export default function MafiaNight({user, usersData, room,
    * @return {undefined}
    */
   function loadNightData() {
-    if (mafiaKill && mafiaKill.uid !== '' &&
-    doctorSave.uid !== '' &&
-    detectiveCheck.uid !== '') {
-      room.update({day: true});
-    }
     if (initialize === false) {
       setInitialize(true);
       const roles = new Set();
@@ -54,7 +50,7 @@ export default function MafiaNight({user, usersData, room,
           roles.add(u.role);
           allPlayers.push(u);
         }
-        if (u.uid === user.uid) {
+        if (u.uid === userUid) {
           setUserInfo(u);
           switch (u.role) {
             case 1:
@@ -84,6 +80,14 @@ export default function MafiaNight({user, usersData, room,
         room.update({doctorSave: {uid: '#', displayName: ''}});
       }
       setPlayers(allPlayers);
+    }
+    if (mafiaKill &&
+      doctorSave &&
+      detectiveCheck &&
+      mafiaKill.uid !== '' &&
+      doctorSave.uid !== '' &&
+      detectiveCheck.uid !== '') {
+      room.update({day: true});
     }
   }
   /**
@@ -170,10 +174,23 @@ export default function MafiaNight({user, usersData, room,
 }
 
 MafiaNight.propTypes = {
-  user: PropTypes.object,
+  userUid: PropTypes.string,
   usersData: PropTypes.array,
   room: PropTypes.object,
   mafiaKill: PropTypes.object,
   doctorSave: PropTypes.object,
   detectiveCheck: PropTypes.object,
 };
+
+const mapStateToProps = (state) => ({
+  userUid: state.currentUser.uid,
+  usersData: state.usersData,
+  mafiaKill: state.roomData.mafiaKill,
+  doctorSave: state.roomData.doctorSave,
+  detectiveCheck: state.roomData.detectiveCheck,
+});
+
+export default connect(
+    mapStateToProps,
+    {},
+)(MafiaNight);
