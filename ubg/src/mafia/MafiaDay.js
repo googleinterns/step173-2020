@@ -51,9 +51,9 @@ export default function MafiaDay({mafiaKill, doctorSave,
   function startDay() {
     if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
       usersCollection.doc(mafiaKill).update({alive: false});
-      setDeathText(mafiaKill.displayName + ' was killed by the mafia');
-    } else if (mafiaKill && mafiaKill.uid === doctorSave.uid) {
-      setDeathText(mafiaKill.displayName + ' was saved by the doctor');
+      setDeathText(mafiaKill.displayName + ' was killed last night');
+    } else {
+      setDeathText('No one was killed last night');
     }
     const allPlayers = [];
     usersData.forEach(function(u) {
@@ -138,6 +138,8 @@ export default function MafiaDay({mafiaKill, doctorSave,
       <Box m={10}>
         <Grid container justify="center" alignItems="center">
           <h2>{deathText}</h2>
+        </Grid>
+        <Grid container justify="center" alignItems="center">
           <h3>You may discuss and vote on who to execute</h3>
         </Grid>
         <br />
