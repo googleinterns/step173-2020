@@ -110,7 +110,8 @@ export default function MafiaNight({user, usersData, room,
           setMessage('This person is good.');
         }
         room.update(
-            {detectiveCheck: {uid: player.uid, displayName: player.displayName}});
+            {detectiveCheck:
+            {uid: player.uid, displayName: player.displayName}});
       } else {
         setMessage('You can only check once each night.');
       }
