@@ -40,12 +40,14 @@ export default function MafiaNight({user, usersData, room,
    * @return {undefined}
    */
   function loadNightData() {
-    if (mafiaKill['uid'] !== '' && doctorSave['uid'] !== '' && detectiveCheck['uid'] !== '') {
+    if (mafiaKill['uid'] !== '' &&
+    doctorSave['uid'] !== '' &&
+    detectiveCheck['uid'] !== '') {
       room.update({day: true});
     }
     if (initialize === false) {
       setInitialize(true);
-      let roles = new Set();
+      const roles = new Set();
       const allPlayers = [];
       usersData.forEach(function(u) {
         if (u.alive === true) {
@@ -92,29 +94,34 @@ export default function MafiaNight({user, usersData, room,
   function handleClick(player) {
     if (userInfo.role === 2) {
       if (mafiaKill['uid'] === '') {
-        room.update({mafiaKill: {uid: player.uid, displayName: player.displayName}});
+        room.update(
+          {mafiaKill: {uid: player.uid, displayName: player.displayName}});
         setMessage('You have killed ' + player.displayName + ' tonight.');
       } else if (room.mafiaKill !== player.uid) {
-        setMessage('You have already chosen ' + mafiaKill['displayName'] + ' to kill tonight.');
+        setMessage('You have already chosen ' +
+        mafiaKill['displayName'] + ' to kill tonight.');
       }
     }
     if (userInfo.role === 3) {
-      if (detectiveCheck['uid'] === ''){
+      if (detectiveCheck['uid'] === '') {
         if (player.role === 2) {
           setMessage('This person is bad.');
         } else {
           setMessage('This person is good.');
         }
-        room.update({detectiveCheck: {uid: player.uid, displayName: player.displayName}});
+        room.update(
+          {detectiveCheck: {uid: player.uid, displayName: player.displayName}});
       } else {
         setMessage('You can only check once each night.');
       }
     } else if (userInfo.role === 4) {
       if (doctorSave['uid'] === '') {
-        room.update({doctorSave: {uid: player.uid, displayName: player.displayName}});
+        room.update(
+          {doctorSave: {uid: player.uid, displayName: player.displayName}});
         setMessage('You have saved ' + player.displayName + ' tonight.');
       } else if (room.doctorSave !== player.uid) {
-        setMessage('You have already chosen ' + doctorSave['displayName'] + ' to save tonight.');
+        setMessage('You have already chosen ' +
+        doctorSave['displayName'] + ' to save tonight.');
       }
     }
   }
