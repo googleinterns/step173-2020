@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button';
 import Player from './Player';
 import PersonalInfo from './PersonalInfo';
 import PropTypes from 'prop-types';
+import * as firebase from 'firebase/app';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -28,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     display: 'flex',
     flexDirection: 'column',
-  }
+  },
 }));
 
 /**
@@ -74,31 +75,32 @@ export default function MafiaDay({mafiaKill, doctorSave,
    * @return {undefined}
    */
   function startNight() {
-    if (roomData.dayVote.length === usersData.length) {
-      let voteMap = new Map();
+    if (roomData.dayVote.length === 1) {
+      const voteMap = new Map();
       let executedPlayer = [];
       roomData.dayVote.forEach((vote) => {
-        if (!voteMap.has(vote)) {
-          voteMap.set(vote, 0);
+        if (!voteMap.has(vote.vote)) {
+          voteMap.set(vote.vote, 0);
         }
-        voteMap.set(vote, voteMap.get(vote) + 1);
+        voteMap.set(vote.vote, voteMap.get(vote.vote) + 1);
       });
       console.log(voteMap);
       executedPlayer = [...voteMap.entries()].reduce((playerOne, playerTwo) =>
-        (playerOne[0].value === playerTwo[0].value ?
-          console.log(playerOne[0])
-          (playerOne[0].key.order > playerTwo[0].key.order ?
+        // if tie, choose player with highest ordering
+        (playerOne[1] === playerTwo[1] ?
+          (playerOne[0].order > playerTwo[0].order ?
             playerOne : playerTwo) :
-          (playerOne[0].value > playerTwo[0].value ?
+          (playerOne[1] > playerTwo[1] ?
             playerOne : playerTwo)));
       usersCollection.doc(executedPlayer[0].uid).update({
         alive: false,
       });
-      alert(executedPlayer[0].displayName + ' was executed.');
-      alert(executedPlayer[0].role === 2 ? 'They were mafia.' : 'They were a townsperson.');
+      alert(executedPlayer[0].name + ' was executed.');
+      alert(executedPlayer[0].role === 2 ?
+        'They were mafia.' : 'They were a townsperson.');
       room.update({
         day: false,
-      })
+      });
     }
   }
 
@@ -111,18 +113,19 @@ export default function MafiaDay({mafiaKill, doctorSave,
    */
   function confirmVote() {
     if (!voted) {
-      const tempRoomData = roomData.dayVote;
-      tempRoomData.push(choice);
-      //roomData.dayVote.push(choice);
-      console.log(tempRoomData)
+      const newVote = {
+        player: user.displayName,
+        vote: {
+          uid: choice.uid,
+          name: choice.displayName,
+        },
+      };
       room.update({
-        dayVote: tempRoomData, //roomData.dayVote,
-      })
-      console.log(room.dayVote);
+        dayVote: firebase.firestore.FieldValue.arrayUnion(newVote),
+      });
       setVoted(true);
-    } else {
-      alert('You have voted for ' + choice.displayName);
     }
+    alert('You have voted for ' + choice.displayName);
   }
 
   return (
@@ -134,23 +137,23 @@ export default function MafiaDay({mafiaKill, doctorSave,
       />
       <Box m={10}>
         <Grid container justify="center" alignItems="center">
-            <h2>{deathText}</h2>
-            <h3>You may discuss and vote on who to execute</h3>
+          <h2>{deathText}</h2>
+          <h3>You may discuss and vote on who to execute</h3>
         </Grid>
         <br />
-          <Grid container justify="center" alignItems="center" spacing={4}>
-            {
-              players.map((u) => {
-                return (
-                  <Player
-                    key={u.uid}
-                    player={u}
-                    handleClick={() => setChoice(u)}
-                  />
-                );
-              })
-            }
-          </Grid>
+        <Grid container justify="center" alignItems="center" spacing={4}>
+          {
+            players.map((u) => {
+              return (
+                <Player
+                  key={u.uid}
+                  player={u}
+                  handleClick={() => setChoice(u)}
+                />
+              );
+            })
+          }
+        </Grid>
         <br /> <br />
         <Grid container justify="center" alignItems="center">
           <Button
