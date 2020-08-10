@@ -82,6 +82,8 @@ function MafiaNight({userUid, usersData, room,
       setPlayers(allPlayers);
     }
     if (mafiaKill &&
+      doctorSave &&
+      detectiveCheck &&
       mafiaKill.uid !== '' &&
       doctorSave.uid !== '' &&
       detectiveCheck.uid !== '') {
