@@ -4,6 +4,7 @@ import MafiaDay from './MafiaDay';
 import MafiaNight from './MafiaNight';
 import PropTypes from 'prop-types';
 import AlertDialog from './utils/AlertDialog';
+import {connect} from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -15,8 +16,8 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Mafia game element
  */
-export default function MafiaGame({day, user, usersData,
-  room, mafiaKill, doctorSave, detectiveCheck}) {
+
+function MafiaGame({day, room}) {
     const [alert, setAlert] = React.useState(null);
   function showResult(message) {
     console.log(message);
@@ -31,12 +32,7 @@ export default function MafiaGame({day, user, usersData,
         day ?
         <MafiaDay /> :
         <MafiaNight
-          user={user}
-          usersData={usersData}
           room={room}
-          mafiaKill={mafiaKill}
-          doctorSave={doctorSave}
-          detectiveCheck={detectiveCheck}
           showResult={showResult}
         />
       }
@@ -46,10 +42,14 @@ export default function MafiaGame({day, user, usersData,
 
 MafiaGame.propTypes = {
   day: PropTypes.bool,
-  user: PropTypes.object,
-  usersData: PropTypes.array,
   room: PropTypes.object,
-  mafiaKill: PropTypes.object,
-  doctorSave: PropTypes.object,
-  detectiveCheck: PropTypes.object,
 };
+
+const mapStateToProps = (state) => ({
+  day: state.roomData.day,
+});
+
+export default connect(
+    mapStateToProps,
+    {},
+)(MafiaGame);

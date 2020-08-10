@@ -5,6 +5,7 @@ import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import SettingsModal from '../mafia/SettingsModal';
 import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -57,8 +58,8 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Waiting room element
  */
-export default function WaitingRoom({usersData, gameName, gameDescription,
-  leaveRoom, joinRoom, inRoom, isHost, usersCollection, startGame, roomData}) {
+function WaitingRoom({gameName, gameDescription, leaveRoom,
+  joinRoom, inRoom, isHost, usersCollection, startGame, gameId}) {
   const classes = useStyles();
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -86,7 +87,7 @@ export default function WaitingRoom({usersData, gameName, gameDescription,
                       variant="contained"
                       color="primary"
                       onClick={() => {
-                        roomData.gameId === '925' && setSettingsOpen(true);
+                        gameId === '925' && setSettingsOpen(true);
                       }}
                     >
                       Start Game
@@ -100,7 +101,6 @@ export default function WaitingRoom({usersData, gameName, gameDescription,
                     >
                       <div className={classes.paper}>
                         <SettingsModal
-                          usersData={usersData}
                           usersCollection={usersCollection}
                           startGame={startGame}
                         />
@@ -134,8 +134,16 @@ WaitingRoom.propTypes = {
   joinRoom: PropTypes.func,
   inRoom: PropTypes.bool,
   isHost: PropTypes.bool,
-  usersData: PropTypes.object,
   usersCollection: PropTypes.object,
   startGame: PropTypes.func,
-  roomData: PropTypes.object,
+  gameId: PropTypes.string,
 };
+
+const mapStateToProps = (state) => ({
+  gameId: state.roomData.gameId,
+});
+
+export default connect(
+    mapStateToProps,
+    {},
+)(WaitingRoom);
