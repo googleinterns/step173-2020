@@ -159,7 +159,7 @@ function SettingsModal({usersDataLength, usersCollection, startGame}) {
 SettingsModal.propTypes = {
   usersCollection: PropTypes.object,
   startGame: PropTypes.func,
-  usersDataLength: PropTypes.number
+  usersDataLength: PropTypes.number,
 };
 
 const mapStateToProps = (state) => ({

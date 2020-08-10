@@ -55,7 +55,7 @@ function Chat({open, messages, roomId, displayName}) {
     const time = `${hours}:${minutes}`;
     roomDoc.update(
         {chat: fieldValue.arrayUnion(
-          {text: newMessage, user: displayName, time}
+            {text: newMessage, user: displayName, time},
         )},
     );
     setNewMessage('');
