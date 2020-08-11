@@ -47,24 +47,45 @@ function Chat({open, messages, room, displayName, direction, mafia}) {
    * Post message to database
    */
   function addMessage() {
-    const today = new Date();
-    const hours = ('0' + today.getHours()).slice(-2);
-    const minutes = ('0' + today.getMinutes()).slice(-2);
-    const time = `${hours}:${minutes}`;
+    let today = new Date();
+    const hours = today.getUTCHours();
+    const minutes = today.getUTCMinutes();
     if (mafia) {
       room.update(
         {mafiaChat: fieldValue.arrayUnion(
-            {text: newMessage, user: displayName, time},
+            {text: newMessage, user: displayName, hours, minutes},
         )},
       );
     } else {
       room.update(
           {chat: fieldValue.arrayUnion(
-              {text: newMessage, user: displayName, time},
+              {text: newMessage, user: displayName, hours, minutes},
           )},
       );
     }
     setNewMessage('');
+  }
+
+  function getLocalTime(hours, minutes) {
+    const today = new Date();
+    const offset = today.getTimezoneOffset();
+    let localMinutes = minutes - offset%60;
+    let localHours = hours - Math.floor(offset/60);
+    if (localMinutes < 0) {
+      localMinutes += 60;
+      localHours --;
+    } else if (localMinutes > 60) {
+      localMinutes -= 60;
+      localHours ++;
+    }
+    if (localHours === 24){
+      localHours = 0;
+    } else if (localHours === -1){
+      localHours = 23;
+    }
+    localMinutes = ('0' + localMinutes).slice(-2);
+    localHours = ('0' + localHours).slice(-2);    
+    return `${localHours}:${localMinutes}`;
   }
 
   /**
@@ -97,7 +118,7 @@ function Chat({open, messages, room, displayName, direction, mafia}) {
                     key={index}
                     user={message.user}
                     text={message.text}
-                    time={message.time}
+                    time={getLocalTime(message.hours, message.minutes)}
                   />
                 );
               }) :
