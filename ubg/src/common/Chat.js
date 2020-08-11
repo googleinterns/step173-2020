@@ -71,15 +71,23 @@ function Chat({open, messages, room, displayName, direction, mafia}) {
    * Scroll to the bottom of chat
    */
   function scrollToBottom() {
-    if (open) {
-      messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
-    }
+    setTimeout(function() {
+      if (open) {
+        messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
+      }
+    }, 100);
   }
 
-  useEffect(scrollToBottom, [messages]);
+  useEffect(scrollToBottom, [messages, open]);
 
   return (
-    <Slide direction={direction} in={open} mountOnEnter unmountOnExit>
+    <Slide
+      direction={direction}
+      in={open}
+      mountOnEnter
+      unmountOnExit
+      timeout={100}
+    >
       <div className={classes.chatContainer}>
         <div className={classes.chatMessages}>
           { messages ?
