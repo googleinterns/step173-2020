@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia day element
  */
 function MafiaDay({mafiaKill, doctorSave, usersData,
-  usersCollection, userUid, userAlive, room, dayVote, end}) {
+  usersCollection, userUid, room, dayVote, end}) {
   const classes = useStyles();
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
@@ -47,19 +47,17 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
   const [win, setWin] = useState(0);
   const [initialize, setInitialize] = useState(false);
   const alive = () => {
-    let count = 0;
     const allPlayers = [];
     usersData.forEach(function(u) {
       if (u.alive === true) {
         allPlayers.push(u);
-        count++;
       }
       if (u.uid === userUid) {
         setUserInfo(u);
       }
     });
     setPlayers(allPlayers);
-    return count;
+    return allPlayers.length;
   };
 
   /**
@@ -162,8 +160,10 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
         dayVote: firebase.firestore.FieldValue.arrayUnion(newVote),
       });
       setVoted(true);
+      alert('You have voted for ' + choice.displayName);
+    } else {
+      alert('You have already voted for ' + choice.displayName);
     }
-    alert('You have voted for ' + choice.displayName);
   }
 
   return (
@@ -201,7 +201,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
               variant="contained"
               color="primary"
               onClick={confirmVote}
-              disabled={!userAlive}
+              disabled={!userInfo.alive}
             >
               Confirm Vote
             </Button>
@@ -237,7 +237,6 @@ MafiaDay.propTypes = {
 
 const mapStateToProps = (state) => ({
   userUid: state.currentUser.uid,
-  userAlive: state.currentUser.alive,
   usersData: state.usersData,
   dayVote: state.roomData.dayVote,
   mafiaKill: state.roomData.mafiaKill,
