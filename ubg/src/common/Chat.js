@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
  * @param {array} messages Messages in chat
  * @return {ReactElement} Drawer with chat
  */
-function Chat({open, messages, room, displayName, direction, mafia}) {
+function Chat({open, messages, room, displayName, mafia}) {
   const classes = useStyles();
   const fieldValue = firebase.firestore.FieldValue;
   const [newMessage, setNewMessage] = useState('');
@@ -47,14 +47,14 @@ function Chat({open, messages, room, displayName, direction, mafia}) {
    * Post message to database
    */
   function addMessage() {
-    let today = new Date();
+    const today = new Date();
     const hours = today.getUTCHours();
     const minutes = today.getUTCMinutes();
     if (mafia) {
       room.update(
-        {mafiaChat: fieldValue.arrayUnion(
-            {text: newMessage, user: displayName, hours, minutes},
-        )},
+          {mafiaChat: fieldValue.arrayUnion(
+              {text: newMessage, user: displayName, hours, minutes},
+          )},
       );
     } else {
       room.update(
@@ -66,6 +66,11 @@ function Chat({open, messages, room, displayName, direction, mafia}) {
     setNewMessage('');
   }
 
+  /**
+   * Get local time from UTC time
+   * @param {number} hours
+   * @param {number} minutes
+   */
   function getLocalTime(hours, minutes) {
     const today = new Date();
     const offset = today.getTimezoneOffset();
@@ -84,7 +89,7 @@ function Chat({open, messages, room, displayName, direction, mafia}) {
       localHours = 23;
     }
     localMinutes = ('0' + localMinutes).slice(-2);
-    localHours = ('0' + localHours).slice(-2);    
+    localHours = ('0' + localHours).slice(-2);
     return `${localHours}:${localMinutes}`;
   }
 
@@ -103,7 +108,7 @@ function Chat({open, messages, room, displayName, direction, mafia}) {
 
   return (
     <Slide
-      direction={direction}
+      direction="up"
       in={open}
       mountOnEnter
       unmountOnExit
@@ -158,8 +163,9 @@ function Chat({open, messages, room, displayName, direction, mafia}) {
 Chat.propTypes = {
   open: PropTypes.bool,
   messages: PropTypes.array,
-  roomId: PropTypes.string,
   displayName: PropTypes.string,
+  room: PropTypes.object,
+  mafia: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({

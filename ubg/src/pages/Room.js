@@ -126,6 +126,10 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     [classes.chatSelected]: mafiaChatSelected,
   });
 
+  /**
+   * Check if current user is mafia
+   * @param {string} uid
+   */
   function isMafia(uid) {
     for (let i = 0; i < usersData.length; i++) {
       if (usersData[i].uid === uid) {
@@ -345,7 +349,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                               setChatOpen(!chatOpen);
                             } else {
                               setMafiaChatSelected(true);
-                              if(!chatOpen){
+                              if (!chatOpen) {
                                 setChatOpen(true);
                               }
                             }
@@ -363,7 +367,6 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                         roomData.mafiaChat : roomData.chat}
                       open={chatOpen}
                       room={room}
-                      direction="up"
                     />
                   </Paper>
                 </div>
