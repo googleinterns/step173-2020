@@ -66,6 +66,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     color: 'black',
     borderRadius: '4px 4px 0 0',
+    cursor: 'pointer',
   },
   sideMargin10px: {
     margin: '0 10px',
