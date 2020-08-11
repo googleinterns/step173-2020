@@ -104,7 +104,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
    * @return {undefined}
    */
   function startNight() {
-    if (dayVote.length === 1) {
+    if (dayVote.length === usersData.length) {
       const voteMap = new Map();
       let executedPlayer = [];
       dayVote.forEach((vote) => {
