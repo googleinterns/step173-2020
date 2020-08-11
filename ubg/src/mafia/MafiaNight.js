@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
 import Player from './Player';
 import PersonalInfo from './PersonalInfo';
 import PropTypes from 'prop-types';
@@ -35,6 +36,7 @@ function MafiaNight({userUid, usersData, room,
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
   const [roleText, setRoleText] = React.useState('');
+  const [choice, setChoice] = React.useState('');
   const [message, setMessage] = React.useState('');
 
   /**
@@ -95,7 +97,14 @@ function MafiaNight({userUid, usersData, room,
    */
   useEffect(loadNightData, [mafiaKill, doctorSave, detectiveCheck]);
 
-
+  /**
+   * @return {undefined}
+   */
+  function confirmClick() {
+    if (choice !== '') {
+      handleClick(choice);
+    }
+  }
   /**
    * @param {object} player information of player
    * @return {undefined}
@@ -154,6 +163,7 @@ function MafiaNight({userUid, usersData, room,
           <h2>{message}</h2>
         </Box>
         {userInfo.role === 1 ? null :
+        <div>
           <Grid container justify="center" alignItems="center" spacing={4}>
             {
               players.map((u) => {
@@ -161,12 +171,23 @@ function MafiaNight({userUid, usersData, room,
                   <Player
                     key={u.uid}
                     player={u}
-                    handleClick={handleClick}
+                    handleClick={() => setChoice(u)}
                   />
                 );
               })
             }
           </Grid>
+          <br /> <br />
+          <Grid container justify="center" alignItems="center">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={confirmClick}
+          >
+            Confirm Choice
+          </Button>
+        </Grid>
+          </div>
         }
       </Box>
     </Grid>

@@ -20,13 +20,11 @@ const useStyles = makeStyles((theme) => ({
 function MafiaGame({day, room, usersCollection}) {
     const [alert, setAlert] = React.useState(null);
   function showResult(message) {
-    console.log(message);
     setAlert(<AlertDialog message={message}></AlertDialog>);
   }
   const classes = useStyles();
   return (
     <div className={classes.root}>
-      <h1>sdfad</h1>
       {alert}
       {
         day ?
