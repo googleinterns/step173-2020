@@ -50,11 +50,9 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
    * Determines if game has reached end
    */
   function endGame() {
-    console.log('0')
     // all mafia are dead
     if (!usersData.some((player) => player.role === 2 &&
         player.alive === true)) {
-          console.log('1')
       setWin(1);
       room.update({
         end: true,
@@ -62,7 +60,6 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
     // all townspeople are dead
     } else if (!usersData.some((player) => player.role !== 2 &&
         player.alive === true)) {
-          console.log('2')
       setWin(2);
       room.update({
         end: true,
