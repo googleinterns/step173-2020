@@ -81,14 +81,12 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
         usersCollection.doc(mafiaKill.uid).update({alive: false});
         setDeathText(mafiaKill.displayName + ' was killed last night');
         aliveNum -= 1;
-        // room.update({
-        //   aliveCount: aliveCount - 1,
-        // });
       } else {
         setDeathText('No one was killed last night');
       }
       usersData.forEach(function(u) {
-        if (u.alive === true) {
+        if (u.alive === true &&
+          (u.uid !== mafiaKill.uid && mafiaKill.uid !== doctorSave)) {
           allPlayers.push(u);
         }
         if (u.uid === userUid) {
@@ -172,6 +170,8 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
       });
       setVoted(true);
       alert('You have voted for ' + choice.displayName);
+    } else {
+      alert('You have already voted for ' + choice.displayName);
     }
   }
 
@@ -210,6 +210,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
               variant="contained"
               color="primary"
               onClick={confirmVote}
+              disabled={!userInfo.alive}
             >
               Confirm Vote
             </Button>
