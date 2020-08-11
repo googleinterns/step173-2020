@@ -4,7 +4,11 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
+import PropTypes from 'prop-types';
 
+/**
+ * @return {ReactElement} AlertDialog element
+ */
 export default function AlertDialog({message}) {
   const [open, setOpen] = React.useState(true);
 
@@ -32,3 +36,7 @@ export default function AlertDialog({message}) {
     </div>
   );
 }
+
+AlertDialog.propTypes = {
+  message: PropTypes.string,
+};

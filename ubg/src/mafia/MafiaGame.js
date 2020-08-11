@@ -16,9 +16,11 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Mafia game element
  */
-
 function MafiaGame({day, room, usersCollection}) {
-    const [alert, setAlert] = React.useState(null);
+  const [alert, setAlert] = React.useState(null);
+  /**
+   * @return {undefined}
+   */
   function showResult(message) {
     setAlert(<AlertDialog message={message}></AlertDialog>);
   }

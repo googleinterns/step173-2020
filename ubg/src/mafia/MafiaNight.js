@@ -225,15 +225,15 @@ function MafiaNight({userUid, usersData, room,
           </Grid>
           <br /> <br />
           <Grid container justify="center" alignItems="center">
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={confirmClick}
-          >
-            Confirm Choice
-          </Button>
-        </Grid>
-          </div>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={confirmClick}
+            >
+              Confirm Choice
+            </Button>
+          </Grid>
+        </div>
         }
       </Box>
     </Grid>
@@ -247,6 +247,7 @@ MafiaNight.propTypes = {
   mafiaKill: PropTypes.object,
   doctorSave: PropTypes.object,
   detectiveCheck: PropTypes.object,
+  showResult: PropTypes.func,
   mafiaDecision: PropTypes.array,
 };
 
