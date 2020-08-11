@@ -245,6 +245,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
    */
   function startGame() {
     room.update({
+      end: false,
       day: false,
       doctorSave: {'uid': '', 'displayName': ''},
       mafiaKill: {'uid': '', 'displayName': ''},
