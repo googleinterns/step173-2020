@@ -37,6 +37,7 @@ function MafiaNight({userUid, usersData, room,
   const [userInfo, setUserInfo] = useState('');
   const [roleText, setRoleText] = useState('');
   const [choice, setChoice] = useState('');
+  // If mafia, whether chosen someone to kill
   const [chose, setChose] = useState(false);
   const [mafiaTotal, setMafiaTotal] = useState(0);
   const [message, setMessage] = useState('');
@@ -57,7 +58,6 @@ function MafiaNight({userUid, usersData, room,
           roles.add(u.role);
           allPlayers.push(u);
           if (u.role === 2) {
-            console.log("$");
             totalMafia += 1;
           }
         }
@@ -81,7 +81,7 @@ function MafiaNight({userUid, usersData, room,
                 setMessage('Role is invalid.');
             }
           } else {
-            setRoleText('Sorry that you are dead :/');
+            setRoleText('Sorry but you are dead :/');
           }
         }
       });
@@ -106,15 +106,14 @@ function MafiaNight({userUid, usersData, room,
       room.update({day: true});
     }
   }
-
+  /**
+   * Check if all mafias decide to kill the same person
+   * @return {undefined}
+   */
   function mafiaVote() {
-    console.log(mafiaTotal);
     if (mafiaDecision.length !== 0 && mafiaDecision.length === mafiaTotal) {
-      console.log("45");
       const killed = mafiaDecision[0].vote.uid;
-      console.log(killed);
       for (let i = 1; i < mafiaTotal; i++) {
-        console.log(mafiaDecision[i].vote.uid);
         if (mafiaDecision[i].vote.uid !== killed) {
           setMessage('All mafia must choose the same person to die! ' +
           'Please vote again');
@@ -209,7 +208,7 @@ function MafiaNight({userUid, usersData, room,
           <h2>{roleText}</h2>
           <h2>{message}</h2>
         </Box>
-        {userInfo.role === 1 || !userInfo.alive ? null :
+        {userInfo.role === 1 || userInfo.alive === false ? null :
         <div>
           <Grid container justify="center" alignItems="center" spacing={4}>
             {
