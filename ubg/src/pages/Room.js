@@ -27,10 +27,12 @@ import {setCurrentUser} from '../redux/actions/currentUserActions';
 import {setRoomData} from '../redux/actions/roomDataActions';
 import {setUsersData} from '../redux/actions/usersDataActions';
 import PropTypes from 'prop-types';
+const classNames = require('classnames');
 
 const useStyles = makeStyles((theme) => ({
   main: {
     height: '100vh',
+    maxHeight: '100vh',
   },
   video: {
     background: theme.palette.primary.main,
@@ -62,12 +64,29 @@ const useStyles = makeStyles((theme) => ({
   chatHeader: {
     display: 'flex',
     alignItems: 'center',
-    background: '#e0e0e0',
     color: 'black',
     borderRadius: '4px 4px 0 0',
+    cursor: 'pointer',
   },
   sideMargin10px: {
     margin: '0 10px',
+  },
+  chatsHeaders: {
+    display: 'flex',
+  },
+  halfWidth: {
+    background: '#a6a6a6',
+    width: '50%',
+  },
+  fullWidth: {
+    background: '#e0e0e0',
+    width: '100%',
+  },
+  transparentBackground: {
+    backgroundColor: 'transparent',
+  },
+  chatSelected: {
+    backgroundColor: '#e0e0e0',
   },
 }));
 
@@ -90,6 +109,39 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
   const [open, setOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [message, setMessage] = useState('');
+  const mafiaChat =
+    roomData.gameId === '925' &&
+    roomData.started &&
+    isMafia(user.uid);
+  const [mafiaChatSelected, setMafiaChatSelected] = useState(false);
+
+  const chatClasses = classNames({
+    [classes.chatHeader]: true,
+    [classes.fullWidth]: !mafiaChat,
+    [classes.halfWidth]: mafiaChat,
+    [classes.chatSelected]: !mafiaChatSelected && mafiaChat,
+  });
+  const mafiaChatClasses = classNames({
+    [classes.chatHeader]: true,
+    [classes.halfWidth]: true,
+    [classes.chatSelected]: mafiaChatSelected,
+  });
+
+  /**
+   * Check if current user is mafia
+   * @param {string} uid
+   * @return {boolean} mafia or not
+   */
+  function isMafia(uid) {
+    for (let i = 0; i < usersData.length; i++) {
+      if (usersData[i].uid === uid) {
+        if (usersData[i].role === 2) {
+          return true;
+        }
+        return false;
+      }
+    }
+  }
 
   /**
    * Get previous value of variable
@@ -199,11 +251,13 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
    */
   function startGame() {
     room.update({
+      end: false,
       day: false,
       doctorSave: {'uid': '', 'displayName': ''},
       mafiaKill: [],
       detectiveCheck: {'uid': '', 'displayName': ''},
       started: true,
+      mafiaChat: [],
       dayVote: [],
     }).catch(function(error) {
       console.error('Error starting game: ', error);
@@ -267,17 +321,54 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                       })
                     }
                   </div>
-                  <Paper>
-                    <div
-                      className={classes.chatHeader}
-                      onClick={() => setChatOpen(!chatOpen)}
-                    >
-                      <ChatIcon className={classes.sideMargin10px}/>
-                      <Typography variant="h6">Chat</Typography>
+                  <Paper className={classes.transparentBackground}>
+                    <div className={classes.chatsHeaders}>
+                      <div
+                        className={chatClasses}
+                        onClick={() => {
+                          if (mafiaChat) {
+                            if (mafiaChatSelected) {
+                              setMafiaChatSelected(false);
+                              if (!chatOpen) {
+                                setChatOpen(true);
+                              }
+                            } else {
+                              setChatOpen(!chatOpen);
+                            }
+                          } else {
+                            setChatOpen(!chatOpen);
+                          }
+                        }}
+                      >
+                        <ChatIcon className={classes.sideMargin10px}/>
+                        <Typography variant="h6">Chat</Typography>
+                      </div>
+                      { mafiaChat ?
+                        <div
+                          className={mafiaChatClasses}
+                          onClick={() => {
+                            if (mafiaChatSelected) {
+                              setChatOpen(!chatOpen);
+                            } else {
+                              setMafiaChatSelected(true);
+                              if (!chatOpen) {
+                                setChatOpen(true);
+                              }
+                            }
+                          }}
+                        >
+                          <ChatIcon className={classes.sideMargin10px}/>
+                          <Typography variant="h6">Mafia</Typography>
+                        </div> :
+                        null
+                      }
                     </div>
                     <Chat
+                      mafia={mafiaChatSelected}
+                      messages={mafiaChatSelected ?
+                        roomData.mafiaChat : roomData.chat}
                       open={chatOpen}
-                      roomId={roomId}
+                      room={room}
                     />
                   </Paper>
                 </div>

@@ -37,38 +37,63 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia day element
  */
 function MafiaDay({mafiaKill, doctorSave, usersData,
-  usersCollection, userUid, userName, room, dayVote}) {
+  usersCollection, userUid, room, dayVote, end}) {
   const classes = useStyles();
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
   const [deathText, setDeathText] = useState('');
   const [choice, setChoice] = useState('');
   const [voted, setVoted] = useState(false);
+  const [win, setWin] = useState(0);
+
+  /**
+   * Determines if game has reached end
+   */
+  function endGame() {
+    // all mafia are dead
+    if (!usersData.some((player) => player.role === 2 &&
+        player.alive === true)) {
+      setWin(1);
+      room.update({
+        end: true,
+      });
+    // all townspeople are dead
+    } else if (!usersData.some((player) => player.role !== 2 &&
+        player.alive === true)) {
+      setWin(2);
+      room.update({
+        end: true,
+      });
+    }
+  }
 
   /**
    * Sets up daytime data and logistics
    * @return {undefined}
    */
   function startDay() {
-    if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
-      usersCollection.doc(mafiaKill).update({alive: false});
-      setDeathText(mafiaKill.displayName + ' was killed last night');
-    } else {
-      setDeathText('No one was killed last night');
+    endGame();
+    if (!end) {
+      if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
+        usersCollection.doc(mafiaKill.uid).update({alive: false});
+        setDeathText(mafiaKill.displayName + ' was killed last night');
+      } else {
+        setDeathText('No one was killed last night');
+      }
+      const allPlayers = [];
+      usersData.forEach(function(u) {
+        if (u.alive === true) {
+          allPlayers.push(u);
+        }
+        if (u.uid === userUid) {
+          setUserInfo(u);
+        }
+      });
+      setPlayers(allPlayers);
+      room.update({
+        dayVote: [],
+      });
     }
-    const allPlayers = [];
-    usersData.forEach(function(u) {
-      if (u.alive === true) {
-        allPlayers.push(u);
-      }
-      if (u.uid === userUid) {
-        setUserInfo(u);
-      }
-    });
-    setPlayers(allPlayers);
-    room.update({
-      dayVote: [],
-    });
   }
 
   /**
@@ -98,9 +123,12 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
       alert(executedPlayer[0].name + ' was executed.');
       alert(executedPlayer[0].role === 2 ?
         'They were mafia.' : 'They were a townsperson.');
-      room.update({
-        day: false,
-      });
+      endGame();
+      if (!end) {
+        room.update({
+          day: false,
+        });
+      }
     }
   }
 
@@ -114,7 +142,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
   function confirmVote() {
     if (!voted) {
       const newVote = {
-        player: userName,
+        player: userInfo.displayName,
         vote: {
           uid: choice.uid,
           name: choice.displayName,
@@ -135,64 +163,76 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
         role={userInfo.role}
         alive={userInfo.alive}
       />
-      <Box m={10}>
-        <Grid container justify="center" alignItems="center">
-          <h2>{deathText}</h2>
-        </Grid>
-        <Grid container justify="center" alignItems="center">
-          <h3>You may discuss and vote on who to execute</h3>
-        </Grid>
-        <br />
-        <Grid container justify="center" alignItems="center" spacing={4}>
-          {
-            players.map((u) => {
-              return (
-                <Player
-                  key={u.uid}
-                  player={u}
-                  handleClick={() => setChoice(u)}
-                />
-              );
-            })
-          }
-        </Grid>
-        <br /> <br />
-        <Grid container justify="center" alignItems="center">
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={confirmVote}
-          >
-            Confirm Vote
-          </Button>
-        </Grid>
-      </Box>
+      { win === 0 ?
+        <Box m={10}>
+          <Grid container justify="center" alignItems="center">
+            <h2>{deathText}</h2>
+          </Grid>
+          <Grid container justify="center" alignItems="center">
+            <h3>You may discuss and vote on who to execute</h3>
+          </Grid>
+          <br />
+          <Grid container justify="center" alignItems="center" spacing={4}>
+            {
+              players.map((u) => {
+                return (
+                  <Player
+                    key={u.uid}
+                    player={u}
+                    handleClick={() => setChoice(u)}
+                  />
+                );
+              })
+            }
+          </Grid>
+          <br /> <br />
+          <Grid container justify="center" alignItems="center">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={confirmVote}
+            >
+              Confirm Vote
+            </Button>
+          </Grid>
+        </Box> :
+        win === 1 ?
+        <Box>
+          <Grid container justify="center" alignItems="center">
+            <h1>Town won!</h1>
+          </Grid>
+        </Box> :
+        <Box>
+          <Grid container justify="center" alignItems="center">
+            <h1>Mafia won!</h1>
+          </Grid>
+        </Box>
+      }
     </Grid>
   );
 }
 
 MafiaDay.propTypes = {
   userUid: PropTypes.string,
-  userName: PropTypes.string,
   usersData: PropTypes.array,
   usersCollection: PropTypes.object,
   room: PropTypes.object,
   dayVote: PropTypes.array,
   mafiaKill: PropTypes.object,
   doctorSave: PropTypes.object,
+  end: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
   userUid: state.currentUser.uid,
-  userName: state.currentUser.displayName,
   usersData: state.usersData,
   dayVote: state.roomData.dayVote,
   mafiaKill: state.roomData.mafiaKill,
   doctorSave: state.roomData.doctorSave,
+  end: state.roomData.end,
 });
 
 export default connect(
     mapStateToProps,
     {},
 )(MafiaDay);
-
