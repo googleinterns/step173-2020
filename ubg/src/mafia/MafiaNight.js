@@ -54,21 +54,25 @@ function MafiaNight({userUid, usersData, room,
         }
         if (u.uid === userUid) {
           setUserInfo(u);
-          switch (u.role) {
-            case 1:
-              setRoleText('Pretend to be clicking, tapping or thinking :)');
-              break;
-            case 2:
-              setRoleText('Mafia, pick someone to kill.');
-              break;
-            case 3:
-              setRoleText('Detective, who do you want to check tonight?');
-              break;
-            case 4:
-              setRoleText('Doctor, who do you want to save tonight?');
-              break;
-            default:
-              setMessage('Role is invalid.');
+          if (u.alive === true) {
+            switch (u.role) {
+              case 1:
+                setRoleText('Pretend to be clicking, tapping or thinking :)');
+                break;
+              case 2:
+                setRoleText('Mafia, pick someone to kill.');
+                break;
+              case 3:
+                setRoleText('Detective, who do you want to check tonight?');
+                break;
+              case 4:
+                setRoleText('Doctor, who do you want to save tonight?');
+                break;
+              default:
+                setMessage('Role is invalid.');
+            }
+          } else {
+            setRoleText('Sorry that you are dead :/');
           }
         }
       });
@@ -162,7 +166,7 @@ function MafiaNight({userUid, usersData, room,
           <h2>{roleText}</h2>
           <h2>{message}</h2>
         </Box>
-        {userInfo.role === 1 ? null :
+        {userInfo.role === 1 || !userInfo.alive ? null :
         <div>
           <Grid container justify="center" alignItems="center" spacing={4}>
             {
