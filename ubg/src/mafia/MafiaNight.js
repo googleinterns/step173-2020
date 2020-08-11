@@ -6,8 +6,6 @@ import Player from './Player';
 import PersonalInfo from './PersonalInfo';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import Chat from '../common/Chat';
-import Paper from '@material-ui/core/Paper';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -25,28 +23,19 @@ const useStyles = makeStyles((theme) => ({
   card: {
     width: '100%',
   },
-  mafiaChatDrawer: {
-    position: 'absolute',
-    top: '50%',
-    left: 0,
-  },
-  mafiaChat: {
-    width: '200px'
-  },
 }));
 
 /**
  * @return {ReactElement} Mafia night element
  */
 function MafiaNight({userUid, usersData, room,
-  mafiaKill, doctorSave, detectiveCheck, mafiaChat}) {
+  mafiaKill, doctorSave, detectiveCheck}) {
   const classes = useStyles();
   const [initialize, setInitialize] = useState(false);
   const [players, setPlayers] = useState([]);
   const [userInfo, setUserInfo] = useState('');
   const [roleText, setRoleText] = useState('');
   const [message, setMessage] = useState('');
-  const [mafiaChatOpen, setMafiaChatOpen] = useState(false);
 
   /**
    * @return {undefined}
@@ -159,20 +148,6 @@ function MafiaNight({userUid, usersData, room,
         role={userInfo.role}
         alive={userInfo.alive}
       />
-      <div className={classes.mafiaChatDrawer}>
-        <button onClick={() => setMafiaChatOpen(!mafiaChatOpen)}>
-          mafia chat
-        </button>
-        <Paper className={classes.mafiaChat}>
-          <Chat
-            mafia={true}
-            messages={mafiaChat}
-            open={mafiaChatOpen}
-            room={room}
-            direction="right"
-          />
-        </Paper>
-      </div>
       <Box m={10}>
         <Box className={classes.text} my={15} justify="center" mx="auto">
           <h2>{roleText}</h2>
@@ -205,7 +180,6 @@ MafiaNight.propTypes = {
   mafiaKill: PropTypes.object,
   doctorSave: PropTypes.object,
   detectiveCheck: PropTypes.object,
-  mafiaChat: PropTypes.array,
 };
 
 const mapStateToProps = (state) => ({
@@ -214,7 +188,6 @@ const mapStateToProps = (state) => ({
   mafiaKill: state.roomData.mafiaKill,
   doctorSave: state.roomData.doctorSave,
   detectiveCheck: state.roomData.detectiveCheck,
-  mafiaChat: state.roomData.mafiaChat
 });
 
 export default connect(
