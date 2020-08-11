@@ -201,7 +201,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     room.update({
       day: false,
       doctorSave: {'uid': '', 'displayName': ''},
-      mafiaKill: {'uid': '', 'displayName': ''},
+      mafiaKill: [],
       detectiveCheck: {'uid': '', 'displayName': ''},
       started: true,
       dayVote: [],

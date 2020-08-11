@@ -7,6 +7,7 @@ import Player from './Player';
 import PersonalInfo from './PersonalInfo';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
+import * as firebase from 'firebase/app';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -37,6 +38,8 @@ function MafiaNight({userUid, usersData, room,
   const [userInfo, setUserInfo] = React.useState('');
   const [roleText, setRoleText] = React.useState('');
   const [choice, setChoice] = React.useState('');
+  const [chose, setChose] = React.useState(false);
+  const [mafiaTotal, setMafiaTotal] = React.useState(0);
   const [message, setMessage] = React.useState('');
 
   /**
@@ -60,6 +63,7 @@ function MafiaNight({userUid, usersData, room,
                 setRoleText('Pretend to be clicking, tapping or thinking :)');
                 break;
               case 2:
+                setMafiaTotal(mafiaTotal + 1);
                 setRoleText('Mafia, pick someone to kill.');
                 break;
               case 3:
@@ -90,16 +94,33 @@ function MafiaNight({userUid, usersData, room,
     if (mafiaKill &&
       doctorSave &&
       detectiveCheck &&
-      mafiaKill.uid !== '' &&
+      mafiaKill.length !== 0 &&
       doctorSave.uid !== '' &&
       detectiveCheck.uid !== '') {
       room.update({day: true});
+    }
+  }
+
+  function mafiaVote() {
+    if (mafiaKill.length !== 0 && mafiaKill.length === mafiaTotal) {
+      const killed = mafiaKill[0].vote.uid;
+      for (let i = 1; i < mafiaTotal.length; i++) {
+        if (mafiaKill[i].vote.uid !== killed) {
+          setMessage('All mafia must choose the same person to die! ' +
+          'Please vote again');
+          room.update({
+            mafiaKill: [],
+          });
+          setChose(false);
+        }
+      }
     }
   }
   /**
    * Load the all the mafia related data
    */
   useEffect(loadNightData, [mafiaKill, doctorSave, detectiveCheck]);
+  useEffect(mafiaVote, [mafiaKill, mafiaTotal]);
 
   /**
    * @return {undefined}
@@ -116,13 +137,21 @@ function MafiaNight({userUid, usersData, room,
   function handleClick(player) {
     switch (userInfo.role) {
       case 2:
-        if (mafiaKill.uid === '') {
-          room.update(
-              {mafiaKill: {uid: player.uid, displayName: player.displayName}});
+        if (chose === false) {
+          const newVote = {
+            player: userInfo.displayName,
+            vote: {
+              uid: player.uid,
+              name: player.displayName,
+            },
+          };
+          room.update({
+            mafiaKill: firebase.firestore.FieldValue.arrayUnion(newVote),
+          });
+          setChose(true);
           showResult('You have killed ' + player.displayName + ' tonight.');
         } else if (room.mafiaKill !== player.uid) {
-          setMessage('You have already chosen ' +
-          mafiaKill.displayName + ' to kill tonight.');
+          setMessage('You have already chosen someone to kill.');
         }
         break;
       case 3:
@@ -202,7 +231,7 @@ MafiaNight.propTypes = {
   userUid: PropTypes.string,
   usersData: PropTypes.array,
   room: PropTypes.object,
-  mafiaKill: PropTypes.object,
+  mafiaKill: PropTypes.array,
   doctorSave: PropTypes.object,
   detectiveCheck: PropTypes.object,
 };
