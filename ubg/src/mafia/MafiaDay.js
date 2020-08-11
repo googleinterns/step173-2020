@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia day element
  */
 function MafiaDay({mafiaKill, doctorSave, usersData,
-  usersCollection, userUid, userName, userRole, room, dayVote, end}) {
+  usersCollection, userUid, room, dayVote, end}) {
   const classes = useStyles();
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
@@ -50,16 +50,23 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
    * Determines if game has reached end
    */
   function endGame() {
+    console.log('0')
     // all mafia are dead
     if (!usersData.some((player) => player.role === 2 &&
         player.alive === true)) {
+          console.log('1')
       setWin(1);
-      end = true;
+      room.update({
+        end: true,
+      });
     // all townspeople are dead
     } else if (!usersData.some((player) => player.role !== 2 &&
         player.alive === true)) {
+          console.log('2')
       setWin(2);
-      end = true;
+      room.update({
+        end: true,
+      });
     }
   }
 
@@ -97,7 +104,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
    * @return {undefined}
    */
   function startNight() {
-    if (dayVote.length === usersData.length) {
+    if (dayVote.length === 1) {
       const voteMap = new Map();
       let executedPlayer = [];
       dayVote.forEach((vote) => {
@@ -119,9 +126,12 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
       alert(executedPlayer[0].name + ' was executed.');
       alert(executedPlayer[0].role === 2 ?
         'They were mafia.' : 'They were a townsperson.');
-      room.update({
-        day: false,
-      });
+      endGame();
+      if (!end) {
+        room.update({
+          day: false,
+        });
+      }
     }
   }
 
@@ -135,7 +145,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
   function confirmVote() {
     if (!voted) {
       const newVote = {
-        player: userName,
+        player: userInfo.displayName,
         vote: {
           uid: choice.uid,
           name: choice.displayName,
@@ -207,8 +217,6 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
 
 MafiaDay.propTypes = {
   userUid: PropTypes.string,
-  userName: PropTypes.string,
-  userRole: PropTypes.string,
   usersData: PropTypes.array,
   usersCollection: PropTypes.object,
   room: PropTypes.object,
@@ -220,7 +228,6 @@ MafiaDay.propTypes = {
 
 const mapStateToProps = (state) => ({
   userUid: state.currentUser.uid,
-  userName: state.currentUser.displayName,
   usersData: state.usersData,
   dayVote: state.roomData.dayVote,
   mafiaKill: state.roomData.mafiaKill,
