@@ -255,6 +255,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
       day: false,
       doctorSave: {'uid': '', 'displayName': ''},
       mafiaKill: {'uid': '', 'displayName': ''},
+      mafiaDecision: [],
       detectiveCheck: {'uid': '', 'displayName': ''},
       started: true,
       aliveCount: usersData.length,

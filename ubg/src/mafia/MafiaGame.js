@@ -3,6 +3,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import MafiaDay from './MafiaDay';
 import MafiaNight from './MafiaNight';
 import PropTypes from 'prop-types';
+import AlertDialog from './utils/AlertDialog';
 import {connect} from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
@@ -16,9 +17,18 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia game element
  */
 function MafiaGame({day, room, usersCollection}) {
+  const [alert, setAlert] = React.useState(null);
+  /**
+   * @param {string} message message to display
+   * @return {undefined}
+   */
+  function showResult(message) {
+    setAlert(<AlertDialog message={message}></AlertDialog>);
+  }
   const classes = useStyles();
   return (
     <div className={classes.root}>
+      {alert}
       {
         day ?
         <MafiaDay
@@ -27,6 +37,7 @@ function MafiaGame({day, room, usersCollection}) {
         /> :
         <MafiaNight
           room={room}
+          showResult={showResult}
         />
       }
     </div>
