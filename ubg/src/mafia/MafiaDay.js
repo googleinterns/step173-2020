@@ -46,7 +46,6 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
   const [voted, setVoted] = useState(false);
   const [win, setWin] = useState(0);
   const [initialize, setInitialize] = useState(false);
-  // const [disabled, setDisabled] = useState(false);
 
   /**
    * Determines if game has reached end
@@ -139,14 +138,6 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
       }
     }
   }
-
-  /**
-   * Checks if player is dead or if they already voted,
-   * The confirm vote button will be disabled if true.
-   */
-  // function canVote() {
-  //   setDisabled(!userInfo.alive || voted);
-  // }
 
   useEffect(startDay, [usersData]);
   useEffect(startNight, [dayVote]);
