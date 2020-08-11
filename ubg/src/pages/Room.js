@@ -258,6 +258,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
       mafiaDecision: [],
       detectiveCheck: {'uid': '', 'displayName': ''},
       started: true,
+      aliveCount: usersData.length,
       mafiaChat: [],
       dayVote: [],
     }).catch(function(error) {
