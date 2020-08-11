@@ -31,12 +31,11 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia night element
  */
 function MafiaNight({userUid, usersData, room,
-  mafiaKill, doctorSave, detectiveCheck, showResult}) {
+  mafiaKill, doctorSave, detectiveCheck, showResult, mafiaDecision}) {
   const classes = useStyles();
   const [players, setPlayers] = useState([]);
   const [userInfo, setUserInfo] = useState('');
   const [roleText, setRoleText] = useState('');
-  const [message, setMessage] = useState('');
   const [choice, setChoice] = useState('');
   const [chose, setChose] = useState(false);
   const [mafiaTotal, setMafiaTotal] = useState(0);
@@ -52,10 +51,15 @@ function MafiaNight({userUid, usersData, room,
       setInitialize(true);
       const roles = new Set();
       const allPlayers = [];
+      let totalMafia = 0;
       usersData.forEach(function(u) {
         if (u.alive === true) {
           roles.add(u.role);
           allPlayers.push(u);
+          if (u.role === 2) {
+            console.log("$");
+            totalMafia += 1;
+          }
         }
         if (u.uid === userUid) {
           setUserInfo(u);
@@ -65,7 +69,6 @@ function MafiaNight({userUid, usersData, room,
                 setRoleText('Pretend to be clicking, tapping or thinking :)');
                 break;
               case 2:
-                setMafiaTotal(mafiaTotal + 1);
                 setRoleText('Mafia, pick someone to kill.');
                 break;
               case 3:
@@ -82,6 +85,7 @@ function MafiaNight({userUid, usersData, room,
           }
         }
       });
+      setMafiaTotal(totalMafia);
       if (!roles.has(2)) {
         room.update({mafiaKill: {uid: '#', displayName: ''}});
       }
@@ -96,7 +100,7 @@ function MafiaNight({userUid, usersData, room,
     if (mafiaKill &&
       doctorSave &&
       detectiveCheck &&
-      mafiaKill.length !== 0 &&
+      mafiaKill.uid !== '' &&
       doctorSave.uid !== '' &&
       detectiveCheck.uid !== '') {
       room.update({day: true});
@@ -104,25 +108,33 @@ function MafiaNight({userUid, usersData, room,
   }
 
   function mafiaVote() {
-    if (mafiaKill.length !== 0 && mafiaKill.length === mafiaTotal) {
-      const killed = mafiaKill[0].vote.uid;
-      for (let i = 1; i < mafiaTotal.length; i++) {
-        if (mafiaKill[i].vote.uid !== killed) {
+    console.log(mafiaTotal);
+    if (mafiaDecision.length !== 0 && mafiaDecision.length === mafiaTotal) {
+      console.log("45");
+      const killed = mafiaDecision[0].vote.uid;
+      console.log(killed);
+      for (let i = 1; i < mafiaTotal; i++) {
+        console.log(mafiaDecision[i].vote.uid);
+        if (mafiaDecision[i].vote.uid !== killed) {
           setMessage('All mafia must choose the same person to die! ' +
           'Please vote again');
           room.update({
-            mafiaKill: [],
+            mafiaDecision: [],
           });
           setChose(false);
+          return;
         }
       }
+      room.update({
+        mafiaKill: mafiaDecision[0].vote,
+      });
     }
   }
   /**
    * Load the all the mafia related data
    */
   useEffect(loadNightData, [mafiaKill, doctorSave, detectiveCheck]);
-  useEffect(mafiaVote, [mafiaKill, mafiaTotal]);
+  useEffect(mafiaVote, [mafiaDecision]);
 
   /**
    * @return {undefined}
@@ -144,15 +156,15 @@ function MafiaNight({userUid, usersData, room,
             player: userInfo.displayName,
             vote: {
               uid: player.uid,
-              name: player.displayName,
+              displayName: player.displayName,
             },
           };
           room.update({
-            mafiaKill: firebase.firestore.FieldValue.arrayUnion(newVote),
+            mafiaDecision: firebase.firestore.FieldValue.arrayUnion(newVote),
           });
           setChose(true);
           showResult('You have killed ' + player.displayName + ' tonight.');
-        } else if (room.mafiaKill !== player.uid) {
+        } else {
           setMessage('You have already chosen someone to kill.');
         }
         break;
@@ -233,9 +245,10 @@ MafiaNight.propTypes = {
   userUid: PropTypes.string,
   usersData: PropTypes.array,
   room: PropTypes.object,
-  mafiaKill: PropTypes.array,
+  mafiaKill: PropTypes.object,
   doctorSave: PropTypes.object,
   detectiveCheck: PropTypes.object,
+  mafiaDecision: PropTypes.array,
 };
 
 const mapStateToProps = (state) => ({
@@ -244,6 +257,7 @@ const mapStateToProps = (state) => ({
   mafiaKill: state.roomData.mafiaKill,
   doctorSave: state.roomData.doctorSave,
   detectiveCheck: state.roomData.detectiveCheck,
+  mafiaDecision: state.roomData.mafiaDecision,
 });
 
 export default connect(
