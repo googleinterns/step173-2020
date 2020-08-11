@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
@@ -31,11 +31,11 @@ const useStyles = makeStyles((theme) => ({
 function MafiaNight({userUid, usersData, room,
   mafiaKill, doctorSave, detectiveCheck}) {
   const classes = useStyles();
-  const [initialize, setInitialize] = React.useState(false);
-  const [players, setPlayers] = React.useState([]);
-  const [userInfo, setUserInfo] = React.useState('');
-  const [roleText, setRoleText] = React.useState('');
-  const [message, setMessage] = React.useState('');
+  const [initialize, setInitialize] = useState(false);
+  const [players, setPlayers] = useState([]);
+  const [userInfo, setUserInfo] = useState('');
+  const [roleText, setRoleText] = useState('');
+  const [message, setMessage] = useState('');
 
   /**
    * @return {undefined}
