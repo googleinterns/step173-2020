@@ -78,9 +78,9 @@ function Chat({open, messages, room, displayName, direction, mafia}) {
       localMinutes -= 60;
       localHours ++;
     }
-    if (localHours === 24){
+    if (localHours === 24) {
       localHours = 0;
-    } else if (localHours === -1){
+    } else if (localHours === -1) {
       localHours = 23;
     }
     localMinutes = ('0' + localMinutes).slice(-2);
