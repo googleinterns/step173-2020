@@ -129,6 +129,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
   /**
    * Check if current user is mafia
    * @param {string} uid
+   * @return {boolean} mafia or not
    */
   function isMafia(uid) {
     for (let i = 0; i < usersData.length; i++) {

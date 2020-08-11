@@ -70,6 +70,7 @@ function Chat({open, messages, room, displayName, mafia}) {
    * Get local time from UTC time
    * @param {number} hours
    * @param {number} minutes
+   * @return {string} local time
    */
   function getLocalTime(hours, minutes) {
     const today = new Date();
@@ -165,7 +166,7 @@ Chat.propTypes = {
   messages: PropTypes.array,
   displayName: PropTypes.string,
   room: PropTypes.object,
-  mafia: PropTypes.bool
+  mafia: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
