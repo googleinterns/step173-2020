@@ -81,7 +81,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
         usersCollection.doc(mafiaKill.uid).update({alive: false});
         setDeathText(mafiaKill.displayName + ' was killed last night');
         room.update({
-          aliveCount: aliveCount - 1, 
+          aliveCount: aliveCount - 1,
         });
       } else {
         setDeathText('No one was killed last night');
@@ -139,6 +139,10 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
     }
   }
 
+  /**
+   * Checks if player is dead or if they already voted,
+   * The confirm vote button will be disabled if true.
+   */
   function canVote() {
     setDisabled(!userInfo.alive || voted);
   }
