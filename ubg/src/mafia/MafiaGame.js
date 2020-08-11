@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
 function MafiaGame({day, room, usersCollection}) {
   const [alert, setAlert] = React.useState(null);
   /**
+   * @param {string} message message to display
    * @return {undefined}
    */
   function showResult(message) {
