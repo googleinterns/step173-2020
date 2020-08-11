@@ -207,7 +207,6 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
               variant="contained"
               color="primary"
               onClick={confirmVote}
-              disabled={disabled}
             >
               Confirm Vote
             </Button>
