@@ -205,6 +205,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
       mafiaKill: {'uid': '', 'displayName': ''},
       detectiveCheck: {'uid': '', 'displayName': ''},
       started: true,
+      aliveCount: usersData.length,
       dayVote: [],
     }).catch(function(error) {
       console.error('Error starting game: ', error);

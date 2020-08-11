@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia day element
  */
 function MafiaDay({mafiaKill, doctorSave, usersData,
-  usersCollection, userUid, room, dayVote, end}) {
+  usersCollection, userUid, room, dayVote, aliveCount, end}) {
   const classes = useStyles();
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
@@ -46,19 +46,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
   const [voted, setVoted] = useState(false);
   const [win, setWin] = useState(0);
   const [initialize, setInitialize] = useState(false);
-  const alive = () => {
-    const allPlayers = [];
-    usersData.forEach(function(u) {
-      if (u.alive === true) {
-        allPlayers.push(u);
-      }
-      if (u.uid === userUid) {
-        setUserInfo(u);
-      }
-    });
-    setPlayers(allPlayers);
-    return allPlayers.length;
-  };
+  const [disabled, setDisabled] = useState(false);
 
   /**
    * Determines if game has reached end
@@ -87,16 +75,27 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
    */
   function startDay() {
     endGame();
-    if (!end) {
-      if (!initialize) {
-        if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
-          usersCollection.doc(mafiaKill.uid).update({alive: false});
-          setDeathText(mafiaKill.displayName + ' was killed last night');
-        } else {
-          setDeathText('No one was killed last night');
-        }
-        setInitialize(true);
+    if (!end && !initialize) {
+      const allPlayers = [];
+      if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
+        usersCollection.doc(mafiaKill.uid).update({alive: false});
+        setDeathText(mafiaKill.displayName + ' was killed last night');
+        room.update({
+          aliveCount: aliveCount - 1, 
+        });
+      } else {
+        setDeathText('No one was killed last night');
       }
+      usersData.forEach(function(u) {
+        if (u.alive === true) {
+          allPlayers.push(u);
+        }
+        if (u.uid === userUid) {
+          setUserInfo(u);
+        }
+      });
+      setPlayers(allPlayers);
+      setInitialize(true);
     }
   }
 
@@ -105,7 +104,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
    * @return {undefined}
    */
   function startNight() {
-    if (dayVote.length === alive()) {
+    if (dayVote.length === aliveCount) {
       const voteMap = new Map();
       let executedPlayer = [];
       dayVote.forEach((vote) => {
@@ -140,8 +139,13 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
     }
   }
 
+  function canVote() {
+    setDisabled(!userInfo.alive || voted);
+  }
+
   useEffect(startDay, [usersData]);
   useEffect(startNight, [dayVote]);
+  useEffect(canVote, [voted]);
 
   /**
    * Sets the voting choice for current user
@@ -161,8 +165,6 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
       });
       setVoted(true);
       alert('You have voted for ' + choice.displayName);
-    } else {
-      alert('You have already voted for ' + choice.displayName);
     }
   }
 
@@ -201,7 +203,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
               variant="contained"
               color="primary"
               onClick={confirmVote}
-              disabled={!userInfo.alive}
+              disabled={disabled}
             >
               Confirm Vote
             </Button>
@@ -232,6 +234,7 @@ MafiaDay.propTypes = {
   dayVote: PropTypes.array,
   mafiaKill: PropTypes.object,
   doctorSave: PropTypes.object,
+  aliveCount: PropTypes.number,
   end: PropTypes.bool,
 };
 
@@ -241,6 +244,7 @@ const mapStateToProps = (state) => ({
   dayVote: state.roomData.dayVote,
   mafiaKill: state.roomData.mafiaKill,
   doctorSave: state.roomData.doctorSave,
+  aliveCount: state.roomData.aliveCount,
   end: state.roomData.end,
 });
 
