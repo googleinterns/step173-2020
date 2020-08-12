@@ -22,6 +22,10 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     position: 'relative',
   },
+  night: {
+    float: 'right',
+    marginRight: '3em',
+  },
   card: {
     width: '100%',
   },
@@ -212,11 +216,14 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
 
   return (
     <Grid className={classes.gameContainer} item>
-      <PersonalInfo
-        name={userInfo.displayName}
-        role={userInfo.role}
-        alive={userInfo.alive}
-      />
+      <div>
+        <h1 className={classes.night}>NIGHT</h1>
+        <PersonalInfo
+          name={userInfo.displayName}
+          role={userInfo.role}
+          alive={userInfo.alive}
+        />
+      </div>
       <Box m={10}>
         <Box className={classes.text} my={15} justify="center" mx="auto">
           <h2>{roleText}</h2>
