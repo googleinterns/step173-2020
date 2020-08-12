@@ -198,7 +198,8 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
                   <Player
                     key={u.uid}
                     player={u}
-                    handleClick={() => setChoice(u)}
+                    setChoice={setChoice}
+                    choice={choice}
                   />
                 );
               })

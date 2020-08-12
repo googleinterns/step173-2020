@@ -137,7 +137,7 @@ function MafiaNight({userUid, usersData, room,
               hours, minutes},
         ),
       });
-      showResult('Mafia have killed ' + player.displayName + ' tonight.');
+      showResult('Mafia have killed ' + mafiaDecision[0].vote.displayName + ' tonight.');
     }
   }
   /**
@@ -235,7 +235,8 @@ function MafiaNight({userUid, usersData, room,
                   <Player
                     key={u.uid}
                     player={u}
-                    handleClick={() => setChoice(u)}
+                    setChoice={setChoice}
+                    choice={choice}
                   />
                 );
               })

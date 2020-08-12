@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
@@ -15,15 +15,29 @@ const useStyles = makeStyles((theme) => ({
 
 /**
  * @param {object} player information of player
- * @param {object} handleClick function when card is clicked
+ * @param {object} setChoice function when card is clicked
+ * @param {object} choice what the player picked
  * @return {ReactElement} Card with different names to choose
  */
-export default function Player({player, handleClick}) {
+export default function Player({player, setChoice, choice}) {
+  const [elevation, setElevation] = useState(1);
+  /**
+   * @return {undefined}
+   */
+  function changeElevation() {
+    if (player.uid === choice.uid) {
+      setElevation(5);
+    } else {
+      setElevation(1);
+    }
+  }
+
+  useEffect(changeElevation, [choice]);
   const classes = useStyles();
   return (
     <Grid item xs={12} sm={6} xl={2} lg={3} md={4}>
-      <Card className={classes.card}>
-        <CardActionArea onClick={() => handleClick(player)}>
+      <Card className={classes.card} elevation={elevation}>
+        <CardActionArea onClick={() => setChoice(player)}>
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">
               {player.displayName}
@@ -37,5 +51,6 @@ export default function Player({player, handleClick}) {
 
 Player.propTypes = {
   player: PropTypes.object,
-  handleClick: PropTypes.func,
+  setChoice: PropTypes.func,
+  choice: PropTypes.object,
 };
