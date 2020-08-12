@@ -52,5 +52,8 @@ export default function Player({player, setChoice, choice}) {
 Player.propTypes = {
   player: PropTypes.object,
   setChoice: PropTypes.func,
-  choice: PropTypes.object,
+  choice: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+  ]),
 };
