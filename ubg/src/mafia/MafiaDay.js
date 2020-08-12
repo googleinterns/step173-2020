@@ -124,7 +124,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
       aliveNum -= 1;
       showResult(executedPlayer[0].name + ' was executed. ' +
         executedPlayer[0].role === 2 ?
-        'They were mafia.' : 'They were a townsperson.')
+        'They were mafia.' : 'They were a townsperson.');
       endGame();
       if (!end) {
         room.update({

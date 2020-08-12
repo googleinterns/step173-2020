@@ -16,6 +16,9 @@ export default function AlertDialog({message}) {
     setOpen(false);
   };
 
+  /**
+   * When message changes, dialog opens again
+   */
   function changeMessage() {
     setOpen(true);
   };
