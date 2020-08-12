@@ -36,8 +36,8 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Mafia day element
  */
-function MafiaDay({mafiaKill, doctorSave, usersData,
-  usersCollection, userUid, room, dayVote, end}) {
+function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
+  userUid, room, dayVote, aliveNum, end, showResult}) {
   const classes = useStyles();
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
@@ -45,6 +45,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
   const [choice, setChoice] = useState('');
   const [voted, setVoted] = useState(false);
   const [win, setWin] = useState(0);
+  const [initialize, setInitialize] = useState(false);
 
   /**
    * Determines if game has reached end
@@ -73,26 +74,27 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
    */
   function startDay() {
     endGame();
-    if (!end) {
+    if (!end && !initialize) {
+      const allPlayers = [];
       if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
         usersCollection.doc(mafiaKill.uid).update({alive: false});
         setDeathText(mafiaKill.displayName + ' was killed last night');
+        aliveNum -= 1;
       } else {
         setDeathText('No one was killed last night');
       }
-      const allPlayers = [];
       usersData.forEach(function(u) {
-        if (u.alive === true) {
-          allPlayers.push(u);
-        }
         if (u.uid === userUid) {
           setUserInfo(u);
         }
+        // if usersData wasn't updated from last night's kill
+        if ((u.alive === true) &&
+          (u.uid !== mafiaKill || mafiaKill.uid === doctorSave.uid)) {
+          allPlayers.push(u);
+        }
       });
       setPlayers(allPlayers);
-      room.update({
-        dayVote: [],
-      });
+      setInitialize(true);
     }
   }
 
@@ -101,7 +103,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
    * @return {undefined}
    */
   function startNight() {
-    if (dayVote.length === usersData.length) {
+    if (dayVote.length === aliveNum) {
       const voteMap = new Map();
       let executedPlayer = [];
       dayVote.forEach((vote) => {
@@ -120,19 +122,26 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
       usersCollection.doc(executedPlayer[0].uid).update({
         alive: false,
       });
-      alert(executedPlayer[0].name + ' was executed.');
-      alert(executedPlayer[0].role === 2 ?
+      aliveNum -= 1;
+      showResult(executedPlayer[0].name + ' was executed. ' +
+        executedPlayer[0].role === 2 ?
         'They were mafia.' : 'They were a townsperson.');
       endGame();
       if (!end) {
         room.update({
+          doctorSave: {'uid': '', 'displayName': ''},
+          mafiaKill: {'uid': '', 'displayName': ''},
+          mafiaDecision: [],
+          detectiveCheck: {'uid': '', 'displayName': ''},
           day: false,
+          dayVote: [],
+          aliveCount: aliveNum,
         });
       }
     }
   }
 
-  useEffect(startDay, []);
+  useEffect(startDay, [usersData]);
   useEffect(startNight, [dayVote]);
 
   /**
@@ -148,12 +157,22 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
           name: choice.displayName,
         },
       };
+      const today = new Date();
+      const hours = today.getUTCHours();
+      const minutes = today.getUTCMinutes();
       room.update({
         dayVote: firebase.firestore.FieldValue.arrayUnion(newVote),
       });
       setVoted(true);
+      room.update({
+        chat: firebase.firestore.FieldValue.arrayUnion(
+            {text: userInfo.displayName + ' voted for ' + choice.displayName,
+              hours, minutes},
+        ),
+      });
+    } else {
+      showResult('You have already voted for ' + choice.displayName);
     }
-    alert('You have voted for ' + choice.displayName);
   }
 
   return (
@@ -191,6 +210,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
               variant="contained"
               color="primary"
               onClick={confirmVote}
+              disabled={!userInfo.alive}
             >
               Confirm Vote
             </Button>
@@ -214,13 +234,16 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
 
 MafiaDay.propTypes = {
   userUid: PropTypes.string,
+  userAlive: PropTypes.bool,
   usersData: PropTypes.array,
   usersCollection: PropTypes.object,
   room: PropTypes.object,
   dayVote: PropTypes.array,
   mafiaKill: PropTypes.object,
   doctorSave: PropTypes.object,
+  aliveNum: PropTypes.number,
   end: PropTypes.bool,
+  showResult: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
@@ -229,6 +252,7 @@ const mapStateToProps = (state) => ({
   dayVote: state.roomData.dayVote,
   mafiaKill: state.roomData.mafiaKill,
   doctorSave: state.roomData.doctorSave,
+  aliveNum: state.roomData.aliveCount,
   end: state.roomData.end,
 });
 
