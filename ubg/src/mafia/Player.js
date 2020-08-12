@@ -18,6 +18,7 @@ const useStyles = (border) => makeStyles((theme) => ({
  * @param {object} player information of player
  * @param {object} setChoice function when card is clicked
  * @param {object} choice what the player picked
+ * @param {object} user current user
  * @return {ReactElement} Card with different names to choose
  */
 export default function Player({player, setChoice, choice, user=null}) {
@@ -68,4 +69,5 @@ Player.propTypes = {
     PropTypes.string,
     PropTypes.object,
   ]),
+  user: PropTypes.object,
 };
