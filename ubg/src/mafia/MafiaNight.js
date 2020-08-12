@@ -140,10 +140,11 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
       room.update({
         mafiaKill: mafiaDecision[0].vote,
         mafiaChat: firebase.firestore.FieldValue.arrayUnion(
-            {text: 'You agreed on to kill' + mafiaDecision[0].vote.displayName,
+            {text: 'Mafia agreed to kill ' + mafiaDecision[0].vote.displayName,
               hours, minutes},
         ),
       });
+      showResult('Mafia have killed ' + mafiaDecision[0].vote.displayName);
     }
   }
   /**
@@ -185,7 +186,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
           ),
         });
         setChose(true);
-        showResult('You have killed ' + player.displayName + ' tonight.');
+        setMessage('You have killed ' + player.displayName + ' tonight.');
         break;
       case 3:
         if (player.role === 2) {
@@ -230,7 +231,8 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
                   <Player
                     key={u.uid}
                     player={u}
-                    handleClick={() => setChoice(u)}
+                    setChoice={setChoice}
+                    choice={choice}
                   />
                 );
               })
