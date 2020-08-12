@@ -90,5 +90,5 @@ function FavoriteGames({userCollection, uid}) {
 
 FavoriteGames.propTypes = {
   userCollection: PropTypes.object,
-  uid: PropTypes.number,
+  uid: PropTypes.string,
 };

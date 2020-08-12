@@ -160,26 +160,20 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
    * @param {object} player Clicked on user object
    */
   function confirmVote() {
-    const newVote = {
-      player: userInfo.displayName,
-      vote: {
-        uid: choice.uid,
-        name: choice.displayName,
-      },
-    };
     const today = new Date();
     const hours = today.getUTCHours();
     const minutes = today.getUTCMinutes();
     room.update({
-      dayVote: firebase.firestore.FieldValue.arrayUnion(newVote),
-    });
-    setVoted(true);
-    room.update({
+      dayVote: firebase.firestore.FieldValue.arrayUnion({
+        uid: choice.uid,
+        name: choice.displayName,
+      }),
       chat: firebase.firestore.FieldValue.arrayUnion(
           {text: userInfo.displayName + ' voted for ' + choice.displayName,
             hours, minutes},
       ),
     });
+    setVoted(true);
   }
 
   return (
