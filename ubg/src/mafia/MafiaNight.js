@@ -118,7 +118,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
    * @return {undefined}
    */
   function mafiaVote() {
-    if (mafiaDecision.length !== 0 && mafiaDecision.length === mafiaTotal) {
+    if (mafiaDecision && mafiaDecision.length !== 0 && mafiaDecision.length === mafiaTotal) {
       const today = new Date();
       const hours = today.getUTCHours();
       const minutes = today.getUTCMinutes();

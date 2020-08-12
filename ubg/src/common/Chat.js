@@ -99,7 +99,7 @@ function Chat({open, messages, room, displayName, mafia, disabled}) {
    */
   function scrollToBottom() {
     setTimeout(function() {
-      if (open) {
+      if (open && messagesEndRef.current) {
         messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
       }
     }, 100);
