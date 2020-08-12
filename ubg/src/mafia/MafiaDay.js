@@ -84,12 +84,13 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
         setDeathText('No one was killed last night');
       }
       usersData.forEach(function(u) {
-        if (u.alive === true &&
-          (u.uid !== mafiaKill.uid && mafiaKill.uid !== doctorSave)) {
-          allPlayers.push(u);
-        }
         if (u.uid === userUid) {
           setUserInfo(u);
+        }
+        // if usersData wasn't updated from last night's kill
+        if ((u.alive === true) &&
+          (u.uid !== mafiaKill || mafiaKill.uid === doctorSave.uid)) {
+          allPlayers.push(u);
         }
       });
       setPlayers(allPlayers);
@@ -156,11 +157,19 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
           name: choice.displayName,
         },
       };
+      const today = new Date();
+      const hours = today.getUTCHours();
+      const minutes = today.getUTCMinutes();
       room.update({
         dayVote: firebase.firestore.FieldValue.arrayUnion(newVote),
       });
       setVoted(true);
-      showResult('You have voted for ' + choice.displayName);
+      room.update({
+        chat: firebase.firestore.FieldValue.arrayUnion(
+            {text: userInfo.displayName + ' voted for ' + choice.displayName,
+              hours, minutes},
+        ),
+      });
     } else {
       showResult('You have already voted for ' + choice.displayName);
     }
