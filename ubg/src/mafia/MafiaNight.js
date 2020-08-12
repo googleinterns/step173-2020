@@ -137,6 +137,7 @@ function MafiaNight({userUid, usersData, room,
               hours, minutes},
         ),
       });
+      showResult('Mafia have killed ' + player.displayName + ' tonight.');
     }
   }
   /**
@@ -179,7 +180,7 @@ function MafiaNight({userUid, usersData, room,
             ),
           });
           setChose(true);
-          showResult('You have killed ' + player.displayName + ' tonight.');
+          setMessage('You have voted for ' + player.displayName);
         } else {
           setMessage('You have already chosen someone to kill.');
         }
