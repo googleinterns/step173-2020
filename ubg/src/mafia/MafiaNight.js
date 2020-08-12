@@ -123,7 +123,7 @@ function MafiaNight({userUid, usersData, room,
           room.update({
             mafiaDecision: [],
             mafiaChat: firebase.firestore.FieldValue.arrayUnion(
-              {text: 'Mafia please vote again', hours, minutes},
+                {text: 'Mafia please vote again', hours, minutes},
             ),
           });
           setChose(false);
@@ -133,8 +133,8 @@ function MafiaNight({userUid, usersData, room,
       room.update({
         mafiaKill: mafiaDecision[0].vote,
         mafiaChat: firebase.firestore.FieldValue.arrayUnion(
-          {text: mafiaDecision[0].vote.displayName + ' is now dead',
-          hours, minutes},
+            {text: mafiaDecision[0].vote.displayName + ' is now dead',
+              hours, minutes},
         ),
       });
     }
@@ -174,8 +174,8 @@ function MafiaNight({userUid, usersData, room,
           room.update({
             mafiaDecision: firebase.firestore.FieldValue.arrayUnion(newVote),
             mafiaChat: firebase.firestore.FieldValue.arrayUnion(
-              {text: userInfo.displayName + ' voted for ' + player.displayName,
-              hours, minutes},
+                {text: userInfo.displayName + ' voted for ' + player.displayName,
+                  hours, minutes},
             ),        
           });
           setChose(true);
