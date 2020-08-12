@@ -112,6 +112,9 @@ function MafiaNight({userUid, usersData, room,
    */
   function mafiaVote() {
     if (mafiaDecision.length !== 0 && mafiaDecision.length === mafiaTotal) {
+      const today = new Date();
+      const hours = today.getUTCHours();
+      const minutes = today.getUTCMinutes();
       const killed = mafiaDecision[0].vote.uid;
       for (let i = 1; i < mafiaTotal; i++) {
         if (mafiaDecision[i].vote.uid !== killed) {
@@ -119,6 +122,9 @@ function MafiaNight({userUid, usersData, room,
           'Please vote again');
           room.update({
             mafiaDecision: [],
+            mafiaChat: firebase.firestore.FieldValue.arrayUnion(
+              {text: 'Mafia please vote again', hours, minutes},
+            ),
           });
           setChose(false);
           return;
@@ -126,6 +132,10 @@ function MafiaNight({userUid, usersData, room,
       }
       room.update({
         mafiaKill: mafiaDecision[0].vote,
+        mafiaChat: firebase.firestore.FieldValue.arrayUnion(
+          {text: mafiaDecision[0].vote.displayName + ' is now dead',
+          hours, minutes},
+        ),
       });
     }
   }
@@ -158,8 +168,15 @@ function MafiaNight({userUid, usersData, room,
               displayName: player.displayName,
             },
           };
+          const today = new Date();
+          const hours = today.getUTCHours();
+          const minutes = today.getUTCMinutes();
           room.update({
             mafiaDecision: firebase.firestore.FieldValue.arrayUnion(newVote),
+            mafiaChat: firebase.firestore.FieldValue.arrayUnion(
+              {text: userInfo.displayName + ' voted for ' + player.displayName,
+              hours, minutes},
+            ),        
           });
           setChose(true);
           showResult('You have killed ' + player.displayName + ' tonight.');
