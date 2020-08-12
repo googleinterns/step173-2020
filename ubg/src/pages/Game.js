@@ -107,7 +107,6 @@ export default function Game() {
             usersCollection={usersCollection}
             game={game}
             createRoom={createRoom}
-            // user={user}
             gameId={gameId}
           />
           <Spacer />
