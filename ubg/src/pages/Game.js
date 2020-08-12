@@ -422,6 +422,7 @@ Description.propTypes = {
     rating: PropTypes.number,
     weight: PropTypes.number,
   }),
+  gameId: PropTypes.string,
 };
 
 Videos.propTypes = {
