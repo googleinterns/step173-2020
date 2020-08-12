@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
  * @param {object} choice what the player picked
  * @return {ReactElement} Card with different names to choose
  */
-export default function Player({player, setChoice, choice}) {
+export default function Player({player, setChoice, choice, user=null}) {
   const [elevation, setElevation] = useState(1);
   /**
    * @return {undefined}
@@ -31,6 +31,10 @@ export default function Player({player, setChoice, choice}) {
       setElevation(1);
     }
   }
+  let text = '(townspeople)';
+  if (user && player.role === 2){
+    text = '(mafia)';
+  }
 
   useEffect(changeElevation, [choice]);
   const classes = useStyles();
@@ -41,6 +45,9 @@ export default function Player({player, setChoice, choice}) {
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">
               {player.displayName}
+              <Typography color="textSecondary">
+                {text}
+              </Typography>
             </Typography>
           </CardContent>
         </CardActionArea>

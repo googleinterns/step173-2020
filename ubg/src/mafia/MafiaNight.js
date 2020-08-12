@@ -240,6 +240,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
                     player={u}
                     setChoice={setChoice}
                     choice={choice}
+                    user={userInfo}
                   />
                 );
               })
