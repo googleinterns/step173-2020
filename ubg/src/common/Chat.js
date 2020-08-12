@@ -134,6 +134,7 @@ function Chat({open, messages, room, displayName, mafia, disabled}) {
         </div>
         <div className={classes.sendMessage}>
           <input
+            disabled={disabled}
             value={newMessage}
             onChange={(e) => {
               setNewMessage(e.target.value);
@@ -141,13 +142,13 @@ function Chat({open, messages, room, displayName, mafia, disabled}) {
             type='text'
             className={classes.chatField}
             onKeyDown={(e) => {
-              if (e.keyCode === 13 && newMessage !== '' && !disabled) {
+              if (e.keyCode === 13 && newMessage !== '') {
                 addMessage();
               }
             }}
           />
           <IconButton
-            disabled={newMessage === '' || disabled}
+            disabled={newMessage === ''}
             color="primary"
             className={classes.margin}
             size="small"
