@@ -25,6 +25,10 @@ const useStyles = makeStyles((theme) => ({
   card: {
     width: '100%',
   },
+  mainActivity: {
+    flexGrow: 1,
+    height: '300px',
+  },
 }));
 
 /**
@@ -217,7 +221,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
         role={userInfo.role}
         alive={userInfo.alive}
       />
-      <Box m={10}>
+      <Box className={classes.mainActivity} m={10}>
         <Box className={classes.text} my={15} justify="center" mx="auto">
           <h2>{roleText}</h2>
           <h2>{message}</h2>

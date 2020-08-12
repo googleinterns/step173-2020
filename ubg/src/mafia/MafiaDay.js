@@ -31,6 +31,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
+  mainActivity: {
+    flexGrow: 1,
+    height: '300px',
+  },
 }));
 
 /**
@@ -184,7 +188,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
         alive={userInfo.alive}
       />
       { win === 0 ?
-        <Box m={10}>
+        <Box className={classes.mainActivity} m={10}>
           <Grid container justify="center" alignItems="center">
             <h2>{deathText}</h2>
           </Grid>
