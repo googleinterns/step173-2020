@@ -23,6 +23,7 @@ function MafiaGame({day, room, usersCollection}) {
    * @return {undefined}
    */
   function showResult(message) {
+    console.log('message: ' + message);
     setAlert(<AlertDialog message={message}></AlertDialog>);
   }
   const classes = useStyles();
@@ -34,6 +35,7 @@ function MafiaGame({day, room, usersCollection}) {
         <MafiaDay
           usersCollection={usersCollection}
           room={room}
+          showResult={showResult}
         /> :
         <MafiaNight
           room={room}
