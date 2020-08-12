@@ -140,11 +140,11 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
       room.update({
         mafiaKill: mafiaDecision[0].vote,
         mafiaChat: firebase.firestore.FieldValue.arrayUnion(
-            {text: 'Mafia agreed on to kill ' + mafiaDecision[0].vote.displayName,
+            {text: 'Mafia agreed to kill ' + mafiaDecision[0].vote.displayName,
               hours, minutes},
         ),
       });
-      showResult('Mafia have killed ' + mafiaDecision[0].vote.displayName + ' tonight.');
+      showResult('Mafia have killed ' + mafiaDecision[0].vote.displayName);
     }
   }
   /**
