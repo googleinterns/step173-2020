@@ -34,7 +34,7 @@ export default function Player({player, setChoice, choice, user=null}) {
     }
   }
   let text = '';
-  if (user !== null && user.role === 2){
+  if (user !== null && user.role === 2) {
     if (player.role === 2) {
       text = '(mafia)';
     } else {
