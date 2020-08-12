@@ -111,7 +111,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
       executedPlayer = [...voteMap.entries()].reduce((playerOne, playerTwo) =>
         // if tie, choose player with highest ordering
         (playerOne[1] === playerTwo[1] ?
-          (playerOne[0].order > playerTwo[0].order ?
+          (playerOne.order > playerTwo.order ?
             playerOne : playerTwo) :
           (playerOne[1] > playerTwo[1] ?
             playerOne : playerTwo)));
