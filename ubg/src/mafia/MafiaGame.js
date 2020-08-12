@@ -34,6 +34,7 @@ function MafiaGame({day, room, usersCollection}) {
         <MafiaDay
           usersCollection={usersCollection}
           room={room}
+          showResult={showResult}
         /> :
         <MafiaNight
           room={room}

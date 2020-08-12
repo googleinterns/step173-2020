@@ -36,8 +36,8 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Mafia day element
  */
-function MafiaDay({mafiaKill, doctorSave, usersData,
-  usersCollection, userUid, room, dayVote, aliveNum, end}) {
+function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
+  userUid, room, dayVote, aliveNum, end, showResult}) {
   const classes = useStyles();
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
@@ -122,8 +122,8 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
         alive: false,
       });
       aliveNum -= 1;
-      alert(executedPlayer[0].name + ' was executed.');
-      alert(executedPlayer[0].role === 2 ?
+      showResult(executedPlayer[0].name + ' was executed. ' +
+        executedPlayer[0].role === 2 ?
         'They were mafia.' : 'They were a townsperson.');
       endGame();
       if (!end) {
@@ -142,7 +142,6 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
 
   useEffect(startDay, [usersData]);
   useEffect(startNight, [dayVote]);
-  // useEffect(canVote, [voted]);
 
   /**
    * Sets the voting choice for current user
@@ -161,9 +160,9 @@ function MafiaDay({mafiaKill, doctorSave, usersData,
         dayVote: firebase.firestore.FieldValue.arrayUnion(newVote),
       });
       setVoted(true);
-      alert('You have voted for ' + choice.displayName);
+      showResult('You have voted for ' + choice.displayName);
     } else {
-      alert('You have already voted for ' + choice.displayName);
+      showResult('You have already voted for ' + choice.displayName);
     }
   }
 
@@ -235,6 +234,7 @@ MafiaDay.propTypes = {
   doctorSave: PropTypes.object,
   aliveNum: PropTypes.number,
   end: PropTypes.bool,
+  showResult: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
