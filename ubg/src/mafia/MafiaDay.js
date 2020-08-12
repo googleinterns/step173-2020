@@ -55,16 +55,22 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
    * Determines if game has reached end
    */
   function endGame() {
+    console.log('HUH???');
+    const mafiaCount = usersData.filter((u) => u.role === 2 &&
+      u.alive).length;
+    const villagerCount = usersData.filter((u) => u.role !== 2 &&
+      u.alive).length;
     // all mafia are dead
-    if (!usersData.some((player) => player.role === 2 &&
-        player.alive === true)) {
+    if (mafiaCount === 0) {
+      console.log('WHAT????');
       setWin(1);
       room.update({
         end: true,
       });
-    // all townspeople are dead
-    } else if (!usersData.some((player) => player.role !== 2 &&
-        player.alive === true)) {
+    // all villagers are dead
+    } else if (villagerCount === 0 ||
+      (mafiaCount === 1 && villagerCount === 1)) {
+      console.log('meow');
       setWin(2);
       room.update({
         end: true,
@@ -111,7 +117,9 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
         voteMap.set(vote, voteMap.get(vote) + 1);
       });
       const entries = [...voteMap.entries()];
-      entries.sort(function(a, b){return b[1] - a[1]});
+      entries.sort(function(a, b) {
+        return b[1] - a[1];
+      });
       executedPlayer = entries[0];
       usersCollection.doc(executedPlayer[0].uid).update({
         alive: false,
