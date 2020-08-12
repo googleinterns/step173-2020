@@ -7,9 +7,10 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import PropTypes from 'prop-types';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = (border) => makeStyles((theme) => ({
   card: {
     width: '100%',
+    border: border,
   },
 }));
 
@@ -20,15 +21,15 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Card with different names to choose
  */
 export default function Player({player, setChoice, choice, user=null}) {
-  const [elevation, setElevation] = useState(1);
+  const [border, setBorder] = useState('none');
   /**
    * @return {undefined}
    */
-  function changeElevation() {
+  function changeBorder() {
     if (player.uid === choice.uid) {
-      setElevation(10);
+      setBorder('2px solid black');
     } else {
-      setElevation(1);
+      setBorder('none');
     }
   }
   let text = '';
@@ -40,11 +41,11 @@ export default function Player({player, setChoice, choice, user=null}) {
     }
   }
 
-  useEffect(changeElevation, [choice]);
-  const classes = useStyles();
+  useEffect(changeBorder, [choice]);
+  const classes = useStyles(border)();
   return (
     <Grid item xs={12} sm={6} xl={2} lg={3} md={4}>
-      <Card className={classes.card} elevation={elevation}>
+      <Card className={classes.card}>
         <CardActionArea onClick={() => setChoice(player)}>
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">
