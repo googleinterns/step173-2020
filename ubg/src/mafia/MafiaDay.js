@@ -77,9 +77,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
     if (!end && !initialize) {
       const allPlayers = [];
       if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
-        usersCollection.doc(mafiaKill.uid).update({alive: false});
         setDeathText(mafiaKill.displayName + ' was killed last night');
-        aliveNum -= 1;
       } else {
         setDeathText('No one was killed last night');
       }
@@ -87,9 +85,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
         if (u.uid === userUid) {
           setUserInfo(u);
         }
-        // if usersData wasn't updated from last night's kill
-        if ((u.alive === true) &&
-          (u.uid !== mafiaKill || mafiaKill.uid === doctorSave.uid)) {
+        if (u.alive === true) {
           allPlayers.push(u);
         }
       });
@@ -123,9 +119,24 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
         alive: false,
       });
       aliveNum -= 1;
-      showResult(executedPlayer[0].name + ' was executed. ' +
-        executedPlayer[0].role === 2 ?
-        'They were mafia.' : 'They were a townsperson.');
+      let executionMessage = executedPlayer[0].name + ' was executed. ';
+      switch (executedPlayer[0].role) {
+        case 1:
+          executionMessage += 'They were a villager.';
+          break;
+        case 2:
+          executionMessage += 'They were mafia.';
+          break;
+        case 3:
+          executionMessage += 'They were a detective.';
+          break;
+        case 4:
+          executionMessage += 'They were a doctor.';
+          break;
+        default:
+          executionMessage = 'No one was executed.';
+      }
+      showResult(executionMessage);
       endGame();
       if (!end) {
         room.update({
@@ -149,30 +160,26 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
    * @param {object} player Clicked on user object
    */
   function confirmVote() {
-    if (!voted) {
-      const newVote = {
-        player: userInfo.displayName,
-        vote: {
-          uid: choice.uid,
-          name: choice.displayName,
-        },
-      };
-      const today = new Date();
-      const hours = today.getUTCHours();
-      const minutes = today.getUTCMinutes();
-      room.update({
-        dayVote: firebase.firestore.FieldValue.arrayUnion(newVote),
-      });
-      setVoted(true);
-      room.update({
-        chat: firebase.firestore.FieldValue.arrayUnion(
-            {text: userInfo.displayName + ' voted for ' + choice.displayName,
-              hours, minutes},
-        ),
-      });
-    } else {
-      showResult('You have already voted for ' + choice.displayName);
-    }
+    const newVote = {
+      player: userInfo.displayName,
+      vote: {
+        uid: choice.uid,
+        name: choice.displayName,
+      },
+    };
+    const today = new Date();
+    const hours = today.getUTCHours();
+    const minutes = today.getUTCMinutes();
+    room.update({
+      dayVote: firebase.firestore.FieldValue.arrayUnion(newVote),
+    });
+    setVoted(true);
+    room.update({
+      chat: firebase.firestore.FieldValue.arrayUnion(
+          {text: userInfo.displayName + ' voted for ' + choice.displayName,
+            hours, minutes},
+      ),
+    });
   }
 
   return (
@@ -211,7 +218,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
               variant="contained"
               color="primary"
               onClick={confirmVote}
-              disabled={!userInfo.alive}
+              disabled={!userInfo.alive || voted}
             >
               Confirm Vote
             </Button>

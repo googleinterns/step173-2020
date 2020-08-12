@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Mafia night element
  */
-function MafiaNight({userUid, usersData, room,
+function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
   mafiaKill, doctorSave, detectiveCheck, showResult, mafiaDecision}) {
   const classes = useStyles();
   const [players, setPlayers] = useState([]);
@@ -103,7 +103,14 @@ function MafiaNight({userUid, usersData, room,
       mafiaKill.uid !== '' &&
       doctorSave.uid !== '' &&
       detectiveCheck.uid !== '') {
-      room.update({day: true});
+      if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
+        usersCollection.doc(mafiaKill.uid).update({alive: false});
+        aliveNum -= 1;
+      }
+      room.update({
+        day: true,
+        aliveCount: aliveNum,
+      });
     }
   }
   /**
@@ -161,53 +168,42 @@ function MafiaNight({userUid, usersData, room,
   function handleClick(player) {
     switch (userInfo.role) {
       case 2:
-        if (chose === false) {
-          const newVote = {
-            player: userInfo.displayName,
-            vote: {
-              uid: player.uid,
-              displayName: player.displayName,
-            },
-          };
-          const today = new Date();
-          const hours = today.getUTCHours();
-          const minutes = today.getUTCMinutes();
-          room.update({
-            mafiaDecision: firebase.firestore.FieldValue.arrayUnion(newVote),
-            mafiaChat: firebase.firestore.FieldValue.arrayUnion(
-                {text: newVote.player + ' voted for ' + player.displayName,
-                  hours, minutes},
-            ),
-          });
-          setChose(true);
-          setMessage('You have voted for ' + player.displayName);
-        } else {
-          setMessage('You have already chosen someone to kill.');
-        }
+        const newVote = {
+          player: userInfo.displayName,
+          vote: {
+            uid: player.uid,
+            displayName: player.displayName,
+          },
+        };
+        const today = new Date();
+        const hours = today.getUTCHours();
+        const minutes = today.getUTCMinutes();
+        room.update({
+          mafiaDecision: firebase.firestore.FieldValue.arrayUnion(newVote),
+          mafiaChat: firebase.firestore.FieldValue.arrayUnion(
+              {text: newVote.player + ' voted for ' + player.displayName,
+                hours, minutes},
+          ),
+        });
+        setChose(true);
+        showResult('You have killed ' + player.displayName + ' tonight.');
         break;
       case 3:
-        if (detectiveCheck.uid === '') {
-          if (player.role === 2) {
-            showResult('This person is bad.');
-          } else {
-            showResult('This person is good.');
-          }
-          room.update(
-              {detectiveCheck:
-              {uid: player.uid, displayName: player.displayName}});
+        if (player.role === 2) {
+          showResult('This person is bad.');
         } else {
-          setMessage('You can only check once each night.');
+          showResult('This person is good.');
         }
+        room.update(
+            {detectiveCheck:
+            {uid: player.uid, displayName: player.displayName}});
+        setChose(true);
         break;
       case 4:
-        if (doctorSave.uid === '') {
-          room.update(
-              {doctorSave: {uid: player.uid, displayName: player.displayName}});
-          showResult('You have saved ' + player.displayName + ' tonight.');
-        } else if (room.doctorSave !== player.uid) {
-          setMessage('You have already chosen ' +
-          doctorSave.displayName + ' to save tonight.');
-        }
+        room.update(
+            {doctorSave: {uid: player.uid, displayName: player.displayName}});
+        showResult('You have saved ' + player.displayName + ' tonight.');
+        setChose(true);
         break;
       default:
         setMessage('Role is invalid.');
@@ -248,6 +244,7 @@ function MafiaNight({userUid, usersData, room,
               variant="contained"
               color="primary"
               onClick={confirmClick}
+              disabled={chose}
             >
               Confirm Choice
             </Button>
@@ -262,7 +259,9 @@ function MafiaNight({userUid, usersData, room,
 MafiaNight.propTypes = {
   userUid: PropTypes.string,
   usersData: PropTypes.array,
+  usersCollection: PropTypes.object,
   room: PropTypes.object,
+  aliveNum: PropTypes.number,
   mafiaKill: PropTypes.object,
   doctorSave: PropTypes.object,
   detectiveCheck: PropTypes.object,
@@ -273,6 +272,7 @@ MafiaNight.propTypes = {
 const mapStateToProps = (state) => ({
   userUid: state.currentUser.uid,
   usersData: state.usersData,
+  aliveNum: state.roomData.aliveCount,
   mafiaKill: state.roomData.mafiaKill,
   doctorSave: state.roomData.doctorSave,
   detectiveCheck: state.roomData.detectiveCheck,

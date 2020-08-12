@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
  * @param {array} messages Messages in chat
  * @return {ReactElement} Drawer with chat
  */
-function Chat({open, messages, room, displayName, mafia}) {
+function Chat({open, messages, room, displayName, mafia, disabled}) {
   const classes = useStyles();
   const fieldValue = firebase.firestore.FieldValue;
   const [newMessage, setNewMessage] = useState('');
@@ -134,6 +134,7 @@ function Chat({open, messages, room, displayName, mafia}) {
         </div>
         <div className={classes.sendMessage}>
           <input
+            disabled={disabled}
             value={newMessage}
             onChange={(e) => {
               setNewMessage(e.target.value);
@@ -141,7 +142,7 @@ function Chat({open, messages, room, displayName, mafia}) {
             type='text'
             className={classes.chatField}
             onKeyDown={(e) => {
-              if (e.keyCode === 13) {
+              if (e.keyCode === 13 && newMessage !== '') {
                 addMessage();
               }
             }}
@@ -167,6 +168,7 @@ Chat.propTypes = {
   displayName: PropTypes.string,
   room: PropTypes.object,
   mafia: PropTypes.bool,
+  disabled: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
