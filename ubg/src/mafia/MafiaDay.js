@@ -78,6 +78,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
    */
   function startDay() {
     endGame();
+    setUserInfo(usersData.find((u) => u.uid === userUid));
     if (!end && !initialize) {
       const allPlayers = [];
       if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
@@ -86,9 +87,6 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
         setDeathText('No one was killed last night');
       }
       usersData.forEach(function(u) {
-        if (u.uid === userUid) {
-          setUserInfo(u);
-        }
         if (u.alive === true) {
           allPlayers.push(u);
         }
@@ -107,18 +105,14 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
       const voteMap = new Map();
       let executedPlayer = [];
       dayVote.forEach((vote) => {
-        if (!voteMap.has(vote.vote)) {
-          voteMap.set(vote.vote, 0);
+        if (!voteMap.has(vote)) {
+          voteMap.set(vote, 0);
         }
-        voteMap.set(vote.vote, voteMap.get(vote.vote) + 1);
+        voteMap.set(vote, voteMap.get(vote) + 1);
       });
-      executedPlayer = [...voteMap.entries()].reduce((playerOne, playerTwo) =>
-        // if tie, choose player with highest ordering
-        (playerOne[1] === playerTwo[1] ?
-          (playerOne.order > playerTwo.order ?
-            playerOne : playerTwo) :
-          (playerOne[1] > playerTwo[1] ?
-            playerOne : playerTwo)));
+      const entries = [...voteMap.entries()];
+      entries.sort(function(a, b){return b[1] - a[1]});
+      executedPlayer = entries[0];
       usersCollection.doc(executedPlayer[0].uid).update({
         alive: false,
       });
@@ -169,8 +163,10 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
     const minutes = today.getUTCMinutes();
     room.update({
       dayVote: firebase.firestore.FieldValue.arrayUnion({
+        player: userUid,
         uid: choice.uid,
         name: choice.displayName,
+        role: choice.role,
       }),
       chat: firebase.firestore.FieldValue.arrayUnion(
           {text: userInfo.displayName + ' voted for ' + choice.displayName,
