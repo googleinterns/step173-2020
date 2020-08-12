@@ -130,6 +130,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
         room.update({
           doctorSave: {'uid': '', 'displayName': ''},
           mafiaKill: {'uid': '', 'displayName': ''},
+          mafiaDecision: [],
           detectiveCheck: {'uid': '', 'displayName': ''},
           day: false,
           dayVote: [],
