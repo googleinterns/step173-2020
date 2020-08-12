@@ -174,9 +174,9 @@ function MafiaNight({userUid, usersData, room,
           room.update({
             mafiaDecision: firebase.firestore.FieldValue.arrayUnion(newVote),
             mafiaChat: firebase.firestore.FieldValue.arrayUnion(
-                {text: userInfo.displayName + ' voted for ' + player.displayName,
+                {text: newVote.player + ' voted for ' + player.displayName,
                   hours, minutes},
-            ),        
+            ),
           });
           setChose(true);
           showResult('You have killed ' + player.displayName + ' tonight.');
