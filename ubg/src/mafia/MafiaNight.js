@@ -133,7 +133,7 @@ function MafiaNight({userUid, usersData, room,
       room.update({
         mafiaKill: mafiaDecision[0].vote,
         mafiaChat: firebase.firestore.FieldValue.arrayUnion(
-            {text: mafiaDecision[0].vote.displayName + ' is now dead',
+            {text: 'You agreed on to kill' + mafiaDecision[0].vote.displayName,
               hours, minutes},
         ),
       });
