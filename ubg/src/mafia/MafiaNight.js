@@ -102,21 +102,6 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
       }
       setPlayers(allPlayers);
     }
-    if (mafiaKill &&
-      doctorSave &&
-      detectiveCheck &&
-      mafiaKill.uid !== '' &&
-      doctorSave.uid !== '' &&
-      detectiveCheck.uid !== '') {
-      if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
-        usersCollection.doc(mafiaKill.uid).update({alive: false});
-        aliveNum -= 1;
-      }
-      room.update({
-        day: true,
-        aliveCount: aliveNum,
-      });
-    }
   }
   /**
    * Check if all mafias decide to kill the same person
@@ -154,10 +139,31 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
     }
   }
   /**
+   * @return {undefined}
+   */
+  function endNight() {
+    if (mafiaKill &&
+      doctorSave &&
+      detectiveCheck &&
+      mafiaKill.uid !== '' &&
+      doctorSave.uid !== '' &&
+      detectiveCheck.uid !== '') {
+      if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
+        usersCollection.doc(mafiaKill.uid).update({alive: false});
+        aliveNum -= 1;
+      }
+      room.update({
+        day: true,
+        aliveCount: aliveNum,
+      });
+    }
+  }
+  /**
    * Load the all the mafia related data
    */
-  useEffect(loadNightData, [mafiaKill, doctorSave, detectiveCheck]);
+  useEffect(loadNightData, []);
   useEffect(mafiaVote, [mafiaDecision]);
+  useEffect(endNight, [mafiaKill, doctorSave, detectiveCheck])
 
   /**
    * @return {undefined}

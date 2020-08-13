@@ -27,7 +27,7 @@ export default function Player({player, setChoice, choice, user=null}) {
    * @return {undefined}
    */
   function changeBorder() {
-    if (player.uid === choice.uid) {
+    if (choice !== undefined && player.uid === choice.uid) {
       setBorder('2px solid black');
     } else {
       setBorder('none');
