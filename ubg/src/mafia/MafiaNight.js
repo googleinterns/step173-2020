@@ -22,6 +22,10 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     position: 'relative',
   },
+  night: {
+    float: 'right',
+    marginRight: '3em',
+  },
   card: {
     width: '100%',
   },
@@ -63,6 +67,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
         }
         if (u.uid === userUid) {
           setUserInfo(u);
+          setChose(u.chose);
           if (u.alive === true) {
             switch (u.role) {
               case 1:
@@ -97,21 +102,6 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
       }
       setPlayers(allPlayers);
     }
-    if (mafiaKill &&
-      doctorSave &&
-      detectiveCheck &&
-      mafiaKill.uid !== '' &&
-      doctorSave.uid !== '' &&
-      detectiveCheck.uid !== '') {
-      if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
-        usersCollection.doc(mafiaKill.uid).update({alive: false});
-        aliveNum -= 1;
-      }
-      room.update({
-        day: true,
-        aliveCount: aliveNum,
-      });
-    }
   }
   /**
    * Check if all mafias decide to kill the same person
@@ -133,7 +123,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
                 {text: 'Mafia please vote again', hours, minutes},
             ),
           });
-          setChose(false);
+          changeChose(false);
           return;
         }
       }
@@ -145,13 +135,41 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
         ),
       });
       showResult('Mafia have killed ' + mafiaDecision[0].vote.displayName);
+      setMessage('Please wait for other players begore jumping to day.');
+    }
+  }
+  /**
+   * @return {undefined}
+   */
+  function endNight() {
+    if (mafiaKill &&
+      doctorSave &&
+      detectiveCheck &&
+      mafiaKill.uid !== '' &&
+      doctorSave.uid !== '' &&
+      detectiveCheck.uid !== '') {
+      if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
+        usersCollection.doc(mafiaKill.uid).update({alive: false});
+        aliveNum -= 1;
+      }
+      // reset chose when night ends
+      players.forEach(function(u) {
+        room.collection('users').doc(u.uid).update({
+          chose: false,
+        });
+      });
+      room.update({
+        day: true,
+        aliveCount: aliveNum,
+      });
     }
   }
   /**
    * Load the all the mafia related data
    */
-  useEffect(loadNightData, [mafiaKill, doctorSave, detectiveCheck]);
+  useEffect(loadNightData, []);
   useEffect(mafiaVote, [mafiaDecision]);
+  useEffect(endNight, [mafiaKill, doctorSave, detectiveCheck]);
 
   /**
    * @return {undefined}
@@ -185,8 +203,8 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
                 hours, minutes},
           ),
         });
-        setChose(true);
-        setMessage('You have killed ' + player.displayName + ' tonight.');
+        changeChose(true);
+        setMessage('You have chose to kill ' + player.displayName);
         break;
       case 3:
         if (player.role === 2) {
@@ -197,26 +215,42 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
         room.update(
             {detectiveCheck:
             {uid: player.uid, displayName: player.displayName}});
-        setChose(true);
+        changeChose(true);
+        setMessage('Please wait for other players begore jumping to day.');
         break;
       case 4:
         room.update(
             {doctorSave: {uid: player.uid, displayName: player.displayName}});
         showResult('You have saved ' + player.displayName + ' tonight.');
-        setChose(true);
+        setMessage('Please wait for other players begore jumping to day.');
+        changeChose(true);
         break;
       default:
         setMessage('Role is invalid.');
     }
   }
+  /**
+   * Set whether player has chosen in database
+   * @param {boolean} chosed
+   * @return {undefined}
+   */
+  function changeChose(chosed) {
+    setChose(chosed);
+    room.collection('users').doc(userInfo.uid).update({
+      chose: chosed,
+    });
+  }
 
   return (
     <Grid className={classes.gameContainer} item>
-      <PersonalInfo
-        name={userInfo.displayName}
-        role={userInfo.role}
-        alive={userInfo.alive}
-      />
+      <div>
+        <h1 className={classes.night}>NIGHT</h1>
+        <PersonalInfo
+          name={userInfo.displayName}
+          role={userInfo.role}
+          alive={userInfo.alive}
+        />
+      </div>
       <Box m={10}>
         <Box className={classes.text} my={15} justify="center" mx="auto">
           <h2>{roleText}</h2>
@@ -233,6 +267,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
                     player={u}
                     setChoice={setChoice}
                     choice={choice}
+                    user={userInfo}
                   />
                 );
               })
