@@ -25,7 +25,7 @@ export default function AuthButtons() {
     },
     button: {
       textTransform: 'none',
-    }
+    },
   }));
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
