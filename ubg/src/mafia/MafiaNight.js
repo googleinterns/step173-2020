@@ -152,7 +152,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
         usersCollection.doc(mafiaKill.uid).update({alive: false});
         aliveNum -= 1;
       }
-      //reset chose when night ends
+      // reset chose when night ends
       players.forEach(function(u) {
         room.collection('users').doc(u.uid).update({
           chose: false,
@@ -169,7 +169,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
    */
   useEffect(loadNightData, []);
   useEffect(mafiaVote, [mafiaDecision]);
-  useEffect(endNight, [mafiaKill, doctorSave, detectiveCheck])
+  useEffect(endNight, [mafiaKill, doctorSave, detectiveCheck]);
 
   /**
    * @return {undefined}
