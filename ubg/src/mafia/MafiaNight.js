@@ -152,6 +152,12 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
         usersCollection.doc(mafiaKill.uid).update({alive: false});
         aliveNum -= 1;
       }
+      //reset chose when night ends
+      players.forEach(function(u) {
+        room.collection('users').doc(u.uid).update({
+          chose: false,
+        });
+      });
       room.update({
         day: true,
         aliveCount: aliveNum,
