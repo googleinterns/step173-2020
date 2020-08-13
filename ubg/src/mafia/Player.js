@@ -7,9 +7,10 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import PropTypes from 'prop-types';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = (border) => makeStyles((theme) => ({
   card: {
     width: '100%',
+    border: border,
   },
 }));
 
@@ -17,30 +18,42 @@ const useStyles = makeStyles((theme) => ({
  * @param {object} player information of player
  * @param {object} setChoice function when card is clicked
  * @param {object} choice what the player picked
+ * @param {object} user current user
  * @return {ReactElement} Card with different names to choose
  */
-export default function Player({player, setChoice, choice}) {
-  const [elevation, setElevation] = useState(1);
+export default function Player({player, setChoice, choice, user=null}) {
+  const [border, setBorder] = useState('none');
   /**
    * @return {undefined}
    */
-  function changeElevation() {
-    if (player.uid === choice.uid) {
-      setElevation(5);
+  function changeBorder() {
+    if (choice !== undefined && player.uid === choice.uid) {
+      setBorder('2px solid black');
     } else {
-      setElevation(1);
+      setBorder('none');
+    }
+  }
+  let text = '';
+  if (user !== null && user.role === 2) {
+    if (player.role === 2) {
+      text = 'mafia';
+    } else {
+      text = 'villager';
     }
   }
 
-  useEffect(changeElevation, [choice]);
-  const classes = useStyles();
+  useEffect(changeBorder, [choice]);
+  const classes = useStyles(border)();
   return (
     <Grid item xs={12} sm={6} xl={2} lg={3} md={4}>
-      <Card className={classes.card} elevation={elevation}>
+      <Card className={classes.card}>
         <CardActionArea onClick={() => setChoice(player)}>
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">
               {player.displayName}
+              <Typography color="textSecondary">
+                {text}
+              </Typography>
             </Typography>
           </CardContent>
         </CardActionArea>
@@ -56,4 +69,5 @@ Player.propTypes = {
     PropTypes.string,
     PropTypes.object,
   ]),
+  user: PropTypes.object,
 };

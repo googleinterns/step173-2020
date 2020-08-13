@@ -4,7 +4,6 @@ import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Player from './Player';
-import PersonalInfo from './PersonalInfo';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import * as firebase from 'firebase/app';
@@ -22,6 +21,10 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     position: 'relative',
   },
+  night: {
+    float: 'right',
+    marginRight: '3em',
+  },
   card: {
     width: '100%',
   },
@@ -34,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Mafia night element
  */
-function MafiaNight({userUid, usersData, room, usersCollection, aliveNum, end,
+function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
   mafiaKill, doctorSave, detectiveCheck, showResult, mafiaDecision, endGame,
   win}) {
   const classes = useStyles();
@@ -55,7 +58,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum, end,
   function loadNightData() {
     endGame();
     setUserInfo(usersData.find((u) => u.uid === userUid));
-    if (!initialize && !end) {
+    if (!initialize && win === 0) {
       setInitialize(true);
       const roles = new Set();
       const allPlayers = [];
@@ -70,6 +73,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum, end,
         }
         if (u.uid === userUid) {
           setUserInfo(u);
+          setChose(u.chose);
           if (u.alive === true) {
             switch (u.role) {
               case 1:
@@ -104,21 +108,6 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum, end,
       }
       setPlayers(allPlayers);
     }
-    if (mafiaKill &&
-      doctorSave &&
-      detectiveCheck &&
-      mafiaKill.uid !== '' &&
-      doctorSave.uid !== '' &&
-      detectiveCheck.uid !== '') {
-      if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
-        usersCollection.doc(mafiaKill.uid).update({alive: false});
-        aliveNum -= 1;
-      }
-      room.update({
-        day: true,
-        aliveCount: aliveNum,
-      });
-    }
   }
   /**
    * Check if all mafias decide to kill the same person
@@ -141,7 +130,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum, end,
                 {text: 'Mafia please vote again', hours, minutes},
             ),
           });
-          setChose(false);
+          changeChose(false);
           return;
         }
       }
@@ -153,13 +142,41 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum, end,
         ),
       });
       showResult('Mafia have killed ' + mafiaDecision[0].vote.displayName);
+      setMessage('Please wait for other players begore jumping to day.');
+    }
+  }
+  /**
+   * @return {undefined}
+   */
+  function endNight() {
+    if (mafiaKill &&
+      doctorSave &&
+      detectiveCheck &&
+      mafiaKill.uid !== '' &&
+      doctorSave.uid !== '' &&
+      detectiveCheck.uid !== '') {
+      if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
+        usersCollection.doc(mafiaKill.uid).update({alive: false});
+        aliveNum -= 1;
+      }
+      // reset chose when night ends
+      players.forEach(function(u) {
+        room.collection('users').doc(u.uid).update({
+          chose: false,
+        });
+      });
+      room.update({
+        day: true,
+        aliveCount: aliveNum,
+      });
     }
   }
   /**
    * Load the all the mafia related data
    */
-  useEffect(loadNightData, [mafiaKill, doctorSave, detectiveCheck]);
+  useEffect(loadNightData, []);
   useEffect(mafiaVote, [mafiaDecision]);
+  useEffect(endNight, [mafiaKill, doctorSave, detectiveCheck]);
 
   /**
    * @return {undefined}
@@ -193,8 +210,8 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum, end,
                 hours, minutes},
           ),
         });
-        setChose(true);
-        setMessage('You have killed ' + player.displayName + ' tonight.');
+        changeChose(true);
+        setMessage('You have chose to kill ' + player.displayName);
         break;
       case 3:
         if (player.role === 2) {
@@ -205,74 +222,70 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum, end,
         room.update(
             {detectiveCheck:
             {uid: player.uid, displayName: player.displayName}});
-        setChose(true);
+        changeChose(true);
+        setMessage('Please wait for other players begore jumping to day.');
         break;
       case 4:
         room.update(
             {doctorSave: {uid: player.uid, displayName: player.displayName}});
         showResult('You have saved ' + player.displayName + ' tonight.');
-        setChose(true);
+        setMessage('Please wait for other players begore jumping to day.');
+        changeChose(true);
         break;
       default:
         setMessage('Role is invalid.');
     }
   }
+  /**
+   * Set whether player has chosen in database
+   * @param {boolean} chosed
+   * @return {undefined}
+   */
+  function changeChose(chosed) {
+    setChose(chosed);
+    room.collection('users').doc(userInfo.uid).update({
+      chose: chosed,
+    });
+  }
 
   return (
     <Grid className={classes.gameContainer} item>
-      <PersonalInfo
-        name={userInfo.displayName}
-        role={userInfo.role}
-        alive={userInfo.alive}
-      />
-      { win === 0 ?
-        <Box className={classes.mainActivity} m={10}>
-          <Box className={classes.text} my={15} justify="center" mx="auto">
-            <h2>{roleText}</h2>
-            <h2>{message}</h2>
-          </Box>
-          {userInfo.role === 1 || userInfo.alive === false ? null :
-          <div>
-            <Grid container justify="center" alignItems="center" spacing={4}>
-              {
-                players.map((u) => {
-                  return (
-                    <Player
-                      key={u.uid}
-                      player={u}
-                      setChoice={setChoice}
-                      choice={choice}
-                    />
-                  );
-                })
-              }
-            </Grid>
-            <br /> <br />
-            <Grid container justify="center" alignItems="center">
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={confirmClick}
-                disabled={chose}
-              >
-                Confirm Choice
-              </Button>
-            </Grid>
-          </div>
-          }
-        </Box> :
-        win === 1 ?
-        <Box>
-          <Grid container justify="center" alignItems="center">
-            <h1>Town won!</h1>
-          </Grid>
-        </Box> :
-        <Box>
-          <Grid container justify="center" alignItems="center">
-            <h1>Mafia won!</h1>
-          </Grid>
+      <Box className={classes.mainActivity} m={10}>
+        <Box className={classes.text} my={15} justify="center" mx="auto">
+          <h2>{roleText}</h2>
+          <h2>{message}</h2>
         </Box>
-      }
+        {userInfo.role === 1 || userInfo.alive === false ? null :
+        <div>
+          <Grid container justify="center" alignItems="center" spacing={4}>
+            {
+              players.map((u) => {
+                return (
+                  <Player
+                    key={u.uid}
+                    player={u}
+                    setChoice={setChoice}
+                    choice={choice}
+                    user={userInfo}
+                  />
+                );
+              })
+            }
+          </Grid>
+          <br /> <br />
+          <Grid container justify="center" alignItems="center">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={confirmClick}
+              disabled={chose}
+            >
+              Confirm Choice
+            </Button>
+          </Grid>
+        </div>
+        }
+      </Box>
     </Grid>
   );
 }
@@ -288,6 +301,8 @@ MafiaNight.propTypes = {
   detectiveCheck: PropTypes.object,
   showResult: PropTypes.func,
   mafiaDecision: PropTypes.array,
+  win: PropTypes.number,
+  endGame: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
@@ -298,7 +313,6 @@ const mapStateToProps = (state) => ({
   doctorSave: state.roomData.doctorSave,
   detectiveCheck: state.roomData.detectiveCheck,
   mafiaDecision: state.roomData.mafiaDecision,
-  end: state.roomData.end,
   win: state.roomData.win,
 });
 
