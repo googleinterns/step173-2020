@@ -67,6 +67,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
         }
         if (u.uid === userUid) {
           setUserInfo(u);
+          setChose(u.chose);
           if (u.alive === true) {
             switch (u.role) {
               case 1:
@@ -137,7 +138,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
                 {text: 'Mafia please vote again', hours, minutes},
             ),
           });
-          setChose(false);
+          changeChose(false);
           return;
         }
       }
@@ -189,7 +190,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
                 hours, minutes},
           ),
         });
-        setChose(true);
+        changeChose(true);
         setMessage('You have killed ' + player.displayName + ' tonight.');
         break;
       case 3:
@@ -201,17 +202,27 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
         room.update(
             {detectiveCheck:
             {uid: player.uid, displayName: player.displayName}});
-        setChose(true);
+        changeChose(true);
         break;
       case 4:
         room.update(
             {doctorSave: {uid: player.uid, displayName: player.displayName}});
         showResult('You have saved ' + player.displayName + ' tonight.');
-        setChose(true);
+        changeChose(true);
         break;
       default:
         setMessage('Role is invalid.');
     }
+  }
+  /**
+   * Set whether player has chosen in database
+   * @return {undefined}
+   */
+  function changeChose(chosed) {
+    setChose(chosed);
+    room.collection('users').doc(userInfo.uid).update({
+      chose: chosed,
+    });
   }
 
   return (
