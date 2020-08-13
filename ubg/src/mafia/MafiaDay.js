@@ -46,7 +46,6 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
   const [userInfo, setUserInfo] = React.useState('');
   const [deathText, setDeathText] = useState('');
   const [choice, setChoice] = useState('');
-  // const [voted, setVoted] = useState(false);
   const [initialize, setInitialize] = useState(false);
 
   /**
