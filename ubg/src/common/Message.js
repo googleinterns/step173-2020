@@ -16,6 +16,9 @@ const useStyles = makeStyles((theme) => ({
   name: {
     flexGrow: 1,
   },
+  text: {
+    overflowWrap: 'break-word',
+  },
 }));
 
 /**
@@ -36,7 +39,7 @@ export default function Message({user, text, time}) {
         >{user}</Typography>
         <Typography variant="caption">{time}</Typography>
       </div>
-      <Typography variant="body2">{text}</Typography>
+      <Typography variant="body2" className={classes.text}>{text}</Typography>
       <Divider />
     </div>
   );
