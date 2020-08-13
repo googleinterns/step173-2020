@@ -107,7 +107,7 @@ export default function Game() {
             usersCollection={usersCollection}
             game={game}
             createRoom={createRoom}
-            user={user}
+            gameId={gameId}
           />
           <Spacer />
           <Grid container spacing={5}>
@@ -172,7 +172,7 @@ function Spacer() {
  * @param {func} createRoom Creates game room for current game
  * @return {ReactElement} Description of game
  */
-function Description({usersCollection, game, createRoom}) {
+function Description({usersCollection, game, createRoom, gameId}) {
   const classes = useStyles();
   let playTime = game.minPlaytime + '-' + game.maxPlaytime;
   let players = game.minPlayer + '-' + game.maxPlayer;
@@ -208,31 +208,34 @@ function Description({usersCollection, game, createRoom}) {
             <Icon aria-label='share'>
               <Star />{game.rating.toFixed(2)}/10
             </Icon>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &emsp;
             <Icon aria-label='share'>
               <Face />{game.minAge}+
             </Icon>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &emsp;
             <Icon aria-label='share'>
               <Timer />{playTime}
             </Icon>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &emsp;
             <Icon aria-label='share'>
               <People />{players}
             </Icon>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &emsp;
             <Icon aria-label='share'>
               <SignalCellular3Bar />{game.weight.toFixed(2)}
             </Icon>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &emsp;
             <AuthCheck>
-              <Button
-                variant='contained'
-                color='primary'
-                onClick={createRoom}>
-                Create Room
-              </Button>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              {gameId === '925' ?
+                <Button
+                  variant='contained'
+                  color='primary'
+                  onClick={createRoom}>
+                  Create Room
+                </Button> :
+                null
+              }
+              &emsp;
               <FavoriteButton usersCollection={usersCollection} game={game}/>
             </AuthCheck>
           </Typography>
@@ -418,6 +421,7 @@ Description.propTypes = {
     rating: PropTypes.number,
     weight: PropTypes.number,
   }),
+  gameId: PropTypes.string,
 };
 
 Videos.propTypes = {
