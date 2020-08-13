@@ -142,7 +142,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
         ),
       });
       showResult('Mafia have killed ' + mafiaDecision[0].vote.displayName);
-      setMessage('Please wait for other players begore jumping to day.');
+      setMessage('Please wait for other players before jumping to day.');
     }
   }
   /**
@@ -223,13 +223,13 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
             {detectiveCheck:
             {uid: player.uid, displayName: player.displayName}});
         changeChose(true);
-        setMessage('Please wait for other players begore jumping to day.');
+        setMessage('Please wait for other players before jumping to day.');
         break;
       case 4:
         room.update(
             {doctorSave: {uid: player.uid, displayName: player.displayName}});
         showResult('You have saved ' + player.displayName + ' tonight.');
-        setMessage('Please wait for other players begore jumping to day.');
+        setMessage('Please wait for other players before jumping to day.');
         changeChose(true);
         break;
       default:
