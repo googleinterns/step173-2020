@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     height: '100%',
     width: '100%',
+    overflow: 'scroll',
   },
   time: {
     float: 'right',
