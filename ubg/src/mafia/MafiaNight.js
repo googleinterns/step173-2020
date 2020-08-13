@@ -219,7 +219,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
   }
   /**
    * Set whether player has chosen in database
-   * @param {boolean} chosed 
+   * @param {boolean} chosed
    * @return {undefined}
    */
   function changeChose(chosed) {
