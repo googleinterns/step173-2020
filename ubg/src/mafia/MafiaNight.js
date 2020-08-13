@@ -4,7 +4,6 @@ import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Player from './Player';
-import PersonalInfo from './PersonalInfo';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import * as firebase from 'firebase/app';
@@ -29,13 +28,18 @@ const useStyles = makeStyles((theme) => ({
   card: {
     width: '100%',
   },
+  mainActivity: {
+    flexGrow: 1,
+    height: '300px',
+  },
 }));
 
 /**
  * @return {ReactElement} Mafia night element
  */
 function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
-  mafiaKill, doctorSave, detectiveCheck, showResult, mafiaDecision}) {
+  mafiaKill, doctorSave, detectiveCheck, showResult, mafiaDecision, endGame,
+  win}) {
   const classes = useStyles();
   const [players, setPlayers] = useState([]);
   const [userInfo, setUserInfo] = useState('');
@@ -52,7 +56,9 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
    * @return {undefined}
    */
   function loadNightData() {
-    if (initialize === false) {
+    endGame();
+    setUserInfo(usersData.find((u) => u.uid === userUid));
+    if (!initialize && win === 0) {
       setInitialize(true);
       const roles = new Set();
       const allPlayers = [];
@@ -108,7 +114,8 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
    * @return {undefined}
    */
   function mafiaVote() {
-    if (mafiaDecision.length !== 0 && mafiaDecision.length === mafiaTotal) {
+    if (mafiaDecision && mafiaDecision.length !== 0 &&
+      mafiaDecision.length === mafiaTotal) {
       const today = new Date();
       const hours = today.getUTCHours();
       const minutes = today.getUTCMinutes();
@@ -243,15 +250,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
 
   return (
     <Grid className={classes.gameContainer} item>
-      <div>
-        <h1 className={classes.night}>NIGHT</h1>
-        <PersonalInfo
-          name={userInfo.displayName}
-          role={userInfo.role}
-          alive={userInfo.alive}
-        />
-      </div>
-      <Box m={10}>
+      <Box className={classes.mainActivity} m={10}>
         <Box className={classes.text} my={15} justify="center" mx="auto">
           <h2>{roleText}</h2>
           <h2>{message}</h2>
@@ -302,6 +301,8 @@ MafiaNight.propTypes = {
   detectiveCheck: PropTypes.object,
   showResult: PropTypes.func,
   mafiaDecision: PropTypes.array,
+  win: PropTypes.number,
+  endGame: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
@@ -312,6 +313,7 @@ const mapStateToProps = (state) => ({
   doctorSave: state.roomData.doctorSave,
   detectiveCheck: state.roomData.detectiveCheck,
   mafiaDecision: state.roomData.mafiaDecision,
+  win: state.roomData.win,
 });
 
 export default connect(
