@@ -107,8 +107,8 @@ function SettingsModal({usersDataLength, usersCollection, startGame}) {
             defaultValue={villager}
             InputProps={{
               inputProps: {
-                  min: 0,
-              }
+                min: 0,
+              },
             }}
             onChange={(event) => setVillager(event.target.value)}
             required
@@ -123,8 +123,8 @@ function SettingsModal({usersDataLength, usersCollection, startGame}) {
             defaultValue={mafia}
             InputProps={{
               inputProps: {
-                  min: 0,
-              }
+                min: 0,
+              },
             }}
             onChange={(event) => (setMafia(event.target.value))}
             required
@@ -139,8 +139,8 @@ function SettingsModal({usersDataLength, usersCollection, startGame}) {
             defaultValue={detective}
             InputProps={{
               inputProps: {
-                  max: 1, min: 0,
-              }
+                max: 1, min: 0,
+              },
             }}
             onChange={(event) => (setDetective(event.target.value))}
             required
@@ -155,8 +155,8 @@ function SettingsModal({usersDataLength, usersCollection, startGame}) {
             defaultValue={doctor}
             InputProps={{
               inputProps: {
-                  max: 1, min: 0,
-              }
+                max: 1, min: 0,
+              },
             }}
             onChange={(event) => (setDoctor(event.target.value))}
             required
