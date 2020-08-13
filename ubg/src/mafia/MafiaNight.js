@@ -67,6 +67,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
         }
         if (u.uid === userUid) {
           setUserInfo(u);
+          setChose(u.chose);
           if (u.alive === true) {
             switch (u.role) {
               case 1:
@@ -137,7 +138,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
                 {text: 'Mafia please vote again', hours, minutes},
             ),
           });
-          setChose(false);
+          changeChose(false);
           return;
         }
       }
@@ -149,6 +150,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
         ),
       });
       showResult('Mafia have killed ' + mafiaDecision[0].vote.displayName);
+      setMessage('Please wait for other players begore jumping to day.');
     }
   }
   /**
@@ -189,8 +191,8 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
                 hours, minutes},
           ),
         });
-        setChose(true);
-        setMessage('You have killed ' + player.displayName + ' tonight.');
+        changeChose(true);
+        setMessage('You have chose to kill ' + player.displayName);
         break;
       case 3:
         if (player.role === 2) {
@@ -201,17 +203,29 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
         room.update(
             {detectiveCheck:
             {uid: player.uid, displayName: player.displayName}});
-        setChose(true);
+        changeChose(true);
+        setMessage('Please wait for other players begore jumping to day.');
         break;
       case 4:
         room.update(
             {doctorSave: {uid: player.uid, displayName: player.displayName}});
         showResult('You have saved ' + player.displayName + ' tonight.');
-        setChose(true);
+        setMessage('Please wait for other players begore jumping to day.');
+        changeChose(true);
         break;
       default:
         setMessage('Role is invalid.');
     }
+  }
+  /**
+   * Set whether player has chosen in database
+   * @return {undefined}
+   */
+  function changeChose(chosed) {
+    setChose(chosed);
+    room.collection('users').doc(userInfo.uid).update({
+      chose: chosed,
+    });
   }
 
   return (

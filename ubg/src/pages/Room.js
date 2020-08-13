@@ -227,6 +227,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
       uid: user.uid,
       role: null,
       alive: true,
+      chose: false,
       order: Math.floor(Math.random() * 20),
     });
   }
