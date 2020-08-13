@@ -21,10 +21,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     position: 'relative',
   },
-  night: {
-    float: 'right',
-    marginRight: '3em',
-  },
   card: {
     width: '100%',
   },
