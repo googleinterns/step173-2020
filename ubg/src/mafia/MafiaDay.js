@@ -41,42 +41,14 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia day element
  */
 function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
-  userUid, room, dayVote, aliveNum, end, showResult}) {
+  userUid, room, dayVote, aliveNum, end, win, showResult, endGame}) {
   const classes = useStyles();
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
   const [deathText, setDeathText] = useState('');
   const [choice, setChoice] = useState('');
   const [voted, setVoted] = useState(false);
-  const [win, setWin] = useState(0);
   const [initialize, setInitialize] = useState(false);
-
-  /**
-   * Determines if game has reached end
-   */
-  function endGame() {
-    console.log('HUH???');
-    const mafiaCount = usersData.filter((u) => u.role === 2 &&
-      u.alive).length;
-    const villagerCount = usersData.filter((u) => u.role !== 2 &&
-      u.alive).length;
-    // all mafia are dead
-    if (mafiaCount === 0) {
-      console.log('WHAT????');
-      setWin(1);
-      room.update({
-        end: true,
-      });
-    // all villagers are dead
-    } else if (villagerCount === 0 ||
-      (mafiaCount === 1 && villagerCount === 1)) {
-      console.log('meow');
-      setWin(2);
-      room.update({
-        end: true,
-      });
-    }
-  }
 
   /**
    * Sets up daytime data and logistics
@@ -143,18 +115,15 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
           executionMessage = 'No one was executed.';
       }
       showResult(executionMessage);
-      endGame();
-      if (!end) {
-        room.update({
-          doctorSave: {'uid': '', 'displayName': ''},
-          mafiaKill: {'uid': '', 'displayName': ''},
-          mafiaDecision: [],
-          detectiveCheck: {'uid': '', 'displayName': ''},
-          day: false,
-          dayVote: [],
-          aliveCount: aliveNum,
-        });
-      }
+      room.update({
+        doctorSave: {'uid': '', 'displayName': ''},
+        mafiaKill: {'uid': '', 'displayName': ''},
+        mafiaDecision: [],
+        detectiveCheck: {'uid': '', 'displayName': ''},
+        day: false,
+        dayVote: [],
+        aliveCount: aliveNum,
+      });
     }
   }
 
@@ -264,6 +233,7 @@ const mapStateToProps = (state) => ({
   doctorSave: state.roomData.doctorSave,
   aliveNum: state.roomData.aliveCount,
   end: state.roomData.end,
+  win: state.roomData.win,
 });
 
 export default connect(

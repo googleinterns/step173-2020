@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Mafia game element
  */
-function MafiaGame({day, room, usersCollection}) {
+function MafiaGame({day, room, usersCollection, usersData}) {
   const [alert, setAlert] = React.useState(null);
   /**
    * @param {string} message message to display
@@ -24,6 +24,31 @@ function MafiaGame({day, room, usersCollection}) {
    */
   function showResult(message) {
     setAlert(<AlertDialog message={message}></AlertDialog>);
+  }
+  /**
+   * Determines if game has reached end
+   */
+  function endGame() {
+    const mafiaCount = usersData.filter((u) => u.role === 2 &&
+      u.alive).length;
+    const villagerCount = usersData.filter((u) => u.role !== 2 &&
+      u.alive).length;
+    // all mafia are dead
+    if (mafiaCount === 0) {
+      // setWin(1);
+      room.update({
+        win: 1,
+        end: true,
+      });
+    // all villagers are dead or one mafia and one villager alive
+    } else if (villagerCount === 0 ||
+      (mafiaCount === 1 && villagerCount === 1)) {
+      // setWin(2);
+      room.update({
+        win: 2,
+        end: true,
+      });
+    }
   }
   const classes = useStyles();
   return (
@@ -35,11 +60,13 @@ function MafiaGame({day, room, usersCollection}) {
           usersCollection={usersCollection}
           room={room}
           showResult={showResult}
+          endGame={endGame}
         /> :
         <MafiaNight
           usersCollection={usersCollection}
           room={room}
           showResult={showResult}
+          endGame={endGame}
         />
       }
     </div>
@@ -54,6 +81,9 @@ MafiaGame.propTypes = {
 
 const mapStateToProps = (state) => ({
   day: state.roomData.day,
+  usersData: state.usersData,
+  end: state.roomData.end,
+  win: state.roomData.win,
 });
 
 export default connect(

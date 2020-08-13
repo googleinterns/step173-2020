@@ -34,8 +34,9 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Mafia night element
  */
-function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
-  mafiaKill, doctorSave, detectiveCheck, showResult, mafiaDecision}) {
+function MafiaNight({userUid, usersData, room, usersCollection, aliveNum, end,
+  mafiaKill, doctorSave, detectiveCheck, showResult, mafiaDecision, endGame,
+  win}) {
   const classes = useStyles();
   const [players, setPlayers] = useState([]);
   const [userInfo, setUserInfo] = useState('');
@@ -52,7 +53,9 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
    * @return {undefined}
    */
   function loadNightData() {
-    if (initialize === false) {
+    endGame();
+    setUserInfo(usersData.find((u) => u.uid === userUid));
+    if (!initialize && !end) {
       setInitialize(true);
       const roles = new Set();
       const allPlayers = [];
@@ -222,41 +225,54 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
         role={userInfo.role}
         alive={userInfo.alive}
       />
-      <Box className={classes.mainActivity} m={10}>
-        <Box className={classes.text} my={15} justify="center" mx="auto">
-          <h2>{roleText}</h2>
-          <h2>{message}</h2>
-        </Box>
-        {userInfo.role === 1 || userInfo.alive === false ? null :
-        <div>
-          <Grid container justify="center" alignItems="center" spacing={4}>
-            {
-              players.map((u) => {
-                return (
-                  <Player
-                    key={u.uid}
-                    player={u}
-                    setChoice={setChoice}
-                    choice={choice}
-                  />
-                );
-              })
-            }
-          </Grid>
-          <br /> <br />
+      { win === 0 ?
+        <Box className={classes.mainActivity} m={10}>
+          <Box className={classes.text} my={15} justify="center" mx="auto">
+            <h2>{roleText}</h2>
+            <h2>{message}</h2>
+          </Box>
+          {userInfo.role === 1 || userInfo.alive === false ? null :
+          <div>
+            <Grid container justify="center" alignItems="center" spacing={4}>
+              {
+                players.map((u) => {
+                  return (
+                    <Player
+                      key={u.uid}
+                      player={u}
+                      setChoice={setChoice}
+                      choice={choice}
+                    />
+                  );
+                })
+              }
+            </Grid>
+            <br /> <br />
+            <Grid container justify="center" alignItems="center">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={confirmClick}
+                disabled={chose}
+              >
+                Confirm Choice
+              </Button>
+            </Grid>
+          </div>
+          }
+        </Box> :
+        win === 1 ?
+        <Box>
           <Grid container justify="center" alignItems="center">
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={confirmClick}
-              disabled={chose}
-            >
-              Confirm Choice
-            </Button>
+            <h1>Town won!</h1>
           </Grid>
-        </div>
-        }
-      </Box>
+        </Box> :
+        <Box>
+          <Grid container justify="center" alignItems="center">
+            <h1>Mafia won!</h1>
+          </Grid>
+        </Box>
+      }
     </Grid>
   );
 }
@@ -282,6 +298,8 @@ const mapStateToProps = (state) => ({
   doctorSave: state.roomData.doctorSave,
   detectiveCheck: state.roomData.detectiveCheck,
   mafiaDecision: state.roomData.mafiaDecision,
+  end: state.roomData.end,
+  win: state.roomData.win,
 });
 
 export default connect(
