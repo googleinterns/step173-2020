@@ -413,7 +413,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                       </div>
                       <Chat
                         disabled={(mafiaChatSelected && roomData.day) ||
-                          !inGame}
+                          !inGame || (!mafiaChatSelected && !roomData.day)}
                         mafia={mafiaChatSelected}
                         messages={mafiaChatSelected ?
                           roomData.mafiaChat : roomData.chat}
