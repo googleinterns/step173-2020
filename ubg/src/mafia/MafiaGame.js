@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
   time: {
     float: 'right',
-    marginRight: '15vw',
+    marginRight: '4vw',
   },
 }));
 
