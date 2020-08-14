@@ -62,6 +62,12 @@ function WaitingRoom({gameName, gameDescription, leaveRoom,
   joinRoom, inRoom, isHost, usersCollection, startGame, gameId}) {
   const classes = useStyles();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  /**
+   * @return {object} inner HTML 
+   */
+  function createMarkup() {
+    return {__html: gameDescription};
+  }
 
   return (
     <div className={classes.main}>
@@ -71,9 +77,10 @@ function WaitingRoom({gameName, gameDescription, leaveRoom,
         </Typography>
       </div>
       <div className={classes.game}>
-        <Typography variant="body1">
-          {gameDescription}
-        </Typography>
+      <div
+        dangerouslySetInnerHTML={createMarkup()}
+      >
+      </div>
       </div>
       <div className={classes.actionBtns}>
         {
