@@ -8,6 +8,7 @@ const useStyles = makeStyles((theme) => ({
   rules: {
     borderTop: '1px solid black',
     textAlign: 'left',
+    whiteSpace: 'pre-line',
   },
 }));
 
@@ -18,11 +19,20 @@ const useStyles = makeStyles((theme) => ({
  */
 export default function RulesDrawer({open, rules}) {
   const classes = useStyles();
+  /**
+   * @return {object} inner HTML
+   */
+  function createMarkup() {
+    return {__html: rules};
+  }
 
   return (
     <Slide direction="up" in={open} mountOnEnter unmountOnExit>
       <Paper className={classes.rules}>
-        {rules}
+        <div
+          dangerouslySetInnerHTML={createMarkup()}
+        >
+        </div>
       </Paper>
     </Slide>
   );
