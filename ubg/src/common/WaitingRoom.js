@@ -4,6 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import SettingsModal from '../mafia/SettingsModal';
+import EndModal from '../mafia/EndModal';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
@@ -58,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Waiting room element
  */
-function WaitingRoom({gameName, gameDescription, leaveRoom,
+function WaitingRoom({gameName, gameDescription, leaveRoom, win,
   joinRoom, inRoom, isHost, usersCollection, startGame, gameId}) {
   const classes = useStyles();
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -68,6 +69,7 @@ function WaitingRoom({gameName, gameDescription, leaveRoom,
   function createMarkup() {
     return {__html: gameDescription};
   }
+  const [endOpen, setEndOpen] = useState(true);
 
   return (
     <div className={classes.main}>
@@ -82,39 +84,61 @@ function WaitingRoom({gameName, gameDescription, leaveRoom,
       >
       </div>
       </div>
+      <div>
+        {
+          win && win !== 0 ?
+          (
+            <Modal
+              open={endOpen}
+              onClose={() => setEndOpen(false)}
+              className={classes.modal}
+            >
+              <div className={classes.paper}>
+                <EndModal
+                  winMessage={win === 1 ? 'Town wins!' : 'Mafia wins!'}
+                />
+              </div>
+            </Modal>
+          ) :
+          null
+        }
+      </div>
       <div className={classes.actionBtns}>
         {
           inRoom ?
             (
               <div className={classes.inRoomBtns}>
                 { isHost ?
-                  <div>
-                    <Button
-                      className={classes.btn}
-                      variant="contained"
-                      color="primary"
-                      onClick={() => {
-                        gameId === '925' && setSettingsOpen(true);
-                      }}
-                    >
-                      Start Game
-                    </Button>
-                    <Modal
-                      open={settingsOpen}
-                      onClose={() => setSettingsOpen(false)}
-                      aria-labelledby="simple-modal-title"
-                      aria-describedby="simple-modal-description"
-                      className={classes.modal}
-                    >
-                      <div className={classes.paper}>
-                        <SettingsModal
-                          usersCollection={usersCollection}
-                          startGame={startGame}
-                        />
-                      </div>
-                    </Modal>
-                  </div> :
-                  'Waiting for the host'}
+                  (
+                    <div>
+                      <Button
+                        className={classes.btn}
+                        variant="contained"
+                        color="primary"
+                        onClick={() => {
+                          gameId === '925' && setSettingsOpen(true);
+                        }}
+                      >
+                        Start Game
+                      </Button>
+                      <Modal
+                        open={settingsOpen}
+                        onClose={() => setSettingsOpen(false)}
+                        className={classes.modal}
+                      >
+                        <div className={classes.paper}>
+                          <SettingsModal
+                            usersCollection={usersCollection}
+                            startGame={startGame}
+                          />
+                        </div>
+                      </Modal>
+                    </div>
+                  ) :
+                  (
+                    'Waiting for the host'
+                  )
+                }
                 <Button
                   className={classes.btn}
                   variant="contained"
@@ -144,10 +168,12 @@ WaitingRoom.propTypes = {
   usersCollection: PropTypes.object,
   startGame: PropTypes.func,
   gameId: PropTypes.string,
+  win: PropTypes.number,
 };
 
 const mapStateToProps = (state) => ({
   gameId: state.roomData.gameId,
+  win: state.roomData.win,
 });
 
 export default connect(

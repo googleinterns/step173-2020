@@ -53,13 +53,15 @@ function Chat({open, messages, room, displayName, mafia, disabled}) {
     if (mafia) {
       room.update(
           {mafiaChat: fieldValue.arrayUnion(
-              {text: newMessage, user: displayName, hours, minutes},
+              {text: newMessage, user: displayName, isGameText: false,
+                hours, minutes},
           )},
       );
     } else {
       room.update(
           {chat: fieldValue.arrayUnion(
-              {text: newMessage, user: displayName, hours, minutes},
+              {text: newMessage, user: displayName, isGameText: false,
+                hours, minutes},
           )},
       );
     }
@@ -124,6 +126,7 @@ function Chat({open, messages, room, displayName, mafia, disabled}) {
                     key={index}
                     user={message.user}
                     text={message.text}
+                    isGameText={message.isGameText}
                     time={getLocalTime(message.hours, message.minutes)}
                   />
                 );
@@ -142,7 +145,7 @@ function Chat({open, messages, room, displayName, mafia, disabled}) {
             type='text'
             className={classes.chatField}
             onKeyDown={(e) => {
-              if (e.keyCode === 13 && newMessage !== '') {
+              if (e.keyCode === 13 && newMessage.trim() !== '') {
                 addMessage();
               }
             }}

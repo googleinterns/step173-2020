@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Game room element
  */
-function GameRoom({gameRules, gameId, room, usersCollection}) {
+function GameRoom({gameRules, gameId, room, usersCollection, playAgain}) {
   const [openRules, setOpenRules] = useState(false);
   const classes = useStyles();
 
@@ -41,7 +41,11 @@ function GameRoom({gameRules, gameId, room, usersCollection}) {
         {/* Check if gamId is mafia
         (not sure if 925 id mafia) */}
         { gameId === '925' ?
-          <MafiaGame room={room} usersCollection={usersCollection} /> :
+          <MafiaGame
+            room={room}
+            usersCollection={usersCollection}
+            playAgain={playAgain}
+          /> :
           'no game'
         }
       </div>
@@ -63,6 +67,7 @@ GameRoom.propTypes = {
   gameId: PropTypes.string,
   room: PropTypes.object,
   usersCollection: PropTypes.object,
+  playAgain: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
