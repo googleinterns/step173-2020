@@ -62,7 +62,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
       const minutes = today.getUTCMinutes();
       if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
         let deathText = mafiaKill.displayName + ' was killed last night. ';
-        switch (usersCollection.doc(mafiaKill.uid).role) {
+        switch (usersData.find((u) => u.uid === mafiaKill.uid).role) {
           case 1:
             deathText += 'They were a villager.';
             break;
@@ -89,7 +89,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
       });
       room.update({
         chat: firebase.firestore.FieldValue.arrayUnion(
-            {text: 'DAY ' + dayNum, hours, minutes},
+            {text: 'DAY ' + dayNum, isGameText: true, hours, minutes},
         ),
       });
       setPlayers(allPlayers);
@@ -155,7 +155,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
         aliveCount: aliveNum,
         dayCount: dayNum,
         chat: firebase.firestore.FieldValue.arrayUnion(
-          {text: executionMessage, hours, minutes},
+            {text: executionMessage, isGameText: true, hours, minutes},
         ),
       });
     }
@@ -181,7 +181,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
       }),
       chat: firebase.firestore.FieldValue.arrayUnion(
           {text: userInfo.displayName + ' voted for ' + choice.displayName,
-            hours, minutes},
+            isGameText: true, hours, minutes},
       ),
     });
     room.collection('users').doc(userInfo.uid).update({

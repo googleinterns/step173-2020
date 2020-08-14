@@ -67,7 +67,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
       dayNum = dayNum ? (initialize ? 1 : dayNum) : 1;
       room.update({
         chat: firebase.firestore.FieldValue.arrayUnion(
-            {text: 'NIGHT ' + dayNum, hours, minutes},
+            {text: 'NIGHT ' + dayNum, isGameText: true, hours, minutes},
         ),
       });
       usersData.forEach(function(u) {
@@ -135,7 +135,8 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
             room.update({
               mafiaDecision: [],
               mafiaChat: firebase.firestore.FieldValue.arrayUnion(
-                  {text: 'Mafia please vote again', hours, minutes},
+                  {text: 'Mafia please vote again', isGameText: true,
+                    hours, minutes},
               ),
             });
             changeChose(false);
@@ -146,10 +147,10 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
           mafiaKill: mafiaDecision[0].vote,
           mafiaChat: firebase.firestore.FieldValue.arrayUnion(
               {text: 'Mafia agreed to kill ' +
-              mafiaDecision[0].vote.displayName, hours, minutes},
+              mafiaDecision[0].vote.displayName, isGameText: true,
+              hours, minutes},
           ),
         });
-        showResult('Mafia have killed ' + mafiaDecision[0].vote.displayName);
         setMessage('Please wait for other players before jumping to day.');
       }
     }
@@ -213,7 +214,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
           mafiaDecision: firebase.firestore.FieldValue.arrayUnion(newVote),
           mafiaChat: firebase.firestore.FieldValue.arrayUnion(
               {text: newVote.player + ' voted for ' + player.displayName,
-                hours, minutes},
+                isGameText: true, hours, minutes},
           ),
         });
         changeChose(true);

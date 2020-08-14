@@ -19,15 +19,20 @@ const useStyles = makeStyles((theme) => ({
   text: {
     overflowWrap: 'break-word',
   },
+  gameText: {
+    overflowWrap: 'break-word',
+    fontStyle: 'italic',
+  },
 }));
 
 /**
  * @param {string} user name of the user who sent the message
  * @param {string} text text of the message
  * @param {string} time time that the message was sent
+ * @param {bool} bool if text is from game or user
  * @return {ReactElement} Div with message info
  */
-export default function Message({user, text, time}) {
+export default function Message({user, text, time, isGameText}) {
   const classes = useStyles();
   return (
     <div className={classes.main}>
@@ -39,7 +44,20 @@ export default function Message({user, text, time}) {
         >{user}</Typography>
         <Typography variant="caption">{time}</Typography>
       </div>
-      <Typography variant="body2" className={classes.text}>{text}</Typography>
+      {
+        // if text from game not user
+        isGameText ?
+        (
+          <Typography variant="body2" className={classes.gameText}>
+            {text}
+          </Typography>
+        ) :
+        (
+          <Typography variant="body2" className={classes.text}>
+            {text}
+          </Typography>
+        )
+      }
       <Divider />
     </div>
   );
@@ -49,4 +67,5 @@ Message.propTypes = {
   user: PropTypes.string,
   text: PropTypes.string,
   time: PropTypes.string,
+  isGameText: PropTypes.bool,
 };
