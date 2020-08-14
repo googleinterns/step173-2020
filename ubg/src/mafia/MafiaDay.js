@@ -89,7 +89,8 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
       });
       room.update({
         chat: firebase.firestore.FieldValue.arrayUnion(
-            {text: 'DAY ' + dayNum, isGameText: true, hours, minutes},
+            {text: '-------- DAY ' + dayNum + ' --------',
+              isGameText: true, hours, minutes},
         ),
       });
       setPlayers(allPlayers);

@@ -67,7 +67,8 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
       dayNum = dayNum ? (initialize ? 1 : dayNum) : 1;
       room.update({
         chat: firebase.firestore.FieldValue.arrayUnion(
-            {text: 'NIGHT ' + dayNum, isGameText: true, hours, minutes},
+            {text: '-------- NIGHT ' + dayNum + ' --------',
+              isGameText: true, hours, minutes},
         ),
       });
       usersData.forEach(function(u) {
