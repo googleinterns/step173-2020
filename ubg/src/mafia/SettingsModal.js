@@ -107,7 +107,7 @@ function SettingsModal({usersDataLength, usersCollection, startGame}) {
             defaultValue={villager}
             InputProps={{
               inputProps: {
-                min: 0,
+                min: 1,
               },
             }}
             onChange={(event) => setVillager(event.target.value)}
@@ -123,7 +123,7 @@ function SettingsModal({usersDataLength, usersCollection, startGame}) {
             defaultValue={mafia}
             InputProps={{
               inputProps: {
-                min: 0,
+                min: 1,
               },
             }}
             onChange={(event) => (setMafia(event.target.value))}
