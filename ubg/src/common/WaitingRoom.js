@@ -84,8 +84,6 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
             <Modal
               open={endOpen}
               onClose={() => setEndOpen(false)}
-              aria-labelledby="simple-modal-title"
-              aria-describedby="simple-modal-description"
               className={classes.modal}
             >
               <div className={classes.paper}>
@@ -119,8 +117,6 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
                       <Modal
                         open={settingsOpen}
                         onClose={() => setSettingsOpen(false)}
-                        aria-labelledby="simple-modal-title"
-                        aria-describedby="simple-modal-description"
                         className={classes.modal}
                       >
                         <div className={classes.paper}>
