@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia day element
  */
 function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
-  userUid, room, dayVote, aliveNum, win, showResult, endGame}) {
+  userUid, room, dayVote, aliveNum, showResult, endGame}) {
   const classes = useStyles();
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
@@ -55,7 +55,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
   function startDay() {
     endGame();
     setUserInfo(usersData.find((u) => u.uid === userUid));
-    if (!initialize && win === 0) {
+    if (!initialize) {
       const allPlayers = [];
       if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
         setDeathText(mafiaKill.displayName + ' was killed last night');
@@ -205,7 +205,6 @@ MafiaDay.propTypes = {
   doctorSave: PropTypes.object,
   aliveNum: PropTypes.number,
   showResult: PropTypes.func,
-  win: PropTypes.number,
   endGame: PropTypes.func,
 };
 
@@ -216,7 +215,6 @@ const mapStateToProps = (state) => ({
   mafiaKill: state.roomData.mafiaKill,
   doctorSave: state.roomData.doctorSave,
   aliveNum: state.roomData.aliveCount,
-  win: state.roomData.win,
 });
 
 export default connect(
