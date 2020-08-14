@@ -182,6 +182,12 @@ function Description({usersCollection, game, createRoom, gameId}) {
   if (game.minPlayer === game.maxPlayer) {
     players = game.minPlayer;
   }
+  /**
+   * @return {object} inner HTML 
+   */
+  function createMarkup() {
+    return {__html: game.description};
+  }
 
   return (
     <Grid container spacing={5}>
@@ -200,9 +206,10 @@ function Description({usersCollection, game, createRoom, gameId}) {
             {game.Name}
           </Typography>
           <br />
-          <Typography variant='body1'>
-            {game.description}
-          </Typography>
+          <div
+            dangerouslySetInnerHTML={createMarkup()}
+          >
+          </div>
           <br />
           <Typography variant='body2' color='textSecondary' component='p'>
             <Icon aria-label='share'>
