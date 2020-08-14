@@ -64,7 +64,7 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
   const classes = useStyles();
   const [settingsOpen, setSettingsOpen] = useState(false);
   /**
-   * @return {object} inner HTML 
+   * @return {object} inner HTML
    */
   function createMarkup() {
     return {__html: gameDescription};
@@ -79,10 +79,10 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
         </Typography>
       </div>
       <div className={classes.game}>
-      <div
-        dangerouslySetInnerHTML={createMarkup()}
-      >
-      </div>
+        <div
+          dangerouslySetInnerHTML={createMarkup()}
+        >
+        </div>
       </div>
       <div>
         {

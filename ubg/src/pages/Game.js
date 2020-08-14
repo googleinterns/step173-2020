@@ -183,7 +183,7 @@ function Description({usersCollection, game, createRoom, gameId}) {
     players = game.minPlayer;
   }
   /**
-   * @return {object} inner HTML 
+   * @return {object} inner HTML
    */
   function createMarkup() {
     return {__html: game.description};
