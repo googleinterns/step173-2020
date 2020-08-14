@@ -145,7 +145,7 @@ function Chat({open, messages, room, displayName, mafia, disabled}) {
             type='text'
             className={classes.chatField}
             onKeyDown={(e) => {
-              if (e.keyCode === 13 && newMessage !== '') {
+              if (e.keyCode === 13 && newMessage.trim() !== '') {
                 addMessage();
               }
             }}
