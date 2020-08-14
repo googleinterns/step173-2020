@@ -251,10 +251,13 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
   return (
     <Grid className={classes.gameContainer} item>
       <Box className={classes.mainActivity} m={10}>
-        <Box className={classes.text} my={15} justify="center" mx="auto">
+        <Grid container justify="center" alignItems="center">
           <h2>{roleText}</h2>
+        </Grid>
+        <Grid container justify="center" alignItems="center">
           <h2>{message}</h2>
-        </Box>
+        </Grid>
+        <br />
         {userInfo.role === 1 || userInfo.alive === false ? null :
         <div>
           <Grid container justify="center" alignItems="center" spacing={4}>

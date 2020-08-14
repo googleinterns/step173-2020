@@ -129,7 +129,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     [classes.halfWidth]: true,
     [classes.chatSelected]: mafiaChatSelected,
   });
-  const [inGame] = useState(user && usersData.some((u) => u.uid === user.uid));
+  const [inGame, setInGame] = useState(false);
 
   /**
    * Go to the home page url
@@ -228,6 +228,11 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     setRoomData(roomData);
   }, [roomData, setRoomData]);
 
+  useEffect(() => {
+    console.log('hi!');
+    setInGame(user && usersData.some((u) => u.uid === user.uid));
+  }, [user, usersData]);
+
   /**
    * Add user to the users collection in the room
    */
@@ -320,7 +325,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                       Back to Homepage
                     </Button>
                     <Typography variant="subtitle1">
-                      You&apos;re too late! The game has already started :/
+                      You&apos;re too late! The game has already started.
                     </Typography>
                   </div> :
                   <WaitingRoom
