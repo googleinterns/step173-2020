@@ -1,7 +1,5 @@
 import React, {useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
 import MafiaDay from './MafiaDay';
 import MafiaNight from './MafiaNight';
 import PersonalInfo from './PersonalInfo';
@@ -19,7 +17,8 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Mafia game element
  */
-function MafiaGame({day, room, usersCollection, usersData, win, userUid}) {
+function MafiaGame({day, room, usersCollection, usersData, userUid,
+  playAgain}) {
   const classes = useStyles();
   const [alert, setAlert] = useState(null);
   const [userInfo, setUserInfo] = useState('');
@@ -43,15 +42,15 @@ function MafiaGame({day, room, usersCollection, usersData, win, userUid}) {
     if (mafiaCount === 0) {
       room.update({
         win: 1,
-        end: true,
       });
+      playAgain();
     // all villagers are dead or one mafia and one villager alive
     } else if (villagerCount === 0 ||
       (mafiaCount === 1 && villagerCount === 1)) {
       room.update({
         win: 2,
-        end: true,
       });
+      playAgain();
     }
   }
 
@@ -67,8 +66,6 @@ function MafiaGame({day, room, usersCollection, usersData, win, userUid}) {
         />
       </div>
       {
-        // victory conditions not met
-        win === 0 ?
         day ?
         <MafiaDay
           usersCollection={usersCollection}
@@ -81,19 +78,7 @@ function MafiaGame({day, room, usersCollection, usersData, win, userUid}) {
           room={room}
           showResult={showResult}
           endGame={endGame}
-        /> :
-        // victory conditions met
-        win === 1 ?
-        <Box>
-          <Grid container justify="center" alignItems="center">
-            <h1>Town won!</h1>
-          </Grid>
-        </Box> :
-        <Box>
-          <Grid container justify="center" alignItems="center">
-            <h1>Mafia won!</h1>
-          </Grid>
-        </Box>
+        />
       }
     </div>
   );
@@ -104,15 +89,14 @@ MafiaGame.propTypes = {
   room: PropTypes.object,
   usersCollection: PropTypes.object,
   usersData: PropTypes.array,
-  win: PropTypes.number,
   userUid: PropTypes.string,
+  playAgain: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
   userUid: state.currentUser.uid,
   day: state.roomData.day,
   usersData: state.usersData,
-  win: state.roomData.win,
 });
 
 export default connect(

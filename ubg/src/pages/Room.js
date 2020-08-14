@@ -229,7 +229,6 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
   }, [roomData, setRoomData]);
 
   useEffect(() => {
-    console.log('hi!');
     setInGame(user && usersData.some((u) => u.uid === user.uid));
   }, [user, usersData]);
 
@@ -284,6 +283,20 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
   }
 
   /**
+   * Sets up player to be able to play again
+   */
+  function playAgain() {
+    usersCollection.doc(user.uid).update({
+      alive: true,
+      chose: false,
+      order: Math.floor(Math.random() * 20),
+    });
+    room.update({
+      started: false,
+    });
+  }
+
+  /**
    * Check if obj is empty
    * @param {object} obj
    * @return {boolean} if obj is empty
@@ -314,6 +327,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                     gameRules={game.description}
                     room={room}
                     usersCollection={usersCollection}
+                    playAgain={playAgain}
                   /> :
                   <div className={classes.signInContainer}>
                     <Button

@@ -4,6 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import SettingsModal from '../mafia/SettingsModal';
+import EndModal from '../mafia/EndModal';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
@@ -58,10 +59,11 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Waiting room element
  */
-function WaitingRoom({gameName, gameDescription, leaveRoom,
+function WaitingRoom({gameName, gameDescription, leaveRoom, win,
   joinRoom, inRoom, isHost, usersCollection, startGame, gameId}) {
   const classes = useStyles();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [endOpen, setEndOpen] = useState(true);
 
   return (
     <div className={classes.main}>
@@ -74,6 +76,27 @@ function WaitingRoom({gameName, gameDescription, leaveRoom,
         <Typography variant="body1">
           {gameDescription}
         </Typography>
+      </div>
+      <div>
+        {
+          win && win !== 0 ?
+          (
+            <Modal
+              open={endOpen}
+              onClose={() => setEndOpen(false)}
+              aria-labelledby="simple-modal-title"
+              aria-describedby="simple-modal-description"
+              className={classes.modal}
+            >
+              <div className={classes.paper}>
+                <EndModal
+                  winMessage={win === 1 ? 'Town wins!' : 'Mafia wins!'}
+                />
+              </div>
+            </Modal>
+          ) :
+          null
+        }
       </div>
       <div className={classes.actionBtns}>
         {
@@ -141,6 +164,7 @@ WaitingRoom.propTypes = {
 
 const mapStateToProps = (state) => ({
   gameId: state.roomData.gameId,
+  win: state.roomData.win,
 });
 
 export default connect(
