@@ -21,14 +21,11 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     position: 'relative',
   },
-  night: {
-    float: 'right',
-    marginRight: '3em',
-  },
   card: {
     width: '100%',
   },
   mainActivity: {
+    marginTop: '10vh',
     flexGrow: 1,
     height: '300px',
   },
@@ -113,35 +110,37 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
    * @return {undefined}
    */
   function mafiaVote() {
-    if (mafiaDecision && mafiaDecision.length !== 0 &&
-      mafiaDecision.length === mafiaTotal) {
-      const today = new Date();
-      const hours = today.getUTCHours();
-      const minutes = today.getUTCMinutes();
-      const killed = mafiaDecision[0].vote.uid;
-      for (let i = 1; i < mafiaTotal; i++) {
-        if (mafiaDecision[i].vote.uid !== killed) {
-          setMessage('All mafia must choose the same person to die! ' +
-          'Please vote again');
-          room.update({
-            mafiaDecision: [],
-            mafiaChat: firebase.firestore.FieldValue.arrayUnion(
-                {text: 'Mafia please vote again', hours, minutes},
-            ),
-          });
-          changeChose(false);
-          return;
+    if (userInfo.role === 2) {
+      if (mafiaDecision && mafiaDecision.length !== 0 &&
+        mafiaDecision.length === mafiaTotal) {
+        const today = new Date();
+        const hours = today.getUTCHours();
+        const minutes = today.getUTCMinutes();
+        const killed = mafiaDecision[0].vote.uid;
+        for (let i = 1; i < mafiaTotal; i++) {
+          if (mafiaDecision[i].vote.uid !== killed) {
+            setMessage('All mafia must choose the same person to die! ' +
+            'Please vote again');
+            room.update({
+              mafiaDecision: [],
+              mafiaChat: firebase.firestore.FieldValue.arrayUnion(
+                  {text: 'Mafia please vote again', hours, minutes},
+              ),
+            });
+            changeChose(false);
+            return;
+          }
         }
+        room.update({
+          mafiaKill: mafiaDecision[0].vote,
+          mafiaChat: firebase.firestore.FieldValue.arrayUnion(
+              {text: 'Mafia agreed to kill ' +
+              mafiaDecision[0].vote.displayName, hours, minutes},
+          ),
+        });
+        showResult('Mafia have killed ' + mafiaDecision[0].vote.displayName);
+        setMessage('Please wait for other players before jumping to day.');
       }
-      room.update({
-        mafiaKill: mafiaDecision[0].vote,
-        mafiaChat: firebase.firestore.FieldValue.arrayUnion(
-            {text: 'Mafia agreed to kill ' + mafiaDecision[0].vote.displayName,
-              hours, minutes},
-        ),
-      });
-      showResult('Mafia have killed ' + mafiaDecision[0].vote.displayName);
-      setMessage('Please wait for other players begore jumping to day.');
     }
   }
   /**
@@ -222,13 +221,13 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
             {detectiveCheck:
             {uid: player.uid, displayName: player.displayName}});
         changeChose(true);
-        setMessage('Please wait for other players begore jumping to day.');
+        setMessage('Please wait for other players before jumping to day.');
         break;
       case 4:
         room.update(
             {doctorSave: {uid: player.uid, displayName: player.displayName}});
         showResult('You have saved ' + player.displayName + ' tonight.');
-        setMessage('Please wait for other players begore jumping to day.');
+        setMessage('Please wait for other players before jumping to day.');
         changeChose(true);
         break;
       default:

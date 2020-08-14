@@ -105,6 +105,11 @@ function SettingsModal({usersDataLength, usersCollection, startGame}) {
             variant="outlined"
             type='number'
             defaultValue={villager}
+            InputProps={{
+              inputProps: {
+                min: 1,
+              },
+            }}
             onChange={(event) => setVillager(event.target.value)}
             required
           />
@@ -116,6 +121,11 @@ function SettingsModal({usersDataLength, usersCollection, startGame}) {
             variant="outlined"
             type='number'
             defaultValue={mafia}
+            InputProps={{
+              inputProps: {
+                min: 1,
+              },
+            }}
             onChange={(event) => (setMafia(event.target.value))}
             required
           />
@@ -127,6 +137,11 @@ function SettingsModal({usersDataLength, usersCollection, startGame}) {
             variant="outlined"
             type='number'
             defaultValue={detective}
+            InputProps={{
+              inputProps: {
+                max: 1, min: 0,
+              },
+            }}
             onChange={(event) => (setDetective(event.target.value))}
             required
           />
@@ -138,6 +153,11 @@ function SettingsModal({usersDataLength, usersCollection, startGame}) {
             variant="outlined"
             type='number'
             defaultValue={doctor}
+            InputProps={{
+              inputProps: {
+                max: 1, min: 0,
+              },
+            }}
             onChange={(event) => (setDoctor(event.target.value))}
             required
           />
