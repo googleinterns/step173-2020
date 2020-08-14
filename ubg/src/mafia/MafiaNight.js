@@ -35,7 +35,8 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia night element
  */
 function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
-  mafiaKill, doctorSave, detectiveCheck, showResult, mafiaDecision, endGame}) {
+  mafiaKill, doctorSave, detectiveCheck, showResult, mafiaDecision,
+  endGame, dayNum}) {
   const classes = useStyles();
   const [players, setPlayers] = useState([]);
   const [userInfo, setUserInfo] = useState('');
@@ -58,7 +59,17 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
       setInitialize(true);
       const roles = new Set();
       const allPlayers = [];
+      const today = new Date();
+      const hours = today.getUTCHours();
+      const minutes = today.getUTCMinutes();
       let totalMafia = 0;
+      // dayNum can show up as undefined on first night
+      dayNum = dayNum ? (initialize ? 1 : dayNum) : 1;
+      room.update({
+        chat: firebase.firestore.FieldValue.arrayUnion(
+            {text: 'NIGHT ' + dayNum, hours, minutes},
+        ),
+      });
       usersData.forEach(function(u) {
         if (u.alive === true) {
           roles.add(u.role);
@@ -157,11 +168,8 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
         usersCollection.doc(mafiaKill.uid).update({alive: false});
         aliveNum -= 1;
       }
-      // reset chose when night ends
-      players.forEach(function(u) {
-        room.collection('users').doc(u.uid).update({
-          chose: false,
-        });
+      usersCollection.doc(userUid).update({
+        chose: false,
       });
       room.update({
         day: true,
@@ -303,6 +311,7 @@ MafiaNight.propTypes = {
   showResult: PropTypes.func,
   mafiaDecision: PropTypes.array,
   endGame: PropTypes.func,
+  dayNum: PropTypes.number,
 };
 
 const mapStateToProps = (state) => ({
@@ -313,6 +322,7 @@ const mapStateToProps = (state) => ({
   doctorSave: state.roomData.doctorSave,
   detectiveCheck: state.roomData.detectiveCheck,
   mafiaDecision: state.roomData.mafiaDecision,
+  dayNum: state.roomData.dayCount,
 });
 
 export default connect(
