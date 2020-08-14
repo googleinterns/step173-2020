@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
@@ -20,8 +20,9 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia game element
  */
 function MafiaGame({day, room, usersCollection, usersData, win, userUid}) {
-  const [alert, setAlert] = React.useState(null);
-  const [userInfo, setUserInfo] = React.useState('');
+  const classes = useStyles();
+  const [alert, setAlert] = useState(null);
+  const [userInfo, setUserInfo] = useState('');
   /**
    * @param {string} message message to display
    * @return {undefined}
@@ -53,7 +54,7 @@ function MafiaGame({day, room, usersCollection, usersData, win, userUid}) {
       });
     }
   }
-  const classes = useStyles();
+
   return (
     <div className={classes.root}>
       {alert}

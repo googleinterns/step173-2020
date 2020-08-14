@@ -26,6 +26,7 @@ import {connect} from 'react-redux';
 import {setCurrentUser} from '../redux/actions/currentUserActions';
 import {setRoomData} from '../redux/actions/roomDataActions';
 import {setUsersData} from '../redux/actions/usersDataActions';
+import {useHistory} from 'react-router-dom';
 import PropTypes from 'prop-types';
 const classNames = require('classnames');
 
@@ -95,6 +96,7 @@ const useStyles = makeStyles((theme) => ({
  */
 function Room({setUsersData, setCurrentUser, setRoomData}) {
   const classes = useStyles();
+  const history = useHistory();
   const user = useUser();
   const auth = useAuth();
   const {roomId} = useParams();
@@ -112,6 +114,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
   const mafiaChat =
     roomData.gameId === '925' &&
     roomData.started &&
+    user &&
     isMafia(user.uid);
   const [mafiaChatSelected, setMafiaChatSelected] = useState(false);
 
@@ -126,6 +129,14 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     [classes.halfWidth]: true,
     [classes.chatSelected]: mafiaChatSelected,
   });
+  const [inGame] = useState(user && usersData.some((u) => u.uid === user.uid));
+
+  /**
+   * Go to the home page url
+   */
+  function homePage() {
+    history.push('/');
+  }
 
   /**
    * Check if current user is mafia
@@ -293,11 +304,25 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
             <Grid className={classes.main} container>
               <Grid className={classes.gameContainer} item xs={9}>
                 { roomData.started ?
+                  inGame ?
                   <GameRoom
                     gameRules={game.description}
                     room={room}
                     usersCollection={usersCollection}
                   /> :
+                  <div className={classes.signInContainer}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={homePage}
+                      className={classes.btn}
+                    >
+                      Back to Homepage
+                    </Button>
+                    <Typography variant="subtitle1">
+                      You&apos;re too late! The game has already started :/
+                    </Typography>
+                  </div> :
                   <WaitingRoom
                     gameName={game.Name}
                     gameDescription={game.description}
@@ -367,7 +392,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                       }
                     </div>
                     <Chat
-                      disabled={mafiaChatSelected && roomData.day}
+                      disabled={(mafiaChatSelected && roomData.day) || !inGame}
                       mafia={mafiaChatSelected}
                       messages={mafiaChatSelected ?
                         roomData.mafiaChat : roomData.chat}
