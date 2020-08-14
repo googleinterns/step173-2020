@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia day element
  */
 function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
-  userUid, room, dayVote, aliveNum, showResult, endGame}) {
+  userUid, room, dayVote, aliveNum, showResult, endGame, dayNum}) {
   const classes = useStyles();
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
@@ -57,8 +57,28 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
     setUserInfo(usersData.find((u) => u.uid === userUid));
     if (!initialize) {
       const allPlayers = [];
+      const today = new Date();
+      const hours = today.getUTCHours();
+      const minutes = today.getUTCMinutes();
       if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
-        setDeathText(mafiaKill.displayName + ' was killed last night');
+        let deathText = mafiaKill.displayName + ' was killed last night. ';
+        switch (usersData.find((u) => u.uid === mafiaKill.uid).role) {
+          case 1:
+            deathText += 'They were a villager.';
+            break;
+          case 2:
+            deathText += 'They were mafia.';
+            break;
+          case 3:
+            deathText += 'They were a detective.';
+            break;
+          case 4:
+            deathText += 'They were a doctor.';
+            break;
+          default:
+            deathText = 'No one was killed last night.';
+        }
+        setDeathText(deathText);
       } else {
         setDeathText('No one was killed last night');
       }
@@ -66,6 +86,12 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
         if (u.alive === true) {
           allPlayers.push(u);
         }
+      });
+      room.update({
+        chat: firebase.firestore.FieldValue.arrayUnion(
+            {text: '-------- DAY ' + dayNum + ' --------',
+              isGameText: true, hours, minutes},
+        ),
       });
       setPlayers(allPlayers);
       setInitialize(true);
@@ -79,6 +105,9 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
   function startNight() {
     if (dayVote.length === aliveNum) {
       const voteMap = new Map();
+      const today = new Date();
+      const hours = today.getUTCHours();
+      const minutes = today.getUTCMinutes();
       let executedPlayer = [];
       dayVote.forEach((vote) => {
         if (!voteMap.has(vote)) {
@@ -94,7 +123,11 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
       usersCollection.doc(executedPlayer[0].uid).update({
         alive: false,
       });
+      usersCollection.doc(userUid).update({
+        chose: false,
+      });
       aliveNum -= 1;
+      dayNum += 1;
       let executionMessage = executedPlayer[0].name + ' was executed. ';
       switch (executedPlayer[0].role) {
         case 1:
@@ -121,6 +154,10 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
         day: false,
         dayVote: [],
         aliveCount: aliveNum,
+        dayCount: dayNum,
+        chat: firebase.firestore.FieldValue.arrayUnion(
+            {text: executionMessage, isGameText: true, hours, minutes},
+        ),
       });
     }
   }
@@ -145,7 +182,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
       }),
       chat: firebase.firestore.FieldValue.arrayUnion(
           {text: userInfo.displayName + ' voted for ' + choice.displayName,
-            hours, minutes},
+            isGameText: true, hours, minutes},
       ),
     });
     room.collection('users').doc(userInfo.uid).update({
@@ -206,6 +243,7 @@ MafiaDay.propTypes = {
   aliveNum: PropTypes.number,
   showResult: PropTypes.func,
   endGame: PropTypes.func,
+  dayNum: PropTypes.number,
 };
 
 const mapStateToProps = (state) => ({
@@ -215,6 +253,7 @@ const mapStateToProps = (state) => ({
   mafiaKill: state.roomData.mafiaKill,
   doctorSave: state.roomData.doctorSave,
   aliveNum: state.roomData.aliveCount,
+  dayNum: state.roomData.dayCount,
 });
 
 export default connect(
