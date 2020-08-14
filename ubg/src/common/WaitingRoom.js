@@ -104,33 +104,38 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
             (
               <div className={classes.inRoomBtns}>
                 { isHost ?
-                  <div>
-                    <Button
-                      className={classes.btn}
-                      variant="contained"
-                      color="primary"
-                      onClick={() => {
-                        gameId === '925' && setSettingsOpen(true);
-                      }}
-                    >
-                      Start Game
-                    </Button>
-                    <Modal
-                      open={settingsOpen}
-                      onClose={() => setSettingsOpen(false)}
-                      aria-labelledby="simple-modal-title"
-                      aria-describedby="simple-modal-description"
-                      className={classes.modal}
-                    >
-                      <div className={classes.paper}>
-                        <SettingsModal
-                          usersCollection={usersCollection}
-                          startGame={startGame}
-                        />
-                      </div>
-                    </Modal>
-                  </div> :
-                  'Waiting for the host'}
+                  (
+                    <div>
+                      <Button
+                        className={classes.btn}
+                        variant="contained"
+                        color="primary"
+                        onClick={() => {
+                          gameId === '925' && setSettingsOpen(true);
+                        }}
+                      >
+                        Start Game
+                      </Button>
+                      <Modal
+                        open={settingsOpen}
+                        onClose={() => setSettingsOpen(false)}
+                        aria-labelledby="simple-modal-title"
+                        aria-describedby="simple-modal-description"
+                        className={classes.modal}
+                      >
+                        <div className={classes.paper}>
+                          <SettingsModal
+                            usersCollection={usersCollection}
+                            startGame={startGame}
+                          />
+                        </div>
+                      </Modal>
+                    </div>
+                  ) :
+                  (
+                    'Waiting for the host'
+                  )
+                }
                 <Button
                   className={classes.btn}
                   variant="contained"

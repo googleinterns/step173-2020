@@ -38,8 +38,7 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia night element
  */
 function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
-  mafiaKill, doctorSave, detectiveCheck, showResult, mafiaDecision, endGame,
-  win}) {
+  mafiaKill, doctorSave, detectiveCheck, showResult, mafiaDecision, endGame}) {
   const classes = useStyles();
   const [players, setPlayers] = useState([]);
   const [userInfo, setUserInfo] = useState('');
@@ -58,7 +57,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
   function loadNightData() {
     endGame();
     setUserInfo(usersData.find((u) => u.uid === userUid));
-    if (!initialize && win === 0) {
+    if (!initialize) {
       setInitialize(true);
       const roles = new Set();
       const allPlayers = [];
@@ -304,7 +303,6 @@ MafiaNight.propTypes = {
   detectiveCheck: PropTypes.object,
   showResult: PropTypes.func,
   mafiaDecision: PropTypes.array,
-  win: PropTypes.number,
   endGame: PropTypes.func,
 };
 
@@ -316,7 +314,6 @@ const mapStateToProps = (state) => ({
   doctorSave: state.roomData.doctorSave,
   detectiveCheck: state.roomData.detectiveCheck,
   mafiaDecision: state.roomData.mafiaDecision,
-  win: state.roomData.win,
 });
 
 export default connect(

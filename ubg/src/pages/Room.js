@@ -318,144 +318,149 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     return (
       <div>
         { user ?
-          <div>
-            <Grid className={classes.main} container>
-              <Grid className={classes.gameContainer} item xs={9}>
-                { roomData.started ?
-                  inGame ?
-                  <GameRoom
-                    gameRules={game.description}
-                    room={room}
-                    usersCollection={usersCollection}
-                    playAgain={playAgain}
-                  /> :
-                  <div className={classes.signInContainer}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={homePage}
-                      className={classes.btn}
-                    >
-                      Back to Homepage
-                    </Button>
-                    <Typography variant="subtitle1">
-                      You&apos;re too late! The game has already started.
-                    </Typography>
-                  </div> :
-                  <WaitingRoom
-                    gameName={game.Name}
-                    gameDescription={game.description}
-                    leaveRoom={leaveRoom}
-                    joinRoom={joinRoom}
-                    inRoom={usersData.some((u) => u.uid === user.uid)}
-                    isHost={roomData.host === user.uid}
-                    usersCollection={usersCollection}
-                    startGame={startGame}
-                  />
-                }
-              </Grid>
-              <Grid className={classes.video} item xs={3}>
-                <div className={classes.flexColumn}>
-                  <div className={classes.grow}>
-                    {
-                      usersData.map((u) => {
-                        return (
-                          <UserVideo
-                            key={u.uid}
-                            user={u.displayName}
-                          />
-                        );
-                      })
-                    }
-                  </div>
-                  <Paper className={classes.transparentBackground}>
-                    <div className={classes.chatsHeaders}>
-                      <div
-                        className={chatClasses}
-                        onClick={() => {
-                          if (mafiaChat) {
-                            if (mafiaChatSelected) {
-                              setMafiaChatSelected(false);
-                              if (!chatOpen) {
-                                setChatOpen(true);
-                              }
-                            } else {
-                              setChatOpen(!chatOpen);
-                            }
-                          } else {
-                            setChatOpen(!chatOpen);
-                          }
-                        }}
+          (
+            <div>
+              <Grid className={classes.main} container>
+                <Grid className={classes.gameContainer} item xs={9}>
+                  { roomData.started ?
+                    inGame ?
+                    <GameRoom
+                      gameRules={game.description}
+                      room={room}
+                      usersCollection={usersCollection}
+                      playAgain={playAgain}
+                    /> :
+                    <div className={classes.signInContainer}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={homePage}
+                        className={classes.btn}
                       >
-                        <ChatIcon className={classes.sideMargin10px}/>
-                        <Typography variant="h6">Chat</Typography>
-                      </div>
-                      { mafiaChat ?
+                        Back to Homepage
+                      </Button>
+                      <Typography variant="subtitle1">
+                        You&apos;re too late! The game has already started.
+                      </Typography>
+                    </div> :
+                    <WaitingRoom
+                      gameName={game.Name}
+                      gameDescription={game.description}
+                      leaveRoom={leaveRoom}
+                      joinRoom={joinRoom}
+                      inRoom={usersData.some((u) => u.uid === user.uid)}
+                      isHost={roomData.host === user.uid}
+                      usersCollection={usersCollection}
+                      startGame={startGame}
+                    />
+                  }
+                </Grid>
+                <Grid className={classes.video} item xs={3}>
+                  <div className={classes.flexColumn}>
+                    <div className={classes.grow}>
+                      {
+                        usersData.map((u) => {
+                          return (
+                            <UserVideo
+                              key={u.uid}
+                              user={u.displayName}
+                            />
+                          );
+                        })
+                      }
+                    </div>
+                    <Paper className={classes.transparentBackground}>
+                      <div className={classes.chatsHeaders}>
                         <div
-                          className={mafiaChatClasses}
+                          className={chatClasses}
                           onClick={() => {
-                            if (mafiaChatSelected) {
-                              setChatOpen(!chatOpen);
-                            } else {
-                              setMafiaChatSelected(true);
-                              if (!chatOpen) {
-                                setChatOpen(true);
+                            if (mafiaChat) {
+                              if (mafiaChatSelected) {
+                                setMafiaChatSelected(false);
+                                if (!chatOpen) {
+                                  setChatOpen(true);
+                                }
+                              } else {
+                                setChatOpen(!chatOpen);
                               }
+                            } else {
+                              setChatOpen(!chatOpen);
                             }
                           }}
                         >
                           <ChatIcon className={classes.sideMargin10px}/>
-                          <Typography variant="h6">Mafia</Typography>
-                        </div> :
-                        null
-                      }
-                    </div>
-                    <Chat
-                      disabled={(mafiaChatSelected && roomData.day) || !inGame}
-                      mafia={mafiaChatSelected}
-                      messages={mafiaChatSelected ?
-                        roomData.mafiaChat : roomData.chat}
-                      open={chatOpen}
-                      room={room}
-                    />
-                  </Paper>
-                </div>
+                          <Typography variant="h6">Chat</Typography>
+                        </div>
+                        { mafiaChat ?
+                          <div
+                            className={mafiaChatClasses}
+                            onClick={() => {
+                              if (mafiaChatSelected) {
+                                setChatOpen(!chatOpen);
+                              } else {
+                                setMafiaChatSelected(true);
+                                if (!chatOpen) {
+                                  setChatOpen(true);
+                                }
+                              }
+                            }}
+                          >
+                            <ChatIcon className={classes.sideMargin10px}/>
+                            <Typography variant="h6">Mafia</Typography>
+                          </div> :
+                          null
+                        }
+                      </div>
+                      <Chat
+                        disabled={(mafiaChatSelected && roomData.day) ||
+                          !inGame}
+                        mafia={mafiaChatSelected}
+                        messages={mafiaChatSelected ?
+                          roomData.mafiaChat : roomData.chat}
+                        open={chatOpen}
+                        room={room}
+                      />
+                    </Paper>
+                  </div>
+                </Grid>
               </Grid>
-            </Grid>
-            <Snackbar
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              open={open}
-              autoHideDuration={2000}
-              onClose={() => setOpen(false)}
-              message={message}
-              action={
-                <IconButton
-                  size="small"
-                  aria-label="close"
-                  color="inherit"
-                  onClick={() => setOpen(false)}
-                >
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-              }
-            />
-          </div> :
-          <div className={classes.signInContainer}>
-            <Button
-              onClick={signIn}
-              variant="contained"
-              color="primary"
-              className={classes.btn}
-            >
-              Sign In
-            </Button>
-            <Typography variant="subtitle1">
-              You must sign in to join a game room
-            </Typography>
-          </div>
+              <Snackbar
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                open={open}
+                autoHideDuration={2000}
+                onClose={() => setOpen(false)}
+                message={message}
+                action={
+                  <IconButton
+                    size="small"
+                    aria-label="close"
+                    color="inherit"
+                    onClick={() => setOpen(false)}
+                  >
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+                }
+              />
+            </div>
+          ) :
+          (
+            <div className={classes.signInContainer}>
+              <Button
+                onClick={signIn}
+                variant="contained"
+                color="primary"
+                className={classes.btn}
+              >
+                Sign In
+              </Button>
+              <Typography variant="subtitle1">
+                You must sign in to join a game room
+              </Typography>
+            </div>
+          )
         }
       </div>
     );
