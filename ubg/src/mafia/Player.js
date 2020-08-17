@@ -6,7 +6,6 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
 
 const useStyles = (border) => makeStyles((theme) => ({
   card: {
@@ -23,7 +22,7 @@ const useStyles = (border) => makeStyles((theme) => ({
  * @param {bool} day current daytime status
  * @return {ReactElement} Card with different names to choose
  */
-function Player({player, setChoice, choice, user=null, day}) {
+export default function Player({player, setChoice, choice, user=null}) {
   const [border, setBorder] = useState('none');
 
   /**
@@ -73,12 +72,3 @@ Player.propTypes = {
   ]),
   user: PropTypes.object,
 };
-
-const mapStateToProps = (state) => ({
-  day: state.roomData.day,
-});
-
-export default connect(
-    mapStateToProps,
-    {},
-)(Player);
