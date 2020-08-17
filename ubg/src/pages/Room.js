@@ -276,6 +276,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
       detectiveCheck: {'uid': '', 'displayName': ''},
       started: true,
       aliveCount: usersData.length,
+      chat: [],
       mafiaChat: [],
       dayVote: [],
     }).catch(function(error) {
@@ -294,6 +295,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     });
     room.update({
       started: false,
+      dayCount: 1,
     });
   }
 

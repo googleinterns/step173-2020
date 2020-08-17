@@ -13,6 +13,12 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     overflow: 'scroll',
   },
+  rootNight: {
+    height: '100%',
+    width: '100%',
+    overflow: 'scroll',
+    backgroundColor: 'rgb(150, 150, 150)',
+  },
   time: {
     float: 'right',
     marginRight: '4vw',
@@ -60,7 +66,7 @@ function MafiaGame({day, room, usersCollection, usersData, userUid,
   }
 
   return (
-    <div className={classes.root}>
+    <div className={day ? classes.root : classes.rootNight}>
       {alert}
       <div>
         <h1 className={classes.time}>{day ? 'DAY' : 'NIGHT'}</h1>

@@ -63,14 +63,6 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
       const hours = today.getUTCHours();
       const minutes = today.getUTCMinutes();
       let totalMafia = 0;
-      // dayNum can show up as undefined on first night
-      dayNum = dayNum ? (initialize ? 1 : dayNum) : 1;
-      room.update({
-        chat: firebase.firestore.FieldValue.arrayUnion(
-            {text: '-------- NIGHT ' + dayNum + ' --------',
-              isGameText: true, hours, minutes},
-        ),
-      });
       usersData.forEach(function(u) {
         if (u.alive === true) {
           roles.add(u.role);
@@ -115,6 +107,14 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
         room.update({doctorSave: {uid: '#', displayName: ''}});
       }
       setPlayers(allPlayers);
+      // dayNum can show up as undefined on first night
+      dayNum = dayNum ? (initialize ? 1 : dayNum) : 1;
+      room.update({
+        chat: firebase.firestore.FieldValue.arrayUnion(
+            {text: '-------- NIGHT ' + dayNum + ' --------',
+              isGameText: true, hours, minutes},
+        ),
+      });
     }
   }
   /**
