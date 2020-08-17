@@ -19,10 +19,12 @@ const useStyles = (border) => makeStyles((theme) => ({
  * @param {object} setChoice function when card is clicked
  * @param {object} choice what the player picked
  * @param {object} user current user
+ * @param {bool} day current daytime status
  * @return {ReactElement} Card with different names to choose
  */
 export default function Player({player, setChoice, choice, user=null}) {
   const [border, setBorder] = useState('none');
+
   /**
    * @return {undefined}
    */
@@ -41,7 +43,6 @@ export default function Player({player, setChoice, choice, user=null}) {
       text = 'villager';
     }
   }
-
   useEffect(changeBorder, [choice]);
   const classes = useStyles(border)();
   return (
