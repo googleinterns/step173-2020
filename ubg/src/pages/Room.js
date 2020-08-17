@@ -311,7 +311,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
   }
 
   function socketConnection() {
-    socket = socketIOClient(ENDPOINT);
+    socket = socketIOClient(ENDPOINT);//, {transports: ['websocket']});
 
     socket.on('newUser', (socketId, uid) => {
       createPeerConnection(socketId);
@@ -361,6 +361,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     localStream = await navigator.mediaDevices.getUserMedia(
       {video: true, audio: true}
     );
+    console.log("emmit join room");
     socket.emit('joinSocketRoom', roomId, user.uid);
     usersCollection.doc(user.uid).set({
       displayName: user.displayName,

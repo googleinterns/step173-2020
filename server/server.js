@@ -1,24 +1,17 @@
 const express = require('express');
+//var cors = require('cors')
 const app = express();
 const port = process.env.PORT || 5000;
-//const { RTCPeerConnection, RTCSessionDescription } = window;
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
 // console.log that your server is up and running
+//let http = require('http').Server(app);
 const server = app.listen(port, () => console.log(`Listening on port ${port}`));
 
 var io = require('socket.io').listen(server);
-
-const configuration = {
-    iceServers: [
-      {
-        urls: [
-          'stun:stun1.l.google.com:19302',
-          'stun:stun2.l.google.com:19302',
-        ],
-      }
-    ],
-    iceCandidatePoolSize: 10,
-};
 
 // create a GET route
 app.get('/', (req, res) => {
@@ -58,3 +51,7 @@ io.on('connection', function (socket) {
         console.log("Client disconnected");
     });
 });
+
+// http.listen(port, function(){
+//   console.log('listening on *:' + port);
+// });
