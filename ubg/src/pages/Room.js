@@ -29,7 +29,9 @@ import {setUsersData} from '../redux/actions/usersDataActions';
 import PropTypes from 'prop-types';
 import socketIOClient from "socket.io-client";
 const classNames = require('classnames');
-const ENDPOINT = "https://5000-cs-981160772047-default.us-central1.cloudshell.dev/?authuser=0";
+const ENDPOINT = 
+"https://api-dot-ultimate-board-game.uc.r.appspot.com/";
+//"localhost:5000;"
 let socket = null;
 let peerConnections = {};
 let remoteStreams = {};
