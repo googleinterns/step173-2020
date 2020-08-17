@@ -1,27 +1,26 @@
-const express = require('express');
-//var cors = require('cors')
-const app = express();
-const port = process.env.PORT || 5000;
+var express = require('express');
+var app = express();
+var path = require('path');
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
+const port = process.env.PORT || 8081;
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  next();
+server.listen(port, () => {
+  console.log('Server listening at port %d', port);
 });
-// console.log that your server is up and running
-//let http = require('http').Server(app);
-const server = app.listen(port, () => console.log(`Listening on port ${port}`));
 
-var io = require('socket.io').listen(server);
+app.use(express.static(path.join(__dirname, './ubg/build')));
 
-// create a GET route
-app.get('/', (req, res) => {
-  res.send("hola");
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "./ubg/build", "index.html"));
 });
 
 io.on('connection', function (socket) {
     console.log('connected to socket');
+    io.to(socket.id).emit("youJoined");
 
     socket.on("joinSocketRoom", (roomId, uid) => {
+        io.to(socket.id).emit("youJoinedRoom");
         socket.join(roomId);
         console.log("joined room " + roomId);
         socket.to(roomId).emit('newUser', socket.id, uid);
@@ -51,7 +50,3 @@ io.on('connection', function (socket) {
         console.log("Client disconnected");
     });
 });
-
-// http.listen(port, function(){
-//   console.log('listening on *:' + port);
-// });

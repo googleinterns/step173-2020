@@ -29,9 +29,6 @@ import {setUsersData} from '../redux/actions/usersDataActions';
 import PropTypes from 'prop-types';
 import socketIOClient from "socket.io-client";
 const classNames = require('classnames');
-const ENDPOINT = 
-"https://api-dot-ultimate-board-game.uc.r.appspot.com/";
-//"localhost:5000;"
 let socket = null;
 let peerConnections = {};
 let remoteStreams = {};
@@ -311,7 +308,15 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
   }
 
   function socketConnection() {
-    socket = socketIOClient(ENDPOINT);//, {transports: ['websocket']});
+    socket = socketIOClient('/');
+
+    socket.on('youJoined', (socketId, uid) => {
+      console.log("I joined the socket!");
+    });
+
+    socket.on('youJoinedRoom', (socketId, uid) => {
+      console.log("I joined the room!");
+    });
 
     socket.on('newUser', (socketId, uid) => {
       createPeerConnection(socketId);
