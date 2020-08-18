@@ -209,6 +209,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
                   player={u}
                   setChoice={setChoice}
                   choice={choice}
+                  user={userInfo}
                 />
               );
             })
