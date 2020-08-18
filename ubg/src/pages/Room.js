@@ -120,6 +120,8 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     roomData.started &&
     isMafia(user.uid);
   const [mafiaChatSelected, setMafiaChatSelected] = useState(false);
+  const [localAudio, setLocalAudio] = useState(true);
+  const [localVideo, setLocalVideo] = useState(true);
 
   const chatClasses = classNames({
     [classes.chatHeader]: true,
@@ -228,6 +230,16 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
       });
       remoteStreams[socketId] = null;
     }
+  }
+
+  function toggleAudio() {
+    setLocalAudio(!localAudio);
+    localStream.getAudioTracks()[0].enabled = !localStream.getAudioTracks()[0].enabled;
+  }
+
+  function toggleVideo() {
+    setLocalVideo(!localVideo);
+    localStream.getVideoTracks()[0].enabled = !localStream.getVideoTracks()[0].enabled;
   }
 
 
@@ -482,7 +494,13 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                             video={u.uid === user.uid ? localStream : remoteStreams[uidToSocketId[u.uid]]}
                             key={u.uid}
                             user={u.displayName}
-                            muted={u.uid === user.uid}
+                            local={u.uid === user.uid ? {
+                              localAudio,
+                              localVideo,
+                              toggleAudio,
+                              toggleVideo,
+                            } :
+                            null}
                           />
                         );
                       })
