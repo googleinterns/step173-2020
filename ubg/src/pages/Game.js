@@ -31,7 +31,6 @@ import NotFound from '../pages/NotFound';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import ApiCalendar from 'react-google-calendar-api';
 import DateFnsUtils from '@date-io/date-fns';
@@ -86,6 +85,25 @@ export default function Game() {
     history.push(`/gameRoom/${newRoom.id}`);
   }
   /**
+   * Creates a room in firebase and return room id
+   */
+  async function createRoomLink() {
+    const newRoom = await roomsCollection.doc();
+    newRoom.set({gameId, host: user.uid, chat: [], started: false});
+    console.log(newRoom.id);
+    console.log(typeof(newRoom.id));
+    return newRoom.id;
+  }
+
+  /**
+   * Delete room in firebase
+   */
+  async function deleteRoom(id) {
+    roomsCollection.doc(id).delete();
+  }
+
+
+  /**
    * Go to a rooms url with the room id
    */
   function joinRoom() {
@@ -120,6 +138,8 @@ export default function Game() {
             game={game}
             createRoom={createRoom}
             gameId={gameId}
+            createRoomLink={createRoomLink}
+            deleteRoom={deleteRoom}
           />
           <Spacer />
           <Grid container spacing={5}>
@@ -184,7 +204,7 @@ function Spacer() {
  * @param {func} createRoom Creates game room for current game
  * @return {ReactElement} Description of game
  */
-function Description({usersCollection, game, createRoom, gameId}) {
+function Description({usersCollection, game, createRoom, gameId, createRoomLink, deleteRoom}) {
   const classes = useStyles();
   let playTime = game.minPlaytime + '-' + game.maxPlaytime;
   let players = game.minPlayer + '-' + game.maxPlayer;
@@ -256,7 +276,12 @@ function Description({usersCollection, game, createRoom, gameId}) {
               }
               &emsp;
               <FavoriteButton usersCollection={usersCollection} game={game}/>
-              <CreateEventButton gameName={game.Name}/>
+              <CreateEventButton
+                gameName={game.Name}
+                gameId={gameId}
+                createRoomLink={createRoomLink}
+                deleteRoom={deleteRoom}
+              />
             </AuthCheck>
           </Typography>
         </Grid>
@@ -291,15 +316,26 @@ function FavoriteButton({usersCollection, game}) {
   );
 }
 
-function CreateEventButton({gameName}) {
+function CreateEventButton({gameName, gameId, createRoomLink, deleteRoom}) {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
-  const [summary, setSummary] = React.useState('🎮 ' + gameName + ' 🎮');
-  const [startTime, setStartTime] = React.useState(new Date());
-  const [endTime, setEndTime] = React.useState(new Date());
+  const [open, setOpen] = useState(false);
+  const [summary, setSummary] = useState('🎮 ' + gameName + ' 🎮');
+  const [startTime, setStartTime] = useState(new Date());
+  const [endTime, setEndTime] = useState(new Date());
+  const [description, setDescription] = useState('');
+  const [roomId, setRoomId] = useState('');
 
-  const handleClickOpen = () => {
+  
+
+  const handleClickOpen = async () => {
     setOpen(true);
+    if (gameId === '925') {
+      const newRoomId = await createRoomLink();
+      setRoomId(newRoomId);
+      setDescription("Join game with this link: " + 
+      window.location.href.substring(0,window.location.href.lastIndexOf("/")) +
+      "/gameRoom/" + newRoomId);
+    }
   };
 
   const handleClose = () => {
@@ -307,6 +343,12 @@ function CreateEventButton({gameName}) {
     setSummary('🎮 ' + gameName + ' 🎮');
     setStartTime(new Date());
     setEndTime(new Date());
+    setDescription(window.location.href);
+    if (gameId == '925') {
+      deleteRoom(roomId);
+      setRoomId('');
+    }
+    
   };
 
   const handleSave = () => {
@@ -316,7 +358,7 @@ function CreateEventButton({gameName}) {
       }
       const event = {
         'summary': summary,
-        'description': 'A chance to hear more about Google\'s developer products.',
+        'description': description,
         'start': {
           'dateTime': startTime.toISOString(),
           'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -336,6 +378,7 @@ function CreateEventButton({gameName}) {
     setSummary('🎮 ' + gameName + ' 🎮');
     setStartTime(new Date());
     setEndTime(new Date());
+    setDescription(window.location.href);
   };
 
   return (
@@ -350,7 +393,6 @@ function CreateEventButton({gameName}) {
           <TextField
             autoFocus
             margin="dense"
-            id="name"
             label="Event Summary"
             value={summary}
             onChange={(e)=> setSummary(e.target.value)}
@@ -374,7 +416,16 @@ function CreateEventButton({gameName}) {
             disablePast
           />
           </MuiPickersUtilsProvider>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Event Description"
+            value={description}
+            onChange={(e)=> setDescription(e.target.value)}
+            fullWidth
+          />
         </DialogContent>
+        
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancel
