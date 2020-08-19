@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import Box from '@material-ui/core/Box';
 import Reviews from './Reviews';
 import Typography from '@material-ui/core/Typography';
-import {useFirestore, useFirestoreDocData} from 'reactfire';
+import {useFirestore} from 'reactfire';
 import NewReview from './NewReview';
 import {AuthCheck, useUser} from 'reactfire';
 import PropTypes from 'prop-types';
@@ -21,17 +21,14 @@ function AllReviews({gameId}) {
       .collection('gameReviews')
       .doc(gameId)
       .collection('reviews');
-  const userDoc = useFirestoreDocData(
-      useFirestore().collection('users').doc(user ? user.uid : '0'));
   const usersCollection = useFirestore().collection('users');
   const handleAddReview = (review) => {
     const tempReviews = [...reviews];
     tempReviews.unshift(review);
     setReviews(tempReviews);
     reviewsRef.add(review);
-    userDoc.reviews.push(review);
     usersCollection.doc(user.uid).update({
-      reviews: firebase.firestore.FieldValue.arrayUnion(...userDoc.reviews),
+      reviews: firebase.firestore.FieldValue.arrayUnion(review),
     });
   };
 

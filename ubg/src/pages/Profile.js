@@ -1,11 +1,12 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {useUser, useFirestoreDocData, useFirestore} from 'reactfire';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Navbar from '../common/Navbar';
 import {makeStyles} from '@material-ui/core/styles';
+import FavoriteGames from '../profile/FavoriteGames';
+import Reviews from '../reviews/Reviews';
 import PropTypes from 'prop-types';
-import DisplayGames from '../search/DisplayGames';
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
@@ -32,13 +33,16 @@ export default function Profile() {
     <div>
       <Navbar />
       <Box container='true' justify='center' alignItems='center' m={10}>
-        <Typography variant='h2' className={classes.fonts}>
-          {user ? user.displayName : 'Sign in to view your profile'}
-        </Typography>
-        <hr />
+        <Box m={10}>
+          <Typography variant='h2' className={classes.fonts}>
+            {user ? user.displayName : 'Sign in to view your profile'}
+          </Typography>
+          <hr />
+        </Box>
         {user ? (
           <div>
             <FavoriteGames userCollection={userCollection} uid={user.uid} />
+            <UserReviews userCollection={userCollection} uid={user.uid} />
           </div>
         ) : ''}
       </Box>
@@ -47,53 +51,38 @@ export default function Profile() {
 }
 
 /**
- * @param {object} userCollection User collection
- * @param {number} uid ID of current user
- * @return {ReactElement} Grid containing favorite games of current user
+ * @param {object} userCollection Reference to user collection
+ * @param {string} uid User ID of current user
+ * @return {ReactElement} Reviews user has left
  */
-function FavoriteGames({userCollection, uid}) {
-  const userGames = useFirestoreDocData(userCollection.doc(uid)).games;
-  const [paginationCount, setPaginationCount] = React.useState(1);
-  const [totalGames, setTotalGames] = React.useState(0);
-  const [games, setGames] = React.useState([[]]);
+function UserReviews({userCollection, uid}) {
+  const userReviews = useFirestoreDocData(userCollection.doc(uid)).reviews;
+  const classes = useStyles();
 
-  function initPagination() {
-    const newGames = [];
-    let list = [];
-    let total = 0;
-
-    userGames.forEach((game) => {
-      list.push(game);
-      total += 1;
-      if (list.length === 12) {
-        newGames.push(list);
-        list = [];
-      }
-    })
-    if (list.length !== 0) {
-      newGames.push(list);
-    }
-    setGames(newGames);
-    setTotalGames(total);
-    setPaginationCount(newGames.length);
+  /**
+   * Orders by timestamp of reviews
+   * @param {number} a Timestamp from first review
+   * @param {number} b Timestamp from second review
+   * @return {number} Timestamp comparison
+   */
+  function compare(a, b) {
+    return b.timestamp - a.timestamp;
   }
-
-  useEffect(initPagination, []);
 
   return (
     <div>
-      <DisplayGames
-        games={games}
-        paginationCount={paginationCount}
-        totalGames={totalGames}
-        title='Favorite Games'
-      />
+      <Box m={10}>
+        <hr /> <br /> <br />
+        <Typography variant='h4' className={classes.fonts}>
+          Reviews
+        </Typography>
+        <Reviews reviews={userReviews.sort(compare)} profile={true}/>
+      </Box>
     </div>
-
   );
 }
 
-FavoriteGames.propTypes = {
+UserReviews.propTypes = {
   userCollection: PropTypes.object,
   uid: PropTypes.string,
 };

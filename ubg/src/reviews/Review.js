@@ -24,7 +24,11 @@ const Review = (props) => {
         alignItems="flex-start">
         <ListItemText
           primary={
-            <Typography className={classes.fonts} component={'span'}>
+            <Typography
+              className={classes.fonts}
+              variant="h6"
+              component={'span'}
+            >
               {props.review.name}
             </Typography>
           }
