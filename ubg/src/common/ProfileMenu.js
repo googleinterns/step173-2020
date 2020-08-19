@@ -23,6 +23,9 @@ export default function AuthButtons() {
     paper: {
       marginRight: theme.spacing(2),
     },
+    button: {
+      textTransform: 'none',
+    },
   }));
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
@@ -93,6 +96,7 @@ export default function AuthButtons() {
           aria-controls={open ? 'menu-list-grow' : undefined}
           aria-haspopup="true"
           onClick={handleToggle}
+          className={classes.button}
         >
           <AccountCircleIcon />
           &nbsp;&nbsp;

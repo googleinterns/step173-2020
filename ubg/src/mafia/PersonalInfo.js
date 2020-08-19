@@ -31,10 +31,10 @@ const useStyles = makeStyles((theme) => ({
 export default function PersonalInfo({name, role, alive}) {
   const classes = useStyles();
   let state = 'alive';
+  let roleName = 'villager';
   if (alive === false) {
     state = 'dead';
   }
-  let roleName = 'villager';
   if (role === 2) {
     roleName = 'mafia';
   } else if (role === 3) {

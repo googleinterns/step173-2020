@@ -4,7 +4,6 @@ import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Player from './Player';
-import PersonalInfo from './PersonalInfo';
 import PropTypes from 'prop-types';
 import * as firebase from 'firebase/app';
 import {connect} from 'react-redux';
@@ -31,42 +30,23 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
+  mainActivity: {
+    flexGrow: 1,
+    height: '300px',
+  },
 }));
 
 /**
  * @return {ReactElement} Mafia day element
  */
 function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
-  userUid, room, dayVote, aliveNum, end, showResult}) {
+  userUid, room, dayVote, aliveNum, showResult, endGame, dayNum}) {
   const classes = useStyles();
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
   const [deathText, setDeathText] = useState('');
   const [choice, setChoice] = useState('');
-  const [voted, setVoted] = useState(false);
-  const [win, setWin] = useState(0);
   const [initialize, setInitialize] = useState(false);
-
-  /**
-   * Determines if game has reached end
-   */
-  function endGame() {
-    // all mafia are dead
-    if (!usersData.some((player) => player.role === 2 &&
-        player.alive === true)) {
-      setWin(1);
-      room.update({
-        end: true,
-      });
-    // all townspeople are dead
-    } else if (!usersData.some((player) => player.role !== 2 &&
-        player.alive === true)) {
-      setWin(2);
-      room.update({
-        end: true,
-      });
-    }
-  }
 
   /**
    * Sets up daytime data and logistics
@@ -74,24 +54,44 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
    */
   function startDay() {
     endGame();
-    if (!end && !initialize) {
+    setUserInfo(usersData.find((u) => u.uid === userUid));
+    if (!initialize) {
       const allPlayers = [];
+      const today = new Date();
+      const hours = today.getUTCHours();
+      const minutes = today.getUTCMinutes();
       if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
-        usersCollection.doc(mafiaKill.uid).update({alive: false});
-        setDeathText(mafiaKill.displayName + ' was killed last night');
-        aliveNum -= 1;
+        let deathText = mafiaKill.displayName + ' was killed last night. ';
+        switch (usersData.find((u) => u.uid === mafiaKill.uid).role) {
+          case 1:
+            deathText += 'They were a villager.';
+            break;
+          case 2:
+            deathText += 'They were mafia.';
+            break;
+          case 3:
+            deathText += 'They were a detective.';
+            break;
+          case 4:
+            deathText += 'They were a doctor.';
+            break;
+          default:
+            deathText = 'No one was killed last night.';
+        }
+        setDeathText(deathText);
       } else {
         setDeathText('No one was killed last night');
       }
       usersData.forEach(function(u) {
-        if (u.uid === userUid) {
-          setUserInfo(u);
-        }
-        // if usersData wasn't updated from last night's kill
-        if ((u.alive === true) &&
-          (u.uid !== mafiaKill || mafiaKill.uid === doctorSave.uid)) {
+        if (u.alive === true) {
           allPlayers.push(u);
         }
+      });
+      room.update({
+        chat: firebase.firestore.FieldValue.arrayUnion(
+            {text: '-------- DAY ' + dayNum + ' --------',
+              isGameText: true, hours, minutes},
+        ),
       });
       setPlayers(allPlayers);
       setInitialize(true);
@@ -105,39 +105,60 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
   function startNight() {
     if (dayVote.length === aliveNum) {
       const voteMap = new Map();
+      const today = new Date();
+      const hours = today.getUTCHours();
+      const minutes = today.getUTCMinutes();
       let executedPlayer = [];
       dayVote.forEach((vote) => {
-        if (!voteMap.has(vote.vote)) {
-          voteMap.set(vote.vote, 0);
+        if (!voteMap.has(vote)) {
+          voteMap.set(vote, 0);
         }
-        voteMap.set(vote.vote, voteMap.get(vote.vote) + 1);
+        voteMap.set(vote, voteMap.get(vote) + 1);
       });
-      executedPlayer = [...voteMap.entries()].reduce((playerOne, playerTwo) =>
-        // if tie, choose player with highest ordering
-        (playerOne[1] === playerTwo[1] ?
-          (playerOne[0].order > playerTwo[0].order ?
-            playerOne : playerTwo) :
-          (playerOne[1] > playerTwo[1] ?
-            playerOne : playerTwo)));
+      const entries = [...voteMap.entries()];
+      entries.sort(function(a, b) {
+        return b[1] - a[1];
+      });
+      executedPlayer = entries[0];
       usersCollection.doc(executedPlayer[0].uid).update({
         alive: false,
       });
+      usersCollection.doc(userUid).update({
+        chose: false,
+      });
       aliveNum -= 1;
-      showResult(executedPlayer[0].name + ' was executed. ' +
-        executedPlayer[0].role === 2 ?
-        'They were mafia.' : 'They were a townsperson.');
-      endGame();
-      if (!end) {
-        room.update({
-          doctorSave: {'uid': '', 'displayName': ''},
-          mafiaKill: {'uid': '', 'displayName': ''},
-          mafiaDecision: [],
-          detectiveCheck: {'uid': '', 'displayName': ''},
-          day: false,
-          dayVote: [],
-          aliveCount: aliveNum,
-        });
+      dayNum += 1;
+      let executionMessage = executedPlayer[0].name + ' was executed. ';
+      switch (executedPlayer[0].role) {
+        case 1:
+          executionMessage += 'They were a villager.';
+          break;
+        case 2:
+          executionMessage += 'They were mafia.';
+          break;
+        case 3:
+          executionMessage += 'They were a detective.';
+          break;
+        case 4:
+          executionMessage += 'They were a doctor.';
+          break;
+        default:
+          executionMessage = 'No one was executed.';
       }
+      showResult(executionMessage);
+      room.update({
+        doctorSave: {'uid': '', 'displayName': ''},
+        mafiaKill: {'uid': '', 'displayName': ''},
+        mafiaDecision: [],
+        detectiveCheck: {'uid': '', 'displayName': ''},
+        day: false,
+        dayVote: [],
+        aliveCount: aliveNum,
+        dayCount: dayNum,
+        chat: firebase.firestore.FieldValue.arrayUnion(
+            {text: executionMessage, isGameText: true, hours, minutes},
+        ),
+      });
     }
   }
 
@@ -149,85 +170,64 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
    * @param {object} player Clicked on user object
    */
   function confirmVote() {
-    if (!voted) {
-      const newVote = {
-        player: userInfo.displayName,
-        vote: {
-          uid: choice.uid,
-          name: choice.displayName,
-        },
-      };
-      const today = new Date();
-      const hours = today.getUTCHours();
-      const minutes = today.getUTCMinutes();
-      room.update({
-        dayVote: firebase.firestore.FieldValue.arrayUnion(newVote),
-      });
-      setVoted(true);
-      room.update({
-        chat: firebase.firestore.FieldValue.arrayUnion(
-            {text: userInfo.displayName + ' voted for ' + choice.displayName,
-              hours, minutes},
-        ),
-      });
-    } else {
-      showResult('You have already voted for ' + choice.displayName);
-    }
+    const today = new Date();
+    const hours = today.getUTCHours();
+    const minutes = today.getUTCMinutes();
+    room.update({
+      dayVote: firebase.firestore.FieldValue.arrayUnion({
+        player: userUid,
+        uid: choice.uid,
+        name: choice.displayName,
+        role: choice.role,
+      }),
+      chat: firebase.firestore.FieldValue.arrayUnion(
+          {text: userInfo.displayName + ' voted for ' + choice.displayName,
+            isGameText: true, hours, minutes},
+      ),
+    });
+    room.collection('users').doc(userInfo.uid).update({
+      chose: true,
+    });
   }
 
   return (
     <Grid className={classes.gameContainer} item>
-      <PersonalInfo
-        name={userInfo.displayName}
-        role={userInfo.role}
-        alive={userInfo.alive}
-      />
-      { win === 0 ?
-        <Box m={10}>
-          <Grid container justify="center" alignItems="center">
-            <h2>{deathText}</h2>
-          </Grid>
-          <Grid container justify="center" alignItems="center">
-            <h3>You may discuss and vote on who to execute</h3>
-          </Grid>
-          <br />
-          <Grid container justify="center" alignItems="center" spacing={4}>
-            {
-              players.map((u) => {
-                return (
-                  <Player
-                    key={u.uid}
-                    player={u}
-                    handleClick={() => setChoice(u)}
-                  />
-                );
-              })
-            }
-          </Grid>
-          <br /> <br />
-          <Grid container justify="center" alignItems="center">
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={confirmVote}
-              disabled={!userInfo.alive}
-            >
-              Confirm Vote
-            </Button>
-          </Grid>
-        </Box> :
-        win === 1 ?
-        <Box>
-          <Grid container justify="center" alignItems="center">
-            <h1>Town won!</h1>
-          </Grid>
-        </Box> :
-        <Box>
-          <Grid container justify="center" alignItems="center">
-            <h1>Mafia won!</h1>
-          </Grid>
-        </Box>
-      }
+      <Box className={classes.mainActivity} m={10}>
+        <Grid container justify="center" alignItems="center">
+          <h2>{deathText}</h2>
+        </Grid>
+        <Grid container justify="center" alignItems="center">
+          <h3>You may discuss and vote on who to execute</h3>
+        </Grid>
+        <br />
+        <Grid container justify="center" alignItems="center" spacing={4}>
+          {
+            players.map((u) => {
+              return (
+                <Player
+                  key={u.uid}
+                  player={u}
+                  setChoice={setChoice}
+                  choice={choice}
+                  user={userInfo}
+                />
+              );
+            })
+          }
+        </Grid>
+        <br /> <br />
+        <Grid container justify="center" alignItems="center">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={confirmVote}
+            disabled={!userInfo.alive || usersData.find((u) =>
+              u.uid === userUid).chose}
+          >
+            Confirm Vote
+          </Button>
+        </Grid>
+      </Box>
     </Grid>
   );
 }
@@ -242,8 +242,9 @@ MafiaDay.propTypes = {
   mafiaKill: PropTypes.object,
   doctorSave: PropTypes.object,
   aliveNum: PropTypes.number,
-  end: PropTypes.bool,
   showResult: PropTypes.func,
+  endGame: PropTypes.func,
+  dayNum: PropTypes.number,
 };
 
 const mapStateToProps = (state) => ({
@@ -253,7 +254,7 @@ const mapStateToProps = (state) => ({
   mafiaKill: state.roomData.mafiaKill,
   doctorSave: state.roomData.doctorSave,
   aliveNum: state.roomData.aliveCount,
-  end: state.roomData.end,
+  dayNum: state.roomData.dayCount,
 });
 
 export default connect(
