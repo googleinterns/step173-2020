@@ -164,8 +164,8 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
 
   /**
    * Create peer connection and call create offer or answer
-   * @param {string} socketId 
-   * @param {object} offer 
+   * @param {string} socketId
+   * @param {object} offer
    */
   function createPeerConnection(socketId, offer = null) {
     console.log('createPeerConnection');
@@ -200,7 +200,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
 
   /**
    * Create and send offer for peer connection
-   * @param {string} socketId 
+   * @param {string} socketId
    */
   async function createOffer(socketId) {
     console.log('createOffer');
@@ -215,8 +215,8 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
 
   /**
    * Create and send answer for peer connection
-   * @param {string} socketId 
-   * @param {object} offer 
+   * @param {string} socketId
+   * @param {object} offer
    */
   async function createAnswer(socketId, offer) {
     console.log('createAnswer');
@@ -232,8 +232,8 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
 
   /**
    * Receive peer connection answer
-   * @param {string} socketId 
-   * @param {object} answer 
+   * @param {string} socketId
+   * @param {object} answer
    */
   async function receiveAnswer(socketId, answer) {
     console.log('receiveAnswer');
@@ -246,8 +246,8 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
 
   /**
    * Receive ICE candidates
-   * @param {string} socketId 
-   * @param {object} candidate 
+   * @param {string} socketId
+   * @param {object} candidate
    */
   function receiveICE(socketId, candidate) {
     console.log('receiveIce');
@@ -258,7 +258,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
 
   /**
    * End connection with the user that left
-   * @param {string} socketId 
+   * @param {string} socketId
    */
   function userLeft(socketId) {
     console.log('userleft');
