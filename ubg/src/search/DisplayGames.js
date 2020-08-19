@@ -26,7 +26,8 @@ const useStyles = makeStyles((theme) => ({
  * @param {number} totalGames number of games in total
  * @return {ReactElement} Display all the games that satisfy conditions
  */
-export default function DisplayGames({games, paginationCount, totalGames, title}) {
+export default function DisplayGames({games, paginationCount, totalGames,
+  title}) {
   const classes = useStyles();
   const [page, setPage] = React.useState(1);
   let total = totalGames;
@@ -76,4 +77,5 @@ DisplayGames.propTypes = {
   games: PropTypes.array,
   paginationCount: PropTypes.number,
   totalGames: PropTypes.number,
+  title: PropTypes.string,
 };
