@@ -33,7 +33,6 @@ let socket = null;
 let peerConnections = {};
 let remoteStreams = {};
 let localStream = null;
-let uidToSocketId = {};
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -125,6 +124,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
   const [mafiaChatSelected, setMafiaChatSelected] = useState(false);
   const [localAudio, setLocalAudio] = useState(true);
   const [localVideo, setLocalVideo] = useState(true);
+  const [uidToSocketId, setUidToSocketId] = useState({});
 
   const chatClasses = classNames({
     [classes.chatHeader]: true,
@@ -245,7 +245,6 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     localStream.getVideoTracks()[0].enabled = !localStream.getVideoTracks()[0].enabled;
   }
 
-
   /**
    * Check if current user is mafia
    * @param {string} uid
@@ -322,8 +321,40 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     }
   }
 
+  async function startVideoAndJoinSocketRoom() {
+    localStream = await navigator.mediaDevices.getUserMedia(
+      {video: true, audio: true}
+    );
+    console.log("join socket room");
+    socket.emit('joinSocketRoom', roomId, user.uid);
+  }
+
+  function leaveSocketRoomEndPeerConnection() {
+    socket.emit('leaveSocketRoom', roomId);
+    Object.keys(remoteStreams).forEach(stream => {
+      if(remoteStreams[stream]){
+        remoteStreams[stream].getTracks().forEach(track => track.stop());
+        remoteStreams[stream] = null;
+      }
+    });
+    Object.keys(peerConnections).forEach(connection => {
+      if(peerConnections[connection]){
+        peerConnections[connection].close();
+        peerConnections[connection] = null;
+      }
+    });
+    localStream.getTracks().forEach(track => {
+      track.stop();
+    });
+    localStream = null;
+  }
+
   function socketConnection() {
     socket = socketIOClient('/');
+
+    if(usersData.some((u) => u.uid === user.uid)){
+      startVideoAndJoinSocketRoom();
+    }
 
     socket.on('youJoined', (socketId, uid) => {
       console.log("I joined the socket!");
@@ -335,12 +366,16 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
 
     socket.on('newUser', (socketId, uid) => {
       createPeerConnection(socketId);
-      uidToSocketId[uid] = socketId;
+      let newIdMap = {...uidToSocketId};
+      newIdMap[uid] = socketId;
+      setUidToSocketId(newIdMap);
     });
 
     socket.on('receiveOffer', (offer, socketId, uid) => {
       createPeerConnection(socketId, offer);
-      uidToSocketId[uid] = socketId;
+      let newIdMap = {...uidToSocketId};
+      newIdMap[uid] = socketId;
+      setUidToSocketId(newIdMap);
     });
 
     socket.on('receiveAnswer', (answer, socketId) => {
@@ -377,12 +412,8 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
   /**
    * Add user to the users collection in the room
    */
-  async function joinRoom() {
-    localStream = await navigator.mediaDevices.getUserMedia(
-      {video: true, audio: true}
-    );
-    console.log("emmit join room");
-    socket.emit('joinSocketRoom', roomId, user.uid);
+  function joinRoom() {
+    startVideoAndJoinSocketRoom();
     usersCollection.doc(user.uid).set({
       displayName: user.displayName,
       email: user.email,
@@ -405,22 +436,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
    * Delete user from user collection in the room
    */
   function leaveRoom() {
-    socket.emit('leaveSocketRoom', roomId);
-    Object.keys(remoteStreams).forEach(stream => {
-      if(remoteStreams[stream]){
-        remoteStreams[stream].getTracks().forEach(track => track.stop());
-        remoteStreams[stream] = null;
-      }
-    });
-    Object.keys(peerConnections).forEach(connection => {
-      if(peerConnections[connection]){
-        peerConnections[connection].close();
-        peerConnections[connection] = null;
-      }
-    });
-    localStream.getTracks().forEach(track => {
-      track.stop();
-    });
+    leaveSocketRoomEndPeerConnection();
     usersCollection.doc(user.uid).delete();
   }
 
