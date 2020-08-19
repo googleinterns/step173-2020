@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server",
+    "build": "cd ubg && npm run build",
     "test": "mocha --reporter spec"
   },
   "repository": {

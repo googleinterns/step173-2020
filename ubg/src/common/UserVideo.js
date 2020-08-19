@@ -12,10 +12,13 @@ const useStyles = makeStyles((theme) => ({
     background: 'white',
     margin: '15px',
   },
-  video: {
+  videoMirror: {
     transform: 'rotateY(180deg)',
     '-webkit-transform': 'rotateY(180deg)',
     '-moz-transform': 'rotateY(180deg)',
+    width: '100%',
+  },
+  video: {
     width: '100%',
   },
 }));
@@ -36,7 +39,12 @@ export default function UserVideo({user, video, local}) {
     <div className={classes.videoDiv}>
       {
         video ?
-        <video className={classes.video} autoPlay={true} ref={setVideoRef} muted={local} /> :
+        <video 
+          className={local ? classes.videoMirror : classes.video} 
+          autoPlay={true} 
+          ref={setVideoRef} 
+          muted={local} 
+        /> :
         null
       }
       <div>

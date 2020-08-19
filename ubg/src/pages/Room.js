@@ -59,6 +59,8 @@ const useStyles = makeStyles((theme) => ({
   },
   grow: {
     flexGrow: 1,
+    height: '100px',
+    overflow: 'scroll',
   },
   signInContainer: {
     height: '100vh',
@@ -90,6 +92,7 @@ const useStyles = makeStyles((theme) => ({
   },
   transparentBackground: {
     backgroundColor: 'transparent',
+    zIndex: 1,
   },
   chatSelected: {
     backgroundColor: '#e0e0e0',
