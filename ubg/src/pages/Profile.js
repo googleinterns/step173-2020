@@ -5,7 +5,6 @@ import Box from '@material-ui/core/Box';
 import Navbar from '../common/Navbar';
 import {makeStyles} from '@material-ui/core/styles';
 import FavoriteGames from '../profile/FavoriteGames';
-import Stat from '../profile/Stat';
 import Reviews from '../reviews/Reviews';
 import PropTypes from 'prop-types';
 
@@ -34,40 +33,20 @@ export default function Profile() {
     <div>
       <Navbar />
       <Box container='true' justify='center' alignItems='center' m={10}>
-        <Box mt={10} mr={10} ml={10}>
+        <Box m={10}>
           <Typography variant='h2' className={classes.fonts}>
             {user ? user.displayName : 'Sign in to view your profile'}
           </Typography>
+          <hr />
         </Box>
         {user ? (
           <div>
-            <UserStats userCollection={userCollection} uid={user.uid} />
             <FavoriteGames userCollection={userCollection} uid={user.uid} />
             <UserReviews userCollection={userCollection} uid={user.uid} />
           </div>
         ) : ''}
       </Box>
     </div>
-  );
-}
-
-function UserStats({userCollection, uid}) {
-  const classes = useStyles();
-  const userStats = useFirestoreDocData(userCollection.doc(uid)).stats;
-  return (
-    <Box m={10}>
-      <Typography variant='h4' className={classes.fonts}>
-        Game Statistics
-      </Typography>
-      <br />
-      {
-        userStats.map((stat) => {
-          return (
-            <Stat stat={stat} />
-          );
-        })
-      }
-    </Box>
   );
 }
 
@@ -91,13 +70,15 @@ function UserReviews({userCollection, uid}) {
   }
 
   return (
-    <Box mb={10} mr={10} ml={10}>
-      <br /> <br />
-      <Typography variant='h4' className={classes.fonts}>
-        Reviews
-      </Typography>
-      <Reviews reviews={userReviews.sort(compare)} profile={true}/>
-    </Box>
+    <div>
+      <Box m={10}>
+        <hr /> <br /> <br />
+        <Typography variant='h4' className={classes.fonts}>
+          Reviews
+        </Typography>
+        <Reviews reviews={userReviews.sort(compare)} profile={true}/>
+      </Box>
+    </div>
   );
 }
 
