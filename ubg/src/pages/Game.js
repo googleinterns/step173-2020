@@ -28,6 +28,12 @@ import * as firebase from 'firebase/app';
 import Pagination from '@material-ui/lab/Pagination';
 import VideoCard from '../game/VideoCard';
 import NotFound from '../pages/NotFound';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import ApiCalendar from 'react-google-calendar-api';
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
@@ -47,6 +53,11 @@ const useStyles = makeStyles((theme) => ({
       display: 'flex',
       justifyContent: 'center',
     },
+  },
+  textField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: 200,
   },
 }));
 
@@ -211,7 +222,7 @@ function Description({usersCollection, game, createRoom, gameId}) {
           >
           </div>
           <br />
-          <Typography variant='body2' color='textSecondary' component='p'>
+          <Typography variant='body2' color='textSecondary' component='div'>
             <Icon aria-label='share'>
               <Star />{game.rating.toFixed(2)}/10
             </Icon>
@@ -244,6 +255,7 @@ function Description({usersCollection, game, createRoom, gameId}) {
               }
               &emsp;
               <FavoriteButton usersCollection={usersCollection} game={game}/>
+              <CreateEventButton gameName={game.Name}/>
             </AuthCheck>
           </Typography>
         </Grid>
@@ -275,6 +287,89 @@ function FavoriteButton({usersCollection, game}) {
         {favorite ? 'Delete from favorites' : 'Add to favorites'}
       </Button>
     ) : null
+  );
+}
+
+function CreateEventButton({gameName}) {
+  const classes = useStyles();
+  const [open, setOpen] = React.useState(false);
+  const [summary, setSummary] = React.useState('🎮 ' + gameName + ' 🎮');
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSummary('');
+  };
+
+  const handleSave = () => {
+    setOpen(false);
+    if (ApiCalendar.sign === false) {
+      ApiCalendar.handleAuthClick();
+      }
+      const event = {
+        'summary': summary,
+        'description': 'A chance to hear more about Google\'s developer products.',
+        'start': {
+          'dateTime': '2020-08-19T09:00:00-07:00',
+          'timeZone': 'America/Los_Angeles',
+        },
+        'end': {
+          'dateTime': '2020-08-19T10:00:00-07:00',
+          'timeZone': 'America/Los_Angeles',
+        },
+      }
+      ApiCalendar.createEvent(event)
+  .then((result) => {
+    console.log(result);
+      })
+   .catch((error) => {
+     console.log(error);
+      });
+    setSummary('');
+  };
+
+  return (
+    <div>
+      <Button variant='contained'
+        color='primary' onClick={handleClickOpen}>
+        Create Event
+      </Button>
+      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Event Summary"
+            value={summary}
+            onChange={(e)=> setSummary(e.target.value)}
+            fullWidth
+          />
+          <TextField
+            id="datetime-local"
+            label="Next appointment"
+            type="datetime-local"
+            defaultValue="2017-05-24T10:30"
+            className={classes.textField}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   );
 }
 
