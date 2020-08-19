@@ -122,8 +122,8 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     roomData.started &&
     isMafia(user.uid);
   const [mafiaChatSelected, setMafiaChatSelected] = useState(false);
-  const [localAudio, setLocalAudio] = useState(true);
-  const [localVideo, setLocalVideo] = useState(true);
+  const [localAudio, setLocalAudio] = useState(false);
+  const [localVideo, setLocalVideo] = useState(false);
   const [uidToSocketId, setUidToSocketId] = useState({});
 
   const chatClasses = classNames({
@@ -325,6 +325,8 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     localStream = await navigator.mediaDevices.getUserMedia(
       {video: true, audio: true}
     );
+    setLocalAudio(true);
+    setLocalVideo(true);
     console.log("join socket room");
     socket.emit('joinSocketRoom', roomId, user.uid);
   }
@@ -347,6 +349,8 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
       track.stop();
     });
     localStream = null;
+    setLocalAudio(false);
+    setLocalVideo(false);
   }
 
   function socketConnection() {
