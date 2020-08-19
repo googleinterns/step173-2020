@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {Fragment, useState} from 'react';
 import AllReviews from '../reviews/AllReviews';
 import {makeStyles} from '@material-ui/core/styles';
 import {useParams, useHistory} from 'react-router-dom';
@@ -34,6 +34,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import ApiCalendar from 'react-google-calendar-api';
+import DateFnsUtils from '@date-io/date-fns';
+import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
@@ -55,8 +57,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
+    marginRight: theme.spacing(2),
     width: 200,
   },
 }));
@@ -294,6 +295,8 @@ function CreateEventButton({gameName}) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [summary, setSummary] = React.useState('🎮 ' + gameName + ' 🎮');
+  const [startTime, setStartTime] = React.useState(new Date());
+  const [endTime, setEndTime] = React.useState(new Date());
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -301,7 +304,9 @@ function CreateEventButton({gameName}) {
 
   const handleClose = () => {
     setOpen(false);
-    setSummary('');
+    setSummary('🎮 ' + gameName + ' 🎮');
+    setStartTime(new Date());
+    setEndTime(new Date());
   };
 
   const handleSave = () => {
@@ -313,12 +318,12 @@ function CreateEventButton({gameName}) {
         'summary': summary,
         'description': 'A chance to hear more about Google\'s developer products.',
         'start': {
-          'dateTime': '2020-08-19T09:00:00-07:00',
-          'timeZone': 'America/Los_Angeles',
+          'dateTime': startTime.toISOString(),
+          'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
         'end': {
-          'dateTime': '2020-08-19T10:00:00-07:00',
-          'timeZone': 'America/Los_Angeles',
+          'dateTime': endTime.toISOString(),
+          'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
       }
       ApiCalendar.createEvent(event)
@@ -328,7 +333,9 @@ function CreateEventButton({gameName}) {
    .catch((error) => {
      console.log(error);
       });
-    setSummary('');
+    setSummary('🎮 ' + gameName + ' 🎮');
+    setStartTime(new Date());
+    setEndTime(new Date());
   };
 
   return (
@@ -349,16 +356,24 @@ function CreateEventButton({gameName}) {
             onChange={(e)=> setSummary(e.target.value)}
             fullWidth
           />
-          <TextField
-            id="datetime-local"
-            label="Next appointment"
-            type="datetime-local"
-            defaultValue="2017-05-24T10:30"
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <DateTimePicker
+            label="Start Time"
+            value={startTime}
+            onChange={setStartTime}
             className={classes.textField}
-            InputLabelProps={{
-              shrink: true,
-            }}
+            showTodayButton
+            disablePast
           />
+          <DateTimePicker
+            label="End Time"
+            value={endTime}
+            onChange={setEndTime}
+            className={classes.textField}
+            showTodayButton
+            disablePast
+          />
+          </MuiPickersUtilsProvider>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
