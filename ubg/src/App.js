@@ -6,12 +6,13 @@ import {
 } from 'react-router-dom';
 import Home from './pages/Home';
 import Game from './pages/Game';
-// import Room from './pages/Room';
 import Search from './pages/Search';
-import WaitingRoom from './pages/WaitingRoom';
+import Room from './pages/Room';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
 import {FirebaseAppProvider} from 'reactfire';
+import {Provider} from 'react-redux';
+import store from './redux/store';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -29,35 +30,37 @@ const firebaseConfig = {
  */
 function App() {
   return (
-    <FirebaseAppProvider firebaseConfig={firebaseConfig}>
-      <Suspense fallback={<p>loading...</p>}>
-        <Router>
-          <Switch>
-            <Route exact path="/">
-              <Home />
-            </Route>
-            <Route exact path="/search">
-              <Search />
-            </Route>
-            <Route exact path="/search/:query">
-              <Search />
-            </Route>
-            <Route exact path="/profile">
-              <Profile />
-            </Route>
-            <Route exact path="/:gameId">
-              <Game />
-            </Route>
-            <Route exact path="/gameRoom/:roomId">
-              <WaitingRoom/>
-            </Route>
-            <Route path="/">
-              <NotFound />
-            </Route>
-          </Switch>
-        </Router>
-      </Suspense>
-    </FirebaseAppProvider>
+    <Provider store={store}>
+      <FirebaseAppProvider firebaseConfig={firebaseConfig}>
+        <Suspense fallback={<p>loading...</p>}>
+          <Router>
+            <Switch>
+              <Route exact path="/">
+                <Home />
+              </Route>
+              <Route exact path="/search">
+                <Search />
+              </Route>
+              <Route exact path="/search/:query">
+                <Search />
+              </Route>
+              <Route exact path="/profile">
+                <Profile />
+              </Route>
+              <Route exact path="/:gameId">
+                <Game />
+              </Route>
+              <Route exact path="/gameRoom/:roomId">
+                <Room />
+              </Route>
+              <Route path="/">
+                <NotFound />
+              </Route>
+            </Switch>
+          </Router>
+        </Suspense>
+      </FirebaseAppProvider>
+    </Provider>
   );
 }
 

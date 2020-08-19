@@ -2,13 +2,13 @@ import React from 'react';
 import Slide from '@material-ui/core/Slide';
 import {makeStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import Paper from '@material-ui/core/Paper';
 
 const useStyles = makeStyles((theme) => ({
   rules: {
-    background: 'white',
-    borderRadius: '5%',
     borderTop: '1px solid black',
     textAlign: 'left',
+    whiteSpace: 'pre-line',
   },
 }));
 
@@ -19,12 +19,21 @@ const useStyles = makeStyles((theme) => ({
  */
 export default function RulesDrawer({open, rules}) {
   const classes = useStyles();
+  /**
+   * @return {object} inner HTML
+   */
+  function createMarkup() {
+    return {__html: rules};
+  }
 
   return (
     <Slide direction="up" in={open} mountOnEnter unmountOnExit>
-      <div className={classes.rules}>
-        {rules}
-      </div>
+      <Paper className={classes.rules}>
+        <div
+          dangerouslySetInnerHTML={createMarkup()}
+        >
+        </div>
+      </Paper>
     </Slide>
   );
 }

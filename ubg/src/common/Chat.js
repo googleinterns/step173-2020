@@ -3,10 +3,10 @@ import Slide from '@material-ui/core/Slide';
 import {makeStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import firebase from 'firebase/app';
-import {useFirestore} from 'reactfire';
 import Message from './Message';
 import SendIcon from '@material-ui/icons/Send';
 import IconButton from '@material-ui/core/IconButton';
+import {connect} from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   chatContainer: {
@@ -37,10 +37,9 @@ const useStyles = makeStyles((theme) => ({
  * @param {array} messages Messages in chat
  * @return {ReactElement} Drawer with chat
  */
-export default function Chat({open, messages, roomId, user}) {
+function Chat({open, messages, room, displayName, mafia, disabled}) {
   const classes = useStyles();
   const fieldValue = firebase.firestore.FieldValue;
-  const roomDoc = useFirestore().collection('rooms').doc(roomId);
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef(null);
 
@@ -49,46 +48,96 @@ export default function Chat({open, messages, roomId, user}) {
    */
   function addMessage() {
     const today = new Date();
-    const hours = ('0' + today.getHours()).slice(-2);
-    const minutes = ('0' + today.getMinutes()).slice(-2);
-    const time = `${hours}:${minutes}`;
-    roomDoc.update(
-        {chat: fieldValue.arrayUnion({text: newMessage, user, time})},
-    );
+    const hours = today.getUTCHours();
+    const minutes = today.getUTCMinutes();
+    if (mafia) {
+      room.update(
+          {mafiaChat: fieldValue.arrayUnion(
+              {text: newMessage, user: displayName, isGameText: false,
+                hours, minutes},
+          )},
+      );
+    } else {
+      room.update(
+          {chat: fieldValue.arrayUnion(
+              {text: newMessage, user: displayName, isGameText: false,
+                hours, minutes},
+          )},
+      );
+    }
     setNewMessage('');
+  }
+
+  /**
+   * Get local time from UTC time
+   * @param {number} hours
+   * @param {number} minutes
+   * @return {string} local time
+   */
+  function getLocalTime(hours, minutes) {
+    const today = new Date();
+    const offset = today.getTimezoneOffset();
+    let localMinutes = minutes - offset%60;
+    let localHours = hours - Math.floor(offset/60);
+    if (localMinutes < 0) {
+      localMinutes += 60;
+      localHours --;
+    } else if (localMinutes > 60) {
+      localMinutes -= 60;
+      localHours ++;
+    }
+    if (localHours === 24) {
+      localHours = 0;
+    } else if (localHours === -1) {
+      localHours = 23;
+    }
+    localMinutes = ('0' + localMinutes).slice(-2);
+    localHours = ('0' + localHours).slice(-2);
+    return `${localHours}:${localMinutes}`;
   }
 
   /**
    * Scroll to the bottom of chat
    */
   function scrollToBottom() {
-    if (open) {
-      messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
-    }
+    setTimeout(function() {
+      if (open && messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
+      }
+    }, 100);
   }
 
-  useEffect(scrollToBottom, [messages]);
+  useEffect(scrollToBottom, [messages, open]);
 
   return (
-    <Slide direction="up" in={open} mountOnEnter unmountOnExit>
+    <Slide
+      direction="up"
+      in={open}
+      mountOnEnter
+      unmountOnExit
+      timeout={100}
+    >
       <div className={classes.chatContainer}>
         <div className={classes.chatMessages}>
-          {
-            messages.map((message, index) => {
-              return (
-                <Message
-                  key={index}
-                  user={message.user}
-                  text={message.text}
-                  time={message.time}
-                />
-              );
-            })
+          { messages ?
+              messages.map((message, index) => {
+                return (
+                  <Message
+                    key={index}
+                    user={message.user}
+                    text={message.text}
+                    isGameText={message.isGameText}
+                    time={getLocalTime(message.hours, message.minutes)}
+                  />
+                );
+              }) :
+              null
           }
           <div ref={messagesEndRef} />
         </div>
         <div className={classes.sendMessage}>
           <input
+            disabled={disabled}
             value={newMessage}
             onChange={(e) => {
               setNewMessage(e.target.value);
@@ -96,7 +145,7 @@ export default function Chat({open, messages, roomId, user}) {
             type='text'
             className={classes.chatField}
             onKeyDown={(e) => {
-              if (e.keyCode === 13) {
+              if (e.keyCode === 13 && newMessage.trim() !== '') {
                 addMessage();
               }
             }}
@@ -119,6 +168,17 @@ export default function Chat({open, messages, roomId, user}) {
 Chat.propTypes = {
   open: PropTypes.bool,
   messages: PropTypes.array,
-  roomId: PropTypes.string,
-  user: PropTypes.string,
+  displayName: PropTypes.string,
+  room: PropTypes.object,
+  mafia: PropTypes.bool,
+  disabled: PropTypes.bool,
 };
+
+const mapStateToProps = (state) => ({
+  displayName: state.currentUser.displayName,
+});
+
+export default connect(
+    mapStateToProps,
+    {},
+)(Chat);
