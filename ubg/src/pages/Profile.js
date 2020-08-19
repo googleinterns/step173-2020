@@ -1,12 +1,11 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useUser, useFirestoreDocData, useFirestore} from 'reactfire';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
 import Navbar from '../common/Navbar';
-import GameCard from '../search/GameCard';
 import {makeStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import DisplayGames from '../search/DisplayGames';
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
@@ -33,10 +32,10 @@ export default function Profile() {
     <div>
       <Navbar />
       <Box container='true' justify='center' alignItems='center' m={10}>
-        <Typography variant='h4' className={classes.fonts}>
+        <Typography variant='h2' className={classes.fonts}>
           {user ? user.displayName : 'Sign in to view your profile'}
         </Typography>
-        <br />
+        <hr />
         {user ? (
           <div>
             <FavoriteGames userCollection={userCollection} uid={user.uid} />
@@ -54,37 +53,43 @@ export default function Profile() {
  */
 function FavoriteGames({userCollection, uid}) {
   const userGames = useFirestoreDocData(userCollection.doc(uid)).games;
+  const [paginationCount, setPaginationCount] = React.useState(1);
+  const [totalGames, setTotalGames] = React.useState(0);
+  const [games, setGames] = React.useState([[]]);
+
+  function initPagination() {
+    const newGames = [];
+    let list = [];
+    let total = 0;
+
+    userGames.forEach((game) => {
+      list.push(game);
+      total += 1;
+      if (list.length === 12) {
+        newGames.push(list);
+        list = [];
+      }
+    })
+    if (list.length !== 0) {
+      newGames.push(list);
+    }
+    setGames(newGames);
+    setTotalGames(total);
+    setPaginationCount(newGames.length);
+  }
+
+  useEffect(initPagination, []);
 
   return (
-    <Box>
-      <hr />
-      <Typography variant='h6'>
-        Favorite Games
-      </Typography>
-      <br />
-      <Grid container justify="flex-start" alignItems="stretch" spacing={4}>
-        {userGames.map((game) => {
-          return (
-            <Grid item key={game.id} xs={12} sm={6} xl={2} lg={3} md={4}>
-              <GameCard
-                id={game.id}
-                image={game.image}
-                name={game.name}
-                year={game.year}
-                minTime={game.minPlaytime}
-                maxTime={game.maxPlaytime}
-                minPlayer={game.minPlayer}
-                maxPlayer={game.maxPlayer}
-                rating={game.rating}
-                minAge={game.minAge}
-                weight={game.weight}
-              />
-            </Grid>
-          );
-        })}
-      </Grid>
-      <br />
-    </Box>
+    <div>
+      <DisplayGames
+        games={games}
+        paginationCount={paginationCount}
+        totalGames={totalGames}
+        title='Favorite Games'
+      />
+    </div>
+
   );
 }
 
