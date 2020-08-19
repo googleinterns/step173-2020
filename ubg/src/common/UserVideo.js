@@ -13,10 +13,10 @@ const useStyles = makeStyles((theme) => ({
     margin: '15px',
   },
   videoMirror: {
-    transform: 'rotateY(180deg)',
+    'transform': 'rotateY(180deg)',
     '-webkit-transform': 'rotateY(180deg)',
     '-moz-transform': 'rotateY(180deg)',
-    width: '100%',
+    'width': '100%',
   },
   video: {
     width: '100%',
@@ -29,8 +29,8 @@ const useStyles = makeStyles((theme) => ({
  */
 export default function UserVideo({user, video, local}) {
   const classes = useStyles();
-  const setVideoRef = videoElement => {
-    if(videoElement){
+  const setVideoRef = (videoElement) => {
+    if (videoElement) {
       videoElement.srcObject = video;
     }
   };
@@ -39,39 +39,39 @@ export default function UserVideo({user, video, local}) {
     <div className={classes.videoDiv}>
       {
         video ?
-        <video 
-          className={local ? classes.videoMirror : classes.video} 
-          autoPlay={true} 
-          ref={setVideoRef} 
-          muted={local} 
+        <video
+          className={local ? classes.videoMirror : classes.video}
+          autoPlay={true}
+          ref={setVideoRef}
+          muted={local}
         /> :
         null
       }
       <div>
         {local ?
           <IconButton
-              color="primary"
-              size="small"
-              onClick={local.toggleAudio}
-            >
-              {local.localAudio ?
+            color="primary"
+            size="small"
+            onClick={local.toggleAudio}
+          >
+            {local.localAudio ?
                 <MicIcon fontSize="inherit" /> :
                 <MicOffIcon fontSize="inherit" />
-              }
+            }
           </IconButton> :
           null
         }
         {user}
         {local ?
           <IconButton
-              color="primary"
-              size="small"
-              onClick={local.toggleVideo}
-            >
-              {local.localVideo ?
+            color="primary"
+            size="small"
+            onClick={local.toggleVideo}
+          >
+            {local.localVideo ?
                 <VideoCamIcon fontSize="inherit" /> :
                 <VideoCamOffIcon fontSize="inherit" />
-              }
+            }
           </IconButton> :
           null
         }
@@ -82,4 +82,11 @@ export default function UserVideo({user, video, local}) {
 
 UserVideo.propTypes = {
   user: PropTypes.string,
+  video: PropTypes.object,
+  local: PropTypes.shape({
+    toggleAudio: PropTypes.func,
+    localAudio: PropTypes.bool,
+    toggleVideo: PropTypes.func,
+    localVideo: PropTypes.bool,
+  }),
 };

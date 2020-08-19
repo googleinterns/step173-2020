@@ -11,42 +11,42 @@ server.listen(port, () => {
 
 app.use(express.static(path.join(__dirname, './ubg/build')));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "./ubg/build", "index.html"));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, './ubg/build', 'index.html'));
 });
 
 io.on('connection', function (socket) {
     console.log('connected to socket');
-    io.to(socket.id).emit("youJoined");
+    io.to(socket.id).emit('youJoined');
 
-    socket.on("joinSocketRoom", (roomId, uid) => {
-        io.to(socket.id).emit("youJoinedRoom");
+    socket.on('joinSocketRoom', (roomId, uid) => {
+        io.to(socket.id).emit('youJoinedRoom');
         socket.join(roomId);
-        console.log("joined room " + roomId);
+        console.log('joined room ' + roomId);
         socket.to(roomId).emit('newUser', socket.id, uid);
     });
 
-    socket.on("sendOffer", (offer, socketId, uid) => {
+    socket.on('sendOffer', (offer, socketId, uid) => {
         console.log('sendOffer');
-        io.to(socketId).emit("receiveOffer", offer, socket.id, uid);
+        io.to(socketId).emit('receiveOffer', offer, socket.id, uid);
     })
 
-    socket.on("sendAnswer", (answer, socketId) => {
+    socket.on('sendAnswer', (answer, socketId) => {
         console.log('sendAnswer');
-        io.to(socketId).emit("receiveAnswer", answer, socket.id);
+        io.to(socketId).emit('receiveAnswer', answer, socket.id);
     })
 
-    socket.on("newICE", (candidate, socketId) => {
+    socket.on('newICE', (candidate, socketId) => {
       console.log('newIce');
-        io.to(socketId).emit("receiveICE", candidate, socket.id);
+        io.to(socketId).emit('receiveICE', candidate, socket.id);
     });
 
-    socket.on("leaveSocketRoom", (roomId) => {
+    socket.on('leaveSocketRoom', (roomId) => {
       console.log('leave room');
-        io.to(roomId).emit("userLeft", socket.id);
+        io.to(roomId).emit('userLeft', socket.id);
     })
 
-    socket.on("disconnect", () => {
-        console.log("Client disconnected");
+    socket.on('disconnect', () => {
+        console.log('Client disconnected');
     });
 });
