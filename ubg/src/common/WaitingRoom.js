@@ -7,6 +7,10 @@ import SettingsModal from '../mafia/SettingsModal';
 import EndModal from '../mafia/EndModal';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
+import villager from '../mafia/images/villager.png';
+import mafia from '../mafia/images/mafia.png';
+import detective from '../mafia/images/detective.png';
+import doctor from '../mafia/images/doctor.png';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -62,12 +66,63 @@ const useStyles = makeStyles((theme) => ({
 function WaitingRoom({gameName, gameDescription, leaveRoom, win,
   joinRoom, inRoom, isHost, usersCollection, startGame, gameId}) {
   const classes = useStyles();
+  const description = '<p>Mafia (also known as Werewolf) takes place in a ' +
+    'small town where a minority of the townsfolk hold a dangerous secret. ' +
+    'Each player is secretly assigned a role - Werewolf (mafia), Villager, ' +
+    'Detective (a special Villager), or Doctor (a special Villager).' +
+    'The game alternates between night and day phases. At night, the ' +
+    'Werewolves secretly choose a Villager to kill, the Detective checks ' +
+    'if another player is a Werewolf, and the Doctor chooses a person to ' +
+    'save. During the day, the person who was killed is revealed and is out ' +
+    'of the game. The remaining people then vote on the player they suspect ' +
+    'to be the Werewolf. The player with the majority of votes is out of ' +
+    'the game and their role is revealed. Villagers win when they have ' +
+    'killed all Werewolves, otherwise Werewolves win. Werewolf is a social ' +
+    'game that requires no equipment to play, and can accommodate almost ' +
+    'any large group of players.<p><br>';
+  const villagerImage = '<img src="' + villager +
+    '" style="width:100%" alt="Villager">';
+  const mafiaImage = '<img src="' + mafia +
+    '" style="width:100%" alt="Mafia">';
+  const detectiveImage = '<img src="' + detective +
+    '" style="width:100%" alt="Detective">';
+  const doctorImage = '<img src="' + doctor +
+    '" style="width:100%" alt="Doctor">';
+
   const [settingsOpen, setSettingsOpen] = useState(false);
   /**
    * @return {object} inner HTML
    */
   function createMarkup() {
-    return {__html: gameDescription};
+    return {__html: description +
+      '<div class="row">' +
+        '<div class="column">' +
+          villagerImage +
+          '<h3>Villager</h3>' +
+          '<p>A role with no night actions</p>' +
+        '</div>' +
+        '<div class="column">' +
+          mafiaImage +
+          '<h3>Mafia</h3>' +
+          '<p>A role that can vote to kill one player each night</p>' +
+        '</div>' +
+        '<div class="column">' +
+          detectiveImage +
+          '<h3>Detective</h3>' +
+          '<p>A role that can vote to kill one player each night</p>' +
+        '</div>' +
+        '<div class="column">' +
+          doctorImage +
+          '<h3>Doctor</h3>' +
+          '<p>A role that can choose a person to save each night. ' +
+          'If the mafia targets the same person, they will remain alive.</p>' +
+        '</div>' +
+      '</div>' +
+      '<style>' +
+        '.row { display: flex;}' +
+        '.column { flex: 25%; padding: 5px; }' +
+      '/style',
+    };
   }
   const [endOpen, setEndOpen] = useState(true);
 
