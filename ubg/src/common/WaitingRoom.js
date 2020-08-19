@@ -120,7 +120,7 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
       '</div>' +
       '<style>' +
         '.row { display: flex;}' +
-        '.column { flex: 33.33%; padding: 5px; }' +
+        '.column { flex: 25%; padding: 5px; }' +
       '/style',
     };
   }
