@@ -1,4 +1,4 @@
-import React, {Fragment, useState} from 'react';
+import React, {useState} from 'react';
 import AllReviews from '../reviews/AllReviews';
 import {makeStyles} from '@material-ui/core/styles';
 import {useParams, useHistory} from 'react-router-dom';
@@ -90,8 +90,6 @@ export default function Game() {
   async function createRoomLink() {
     const newRoom = await roomsCollection.doc();
     newRoom.set({gameId, host: user.uid, chat: [], started: false});
-    console.log(newRoom.id);
-    console.log(typeof(newRoom.id));
     return newRoom.id;
   }
 
@@ -202,6 +200,8 @@ function Spacer() {
  * @param {object} usersCollection User collection
  * @param {object} game Reference to game doc
  * @param {func} createRoom Creates game room for current game
+ * @param {func} createRoomLink Creates game room 
+ * @param {func} deleteRoom delete room from database
  * @return {ReactElement} Description of game
  */
 function Description({usersCollection, game, createRoom, gameId, createRoomLink, deleteRoom}) {
@@ -316,6 +316,14 @@ function FavoriteButton({usersCollection, game}) {
   );
 }
 
+/**
+ * @param {string} gameName game name
+ * @param {string} gameId game id
+ * @param {func} createRoomLink Creates game room 
+ * @param {func} deleteRoom delete room from database
+ * @return {ReactElement} Add game event button
+ */
+
 function CreateEventButton({gameName, gameId, createRoomLink, deleteRoom}) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
@@ -344,7 +352,7 @@ function CreateEventButton({gameName, gameId, createRoomLink, deleteRoom}) {
     setStartTime(new Date());
     setEndTime(new Date());
     setDescription(window.location.href);
-    if (gameId == '925') {
+    if (gameId === '925') {
       deleteRoom(roomId);
       setRoomId('');
     }
@@ -369,9 +377,6 @@ function CreateEventButton({gameName, gameId, createRoomLink, deleteRoom}) {
         },
       }
       ApiCalendar.createEvent(event)
-  .then((result) => {
-    console.log(result);
-      })
    .catch((error) => {
      console.log(error);
       });
@@ -385,7 +390,7 @@ function CreateEventButton({gameName, gameId, createRoomLink, deleteRoom}) {
     <div>
       <Button variant='contained'
         color='primary' onClick={handleClickOpen}>
-        Create Event
+        Add Game Event
       </Button>
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
@@ -590,10 +595,8 @@ Description.propTypes = {
     weight: PropTypes.number,
   }),
   gameId: PropTypes.string,
-};
-
-Videos.propTypes = {
-  videos: PropTypes.array,
+  createRoomLink: PropTypes.func,
+  deleteRoom: PropTypes.func,
 };
 
 FavoriteButton.propTypes = {
@@ -601,4 +604,15 @@ FavoriteButton.propTypes = {
   game: PropTypes.shape({
     id: PropTypes.number,
   }),
+};
+
+CreateEventButton.propTypes = {
+  gameName: PropTypes.string,
+  gameId: PropTypes.string,
+  createRoomLink: PropTypes.func,
+  deleteRoom: PropTypes.func,
+};
+
+Videos.propTypes = {
+  videos: PropTypes.array,
 };
