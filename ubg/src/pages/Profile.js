@@ -2,10 +2,10 @@ import React from 'react';
 import {useUser, useFirestoreDocData, useFirestore} from 'reactfire';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
 import Navbar from '../common/Navbar';
-import GameCard from '../search/GameCard';
 import {makeStyles} from '@material-ui/core/styles';
+import FavoriteGames from '../profile/FavoriteGames';
+import Reviews from '../reviews/Reviews';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
@@ -33,13 +33,16 @@ export default function Profile() {
     <div>
       <Navbar />
       <Box container='true' justify='center' alignItems='center' m={10}>
-        <Typography variant='h4' className={classes.fonts}>
-          {user ? user.displayName : 'Sign in to view your profile'}
-        </Typography>
-        <br />
+        <Box m={10}>
+          <Typography variant='h2' className={classes.fonts}>
+            {user ? user.displayName : 'Sign in to view your profile'}
+          </Typography>
+          <hr />
+        </Box>
         {user ? (
           <div>
             <FavoriteGames userCollection={userCollection} uid={user.uid} />
+            <UserReviews userCollection={userCollection} uid={user.uid} />
           </div>
         ) : ''}
       </Box>
@@ -48,47 +51,38 @@ export default function Profile() {
 }
 
 /**
- * @param {object} userCollection User collection
- * @param {number} uid ID of current user
- * @return {ReactElement} Grid containing favorite games of current user
+ * @param {object} userCollection Reference to user collection
+ * @param {string} uid User ID of current user
+ * @return {ReactElement} Reviews user has left
  */
-function FavoriteGames({userCollection, uid}) {
-  const userGames = useFirestoreDocData(userCollection.doc(uid)).games;
+function UserReviews({userCollection, uid}) {
+  const userReviews = useFirestoreDocData(userCollection.doc(uid)).reviews;
+  const classes = useStyles();
+
+  /**
+   * Orders by timestamp of reviews
+   * @param {number} a Timestamp from first review
+   * @param {number} b Timestamp from second review
+   * @return {number} Timestamp comparison
+   */
+  function compare(a, b) {
+    return b.timestamp - a.timestamp;
+  }
 
   return (
-    <Box>
-      <hr />
-      <Typography variant='h6'>
-        Favorite Games
-      </Typography>
-      <br />
-      <Grid container justify="flex-start" alignItems="stretch" spacing={4}>
-        {userGames.map((game) => {
-          return (
-            <Grid item key={game.id} xs={12} sm={6} xl={2} lg={3} md={4}>
-              <GameCard
-                id={game.id}
-                image={game.image}
-                name={game.name}
-                year={game.year}
-                minTime={game.minPlaytime}
-                maxTime={game.maxPlaytime}
-                minPlayer={game.minPlayer}
-                maxPlayer={game.maxPlayer}
-                rating={game.rating}
-                minAge={game.minAge}
-                weight={game.weight}
-              />
-            </Grid>
-          );
-        })}
-      </Grid>
-      <br />
-    </Box>
+    <div>
+      <Box m={10}>
+        <hr /> <br /> <br />
+        <Typography variant='h4' className={classes.fonts}>
+          Reviews
+        </Typography>
+        <Reviews reviews={userReviews.sort(compare)} profile={true}/>
+      </Box>
+    </div>
   );
 }
 
-FavoriteGames.propTypes = {
+UserReviews.propTypes = {
   userCollection: PropTypes.object,
   uid: PropTypes.string,
 };

@@ -2,6 +2,7 @@ import React from 'react';
 import {Box, Button, InputLabel, TextField} from '@material-ui/core/';
 import Rating from '@material-ui/lab/Rating';
 import PropTypes from 'prop-types';
+import {useFirestore, useFirestoreDocData} from 'reactfire';
 
 /**
  * Displays a review writing section
@@ -9,6 +10,8 @@ import PropTypes from 'prop-types';
  * @return {ReactElement} Box containing section to write a new review
  */
 export default function NewReview(props) {
+  const gameName = useFirestoreDocData(
+      useFirestore().collection('games').doc(props.gameId)).Name;
   const addReview = (event) => {
     event.preventDefault();
     // Get the values of the form
@@ -17,7 +20,7 @@ export default function NewReview(props) {
     const text = event.target.elements.text.value.trim();
     const timestamp = Date.now();
     const userId = props.user.uid;
-    const reviewObject = {name, rating, text, timestamp, userId};
+    const reviewObject = {name, rating, text, timestamp, userId, gameName};
 
     // force user to select a rating before submitting review
     if (rating && rating !== null) {
@@ -62,4 +65,5 @@ export default function NewReview(props) {
 NewReview.propTypes = {
   user: PropTypes.object,
   handleAddReview: PropTypes.func,
+  gameId: PropTypes.string,
 };
