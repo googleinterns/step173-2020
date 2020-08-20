@@ -209,7 +209,7 @@ function Spacer() {
  * @return {ReactElement} Description of game
  */
 function Description(
-  {usersCollection, game, createRoom, gameId, createRoomLink, deleteRoom}) {
+    {usersCollection, game, createRoom, gameId, createRoomLink, deleteRoom}) {
   const classes = useStyles();
   let playTime = game.minPlaytime + '-' + game.maxPlaytime;
   let players = game.minPlayer + '-' + game.maxPlayer;

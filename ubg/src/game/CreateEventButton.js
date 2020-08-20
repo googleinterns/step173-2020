@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Add game event button
  */
 export default function CreateEventButton(
-  {gameName, gameId, createRoomLink, deleteRoom}) {
+    {gameName, gameId, createRoomLink, deleteRoom}) {
   const classes = useStyles();
   const moment = require('moment-timezone');
   const timeZone = moment.tz.guess();
