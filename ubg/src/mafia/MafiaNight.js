@@ -117,6 +117,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
           ),
         });
       }
+      endGame();
     }
   }
   /**

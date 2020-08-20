@@ -100,6 +100,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
       }
       setPlayers(allPlayers);
       setInitialize(true);
+      endGame();
     }
   }
 

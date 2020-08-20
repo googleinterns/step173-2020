@@ -108,6 +108,7 @@ const mapStateToProps = (state) => ({
   userUid: state.currentUser.uid,
   day: state.roomData.day,
   usersData: state.usersData,
+  chat: state.roomData.chat,
 });
 
 export default connect(
