@@ -5,6 +5,7 @@ import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import Link from '@material-ui/core/Link';
 import {AuthCheck} from 'reactfire';
 import PropTypes from 'prop-types';
 
@@ -35,22 +36,40 @@ export default function Implementation({gameId, gamesCollection, implementations
    * Add link to implementations
    */
   function addImplementationLink() {
-    console.log('here');
+    if (link !== '' && linkName !== '') {
+      let links = implementations;
+      links.push({'name': linkName, 'link': link});
+      gamesCollection.doc(gameId).update({'implementations':links});
+    }
+    setLink('');
+    setLinkName('');
   }
   return (
     <Box>
-      <Grid container spacing={5}>
-        <Grid item>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
           <Typography variant='h4'>
             Implementations
           </Typography>
         </Grid>
+        {implementations.map((l, index) => {
+            return (
+              <Grid item
+                key={index}
+                className={classes.section}
+              >
+                <Link target="_blank" href={l.link} >
+                  {l.name}
+                </Link>
+              </Grid>
+            );
+          })}
       </Grid>
       <br />
-      <Typography variant='h6'>
-        Add Implementation Link
-      </Typography>
       <AuthCheck>
+        <Typography variant='h6'>
+          Add Implementation Link
+        </Typography>
         <Grid container spacing={3}>
           <Grid item className={classes.grid}>
             <TextField
