@@ -28,7 +28,12 @@ import {setRoomData} from '../redux/actions/roomDataActions';
 import {setUsersData} from '../redux/actions/usersDataActions';
 import {useHistory} from 'react-router-dom';
 import PropTypes from 'prop-types';
+import socketIOClient from 'socket.io-client';
 const classNames = require('classnames');
+let socket = null;
+const peerConnections = {};
+const remoteStreams = {};
+let localStream = null;
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -54,6 +59,8 @@ const useStyles = makeStyles((theme) => ({
   },
   grow: {
     flexGrow: 1,
+    height: '100px',
+    overflow: 'scroll',
   },
   signInContainer: {
     height: '100vh',
@@ -85,6 +92,7 @@ const useStyles = makeStyles((theme) => ({
   },
   transparentBackground: {
     backgroundColor: 'transparent',
+    zIndex: 1,
   },
   chatSelected: {
     backgroundColor: '#e0e0e0',
@@ -117,6 +125,9 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     user &&
     isMafia(user.uid);
   const [mafiaChatSelected, setMafiaChatSelected] = useState(false);
+  const [localAudio, setLocalAudio] = useState(false);
+  const [localVideo, setLocalVideo] = useState(false);
+  const [uidToSocketId, setUidToSocketId] = useState({});
 
   const chatClasses = classNames({
     [classes.chatHeader]: true,
@@ -136,6 +147,143 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
    */
   function homePage() {
     history.push('/');
+  }
+
+  // Video chat
+  const configuration = {
+    iceServers: [
+      {
+        urls: [
+          'stun:stun1.l.google.com:19302',
+          'stun:stun2.l.google.com:19302',
+        ],
+      },
+    ],
+    iceCandidatePoolSize: 10,
+  };
+
+  /**
+   * Create peer connection and call create offer or answer
+   * @param {string} socketId
+   * @param {object} offer
+   */
+  function createPeerConnection(socketId, offer = null) {
+    if (!peerConnections[socketId]) {
+      peerConnections[socketId] = new RTCPeerConnection(configuration);
+      localStream.getTracks().forEach((track) => {
+        peerConnections[socketId].addTrack(track, localStream);
+      });
+
+      remoteStreams[socketId] = new MediaStream();
+      peerConnections[socketId].addEventListener('track', (event) => {
+        event.streams[0].getTracks().forEach((track) => {
+          remoteStreams[socketId].addTrack(track);
+        });
+      });
+
+      peerConnections[socketId].addEventListener('icecandidate', (event) => {
+        if (!event.candidate) {
+          return;
+        }
+        socket.emit('newICE', event.candidate, socketId);
+      });
+      if (offer) {
+        createAnswer(socketId, offer);
+      } else {
+        createOffer(socketId);
+      }
+    } else {
+      console.error('connection already exists!');
+    }
+  }
+
+  /**
+   * Create and send offer for peer connection
+   * @param {string} socketId
+   */
+  async function createOffer(socketId) {
+    if (peerConnections[socketId]) {
+      const offer = await peerConnections[socketId].createOffer();
+      await peerConnections[socketId].setLocalDescription(offer);
+      socket.emit('sendOffer', offer, socketId, user.uid);
+    } else {
+      console.error('connection doesnt exists');
+    }
+  }
+
+  /**
+   * Create and send answer for peer connection
+   * @param {string} socketId
+   * @param {object} offer
+   */
+  async function createAnswer(socketId, offer) {
+    if (peerConnections[socketId]) {
+      await peerConnections[socketId].setRemoteDescription(offer);
+      const answer = await peerConnections[socketId].createAnswer();
+      await peerConnections[socketId].setLocalDescription(answer);
+      socket.emit('sendAnswer', answer, socketId);
+    } else {
+      console.error('connection doesnt exists');
+    }
+  }
+
+  /**
+   * Receive peer connection answer
+   * @param {string} socketId
+   * @param {object} answer
+   */
+  async function receiveAnswer(socketId, answer) {
+    if (peerConnections[socketId]) {
+      await peerConnections[socketId].setRemoteDescription(answer);
+    } else {
+      console.error('connection doesnt exists');
+    }
+  }
+
+  /**
+   * Receive ICE candidates
+   * @param {string} socketId
+   * @param {object} candidate
+   */
+  function receiveICE(socketId, candidate) {
+    if (peerConnections[socketId]) {
+      peerConnections[socketId].addIceCandidate(candidate);
+    }
+  }
+
+  /**
+   * End connection with the user that left
+   * @param {string} socketId
+   */
+  function userLeft(socketId) {
+    if (peerConnections[socketId]) {
+      peerConnections[socketId].close();
+      peerConnections[socketId] = null;
+    }
+    if (remoteStreams[socketId]) {
+      remoteStreams[socketId].getTracks().forEach((track) => {
+        track.stop();
+      });
+      remoteStreams[socketId] = null;
+    }
+  }
+
+  /**
+   * Toggle local audio
+   */
+  function toggleAudio() {
+    setLocalAudio(!localAudio);
+    localStream.getAudioTracks()[0].enabled =
+    !localStream.getAudioTracks()[0].enabled;
+  }
+
+  /**
+   * Toggle local video
+   */
+  function toggleVideo() {
+    setLocalVideo(!localVideo);
+    localStream.getVideoTracks()[0].enabled =
+    !localStream.getVideoTracks()[0].enabled;
   }
 
   /**
@@ -214,6 +362,85 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     }
   }
 
+  /**
+   * Start video and join to socket room
+   */
+  async function startVideoAndJoinSocketRoom() {
+    localStream = await navigator.mediaDevices.getUserMedia(
+        {video: true, audio: true},
+    );
+    setLocalAudio(true);
+    setLocalVideo(true);
+    socket.emit('joinSocketRoom', roomId, user.uid);
+  }
+
+  /**
+   * Emmit leave socket room and end peer concections
+   */
+  function leaveSocketRoomEndPeerConnection() {
+    socket.emit('leaveSocketRoom', roomId);
+    Object.keys(remoteStreams).forEach((stream) => {
+      if (remoteStreams[stream]) {
+        remoteStreams[stream].getTracks().forEach((track) => track.stop());
+        remoteStreams[stream] = null;
+      }
+    });
+    Object.keys(peerConnections).forEach((connection) => {
+      if (peerConnections[connection]) {
+        peerConnections[connection].close();
+        peerConnections[connection] = null;
+      }
+    });
+    localStream.getTracks().forEach((track) => {
+      track.stop();
+    });
+    localStream = null;
+    setLocalAudio(false);
+    setLocalVideo(false);
+  }
+
+  /**
+   * handle socket connection
+   * @return {func}
+   */
+  function socketConnection() {
+    socket = socketIOClient('/');
+
+    if (usersData.some((u) => u.uid === user.uid)) {
+      startVideoAndJoinSocketRoom();
+    }
+
+    socket.on('newUser', (socketId, uid) => {
+      createPeerConnection(socketId);
+      const newIdMap = {...uidToSocketId};
+      newIdMap[uid] = socketId;
+      setUidToSocketId(newIdMap);
+    });
+
+    socket.on('receiveOffer', (offer, socketId, uid) => {
+      createPeerConnection(socketId, offer);
+      const newIdMap = {...uidToSocketId};
+      newIdMap[uid] = socketId;
+      setUidToSocketId(newIdMap);
+    });
+
+    socket.on('receiveAnswer', (answer, socketId) => {
+      receiveAnswer(socketId, answer);
+    });
+
+    socket.on('receiveICE', (candidate, socketId) => {
+      receiveICE(socketId, candidate);
+    });
+
+    socket.on('userLeft', (socketId) => {
+      userLeft(socketId);
+    });
+
+    return () => socket.disconnect();
+  }
+
+  useEffect(socketConnection, []);
+
   useEffect(userSnackbar, [usersData, prevUsersData]);
 
   useEffect(() => {
@@ -236,6 +463,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
    * Add user to the users collection in the room
    */
   function joinRoom() {
+    startVideoAndJoinSocketRoom();
     usersCollection.doc(user.uid).set({
       displayName: user.displayName,
       email: user.email,
@@ -259,6 +487,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
    * Delete user from user collection in the room
    */
   function leaveRoom() {
+    leaveSocketRoomEndPeerConnection();
     usersCollection.doc(user.uid).delete();
   }
 
@@ -365,8 +594,17 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                         usersData.map((u) => {
                           return (
                             <UserVideo
+                              video={u.uid === user.uid ? localStream :
+                                remoteStreams[uidToSocketId[u.uid]]}
                               key={u.uid}
                               user={u.displayName}
+                              local={u.uid === user.uid ? {
+                                localAudio,
+                                localVideo,
+                                toggleAudio,
+                                toggleVideo,
+                              } :
+                              null}
                             />
                           );
                         })

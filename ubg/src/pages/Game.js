@@ -25,9 +25,9 @@ import SignalCellular3Bar from '@material-ui/icons/SignalCellular3Bar';
 import TextField from '@material-ui/core/TextField';
 import PropTypes from 'prop-types';
 import * as firebase from 'firebase/app';
-import Pagination from '@material-ui/lab/Pagination';
-import VideoCard from '../game/VideoCard';
 import Implementation from '../game/Implementation';
+import Videos from '../game/Videos';
+import CreateEventButton from '../game/CreateEventButton';
 import NotFound from '../pages/NotFound';
 
 const useStyles = makeStyles((theme) => ({
@@ -41,13 +41,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  pagination: {
-    '& > *': {
-      margin: theme.spacing(2),
-      display: 'flex',
-      justifyContent: 'center',
-    },
   },
 }));
 
@@ -75,6 +68,24 @@ export default function Game() {
     history.push(`/gameRoom/${newRoom.id}`);
   }
   /**
+   * Creates a room in firebase and return room id
+   */
+  async function createRoomLink() {
+    const newRoom = await roomsCollection.doc();
+    newRoom.set({gameId, host: user.uid, chat: [], started: false});
+    return newRoom.id;
+  }
+
+  /**
+   * @param {string} id room id
+   * Delete room in firebase
+   */
+  async function deleteRoom(id) {
+    roomsCollection.doc(id).delete();
+  }
+
+
+  /**
    * Go to a rooms url with the room id
    */
   function joinRoom() {
@@ -95,6 +106,27 @@ export default function Game() {
     return true;
   }
 
+  /**
+   * Sets up array of videos for pagination
+   * @param {array} videos Array of videos for game page
+   * @return {array} Nested array for videos
+   */
+  function paginateVideos(videos) {
+    const allVideos = [];
+    let list = [];
+    videos.forEach((video) => {
+      list.push(video);
+      if (list.length === 12) {
+        allVideos.push(list);
+        list = [];
+      }
+    });
+    if (list.length !== 0) {
+      allVideos.push(list);
+    }
+    return allVideos;
+  }
+
   if (isEmpty(game)) {
     return (
       <NotFound />
@@ -109,6 +141,8 @@ export default function Game() {
             game={game}
             createRoom={createRoom}
             gameId={gameId}
+            createRoomLink={createRoomLink}
+            deleteRoom={deleteRoom}
           />
           <Spacer />
           <Implementation
@@ -177,9 +211,12 @@ function Spacer() {
  * @param {object} usersCollection User collection
  * @param {object} game Reference to game doc
  * @param {func} createRoom Creates game room for current game
+ * @param {func} createRoomLink Creates game room
+ * @param {func} deleteRoom delete room from database
  * @return {ReactElement} Description of game
  */
-function Description({usersCollection, game, createRoom, gameId}) {
+function Description(
+    {usersCollection, game, createRoom, gameId, createRoomLink, deleteRoom}) {
   const classes = useStyles();
   let playTime = game.minPlaytime + '-' + game.maxPlaytime;
   let players = game.minPlayer + '-' + game.maxPlayer;
@@ -218,7 +255,7 @@ function Description({usersCollection, game, createRoom, gameId}) {
           >
           </div>
           <br />
-          <Typography variant='body2' color='textSecondary' component='p'>
+          <Typography variant='body2' color='textSecondary' component='div'>
             <Icon aria-label='share'>
               <Star />{game.rating.toFixed(2)}/10
             </Icon>
@@ -240,17 +277,33 @@ function Description({usersCollection, game, createRoom, gameId}) {
             </Icon>
             &emsp;
             <AuthCheck>
-              {gameId === '925' ?
-                <Button
-                  variant='contained'
-                  color='primary'
-                  onClick={createRoom}>
-                  Create Room
-                </Button> :
-                null
-              }
-              &emsp;
-              <FavoriteButton usersCollection={usersCollection} game={game}/>
+              <Grid container spacing={3}>
+                {gameId === '925' ?
+                  <Grid item>
+                    <Button
+                      variant='contained'
+                      color='primary'
+                      onClick={createRoom}>
+                      Create Room
+                    </Button>
+                  </Grid> :
+                  null
+                }
+                <Grid item>
+                  <FavoriteButton
+                    usersCollection={usersCollection}
+                    game={game}
+                  />
+                </Grid>
+                <Grid item>
+                  <CreateEventButton
+                    gameName={game.Name}
+                    gameId={gameId}
+                    createRoomLink={createRoomLink}
+                    deleteRoom={deleteRoom}
+                  />
+                </Grid>
+              </Grid>
             </AuthCheck>
           </Typography>
         </Grid>
@@ -282,55 +335,6 @@ function FavoriteButton({usersCollection, game}) {
         {favorite ? 'Delete from favorites' : 'Add to favorites'}
       </Button>
     ) : null
-  );
-}
-
-/**
- * @param {object} videos Object containing all videos
- * @return {ReactElement} Videos describing the game
- */
-function Videos({videos}) {
-  const classes = useStyles();
-  const [page, setPage] = React.useState(1);
-  if (Object.keys(videos).length === 0) {
-    return (
-      <Typography variant='h4'>
-        No videos available
-      </Typography>
-    );
-  }
-  return (
-    <Box>
-      <Box>
-        <Grid container>
-          <Grid item>
-            <Typography variant='h4'>
-              Videos
-            </Typography>
-          </Grid>
-        </Grid>
-        <br />
-        <Grid container justify="flex-start" alignItems="stretch" spacing={4}>
-          {videos[page-1].map((video) => {
-            return (
-              <Grid item
-                key={video.link}
-                className={classes.section}
-                xs={12} sm={6} xl={2} lg={3} md={4}
-              >
-                <VideoCard video={video} />
-              </Grid>
-            );
-          })}
-        </Grid>
-      </Box>
-      <Pagination
-        count={videos.length}
-        boundaryCount={2}
-        onChange={(e, p) => setPage(p)}
-        className={classes.pagination}
-      />
-    </Box>
   );
 }
 
@@ -399,27 +403,6 @@ function addFavorite(userGames, usersCollection,
   }
 }
 
-/**
- * Sets up array of videos for pagination
- * @param {array} videos Array of videos for game page
- * @return {array} Nested array for videos
- */
-function paginateVideos(videos) {
-  const allVideos = [];
-  let list = [];
-  videos.forEach((video) => {
-    list.push(video);
-    if (list.length === 12) {
-      allVideos.push(list);
-      list = [];
-    }
-  });
-  if (list.length !== 0) {
-    allVideos.push(list);
-  }
-  return allVideos;
-}
-
 Description.propTypes = {
   usersCollection: PropTypes.object,
   createRoom: PropTypes.func,
@@ -436,10 +419,8 @@ Description.propTypes = {
     weight: PropTypes.number,
   }),
   gameId: PropTypes.string,
-};
-
-Videos.propTypes = {
-  videos: PropTypes.array,
+  createRoomLink: PropTypes.func,
+  deleteRoom: PropTypes.func,
 };
 
 FavoriteButton.propTypes = {
@@ -448,3 +429,4 @@ FavoriteButton.propTypes = {
     id: PropTypes.number,
   }),
 };
+
