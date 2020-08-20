@@ -70,7 +70,7 @@ function MafiaGame({day, room, usersCollection, usersData, userUid,
         userDoc.update({
           'mafiaStats.wins': userDocData.mafiaStats.wins + 1,
         })
-      )
+      );
       playAgain();
     // all villagers are dead or one mafia and one villager alive
     } else if (villagerCount === 0 ||
@@ -88,7 +88,7 @@ function MafiaGame({day, room, usersCollection, usersData, userUid,
         userDoc.update({
           'mafiaStats.losses': userDocData.mafiaStats.losses + 1,
         })
-      )
+      );
       playAgain();
     }
   }

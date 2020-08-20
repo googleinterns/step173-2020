@@ -34,7 +34,8 @@ export default function Profile() {
   return (
     <div>
       <Navbar />
-      <Box container='true' justify='center' alignItems='center' mt={10} ml={30} mr={30}>
+      <Box container='true' justify='center' alignItems='center'
+        mt={10} ml={30} mr={30}>
         <Box m={10}>
           <Typography variant='h2' className={classes.fonts}>
             {user ? user.displayName : 'Sign in to view your profile'}
@@ -53,6 +54,11 @@ export default function Profile() {
   );
 }
 
+/**
+ * @param {object} userCollection Reference to user collection
+ * @param {string} uid User ID of current user
+ * @return {ReactElement} Returns game statistics for user
+ */
 function UserStats({userCollection, uid}) {
   const classes = useStyles();
   const userStats = useFirestoreDocData(userCollection.doc(uid)).mafiaStats;
@@ -95,7 +101,7 @@ function UserReviews({userCollection, uid}) {
    */
   function compare(a, b) {
     return b.timestamp - a.timestamp;
-  }git status
+  }
 
   return (
     <div>
@@ -118,6 +124,11 @@ function UserReviews({userCollection, uid}) {
     </div>
   );
 }
+
+UserStats.propTypes = {
+  userCollection: PropTypes.object,
+  uid: PropTypes.string,
+};
 
 UserReviews.propTypes = {
   userCollection: PropTypes.object,
