@@ -27,6 +27,7 @@ import PropTypes from 'prop-types';
 import * as firebase from 'firebase/app';
 import Pagination from '@material-ui/lab/Pagination';
 import VideoCard from '../game/VideoCard';
+import Implementation from '../game/Implementation';
 import NotFound from '../pages/NotFound';
 
 const useStyles = makeStyles((theme) => ({
@@ -61,9 +62,9 @@ export default function Game() {
   const [roomId, setRoomId] = useState('');
   const roomsCollection = useFirestore().collection('rooms');
   const usersCollection = useFirestore().collection('users');
+  const gamesCollection = useFirestore().collection('games');
 
-  const game = useFirestoreDocData(
-      useFirestore().collection('games').doc(gameId));
+  const game = useFirestoreDocData(gamesCollection.doc(gameId));
 
   /**
    * Creates a room in firebase and adds the current user as host
@@ -108,6 +109,12 @@ export default function Game() {
             game={game}
             createRoom={createRoom}
             gameId={gameId}
+          />
+          <Spacer />
+          <Implementation
+            gameId={gameId}
+            gamesCollection={gamesCollection}
+            implementations={game.implementations}
           />
           <Spacer />
           <Grid container spacing={5}>
