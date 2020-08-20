@@ -13,14 +13,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// Returns one formatted review
-const Review = (props) => {
+/**
+ * @param {object} review text of the message
+ * @return {ReactElement} Returns one formatted review
+ */
+export default function Review({review}) {
   const classes = useStyles();
-  const ratingVal = parseInt(props.review.rating, 10);
+  const ratingVal = parseInt(review.rating, 10);
 
   return (
     <div>
-      <ListItem key={props.review.name + props.review.timestamp}
+      <ListItem 
         alignItems="flex-start">
         <ListItemText
           primary={
@@ -29,7 +32,7 @@ const Review = (props) => {
               variant="h6"
               component={'span'}
             >
-              {props.review.name}
+              {review.name}
             </Typography>
           }
           secondary={
@@ -42,7 +45,7 @@ const Review = (props) => {
               />
               <br />
               <Typography component={'span'}>
-                {props.review.text}
+                {review.text}
               </Typography>
             </>
           }
@@ -57,4 +60,3 @@ Review.propTypes = {
   review: PropTypes.object,
 };
 
-export default Review;
