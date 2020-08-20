@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
  */
 function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
   mafiaKill, doctorSave, detectiveCheck, showResult, mafiaDecision,
-  endGame, dayNum}) {
+  endGame, dayNum, chat}) {
   const classes = useStyles();
   const [players, setPlayers] = useState([]);
   const [userInfo, setUserInfo] = useState('');
@@ -109,12 +109,14 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
       setPlayers(allPlayers);
       // dayNum can show up as undefined on first night
       dayNum = dayNum ? (initialize ? 1 : dayNum) : 1;
-      room.update({
-        chat: firebase.firestore.FieldValue.arrayUnion(
-            {text: '-------- NIGHT ' + dayNum + ' --------',
-              isGameText: true, hours, minutes},
-        ),
-      });
+      if (!chat.includes('-------- NIGHT ' + dayNum + ' --------')) {
+        room.update({
+          chat: firebase.firestore.FieldValue.arrayUnion(
+              {text: '-------- NIGHT ' + dayNum + ' --------',
+                isGameText: true, hours, minutes},
+          ),
+        });
+      }
     }
   }
   /**
@@ -314,6 +316,7 @@ MafiaNight.propTypes = {
   mafiaDecision: PropTypes.array,
   endGame: PropTypes.func,
   dayNum: PropTypes.number,
+  chat: PropTypes.array,
 };
 
 const mapStateToProps = (state) => ({
@@ -325,6 +328,7 @@ const mapStateToProps = (state) => ({
   detectiveCheck: state.roomData.detectiveCheck,
   mafiaDecision: state.roomData.mafiaDecision,
   dayNum: state.roomData.dayCount,
+  chat: state.roomData.chat,
 });
 
 export default connect(
