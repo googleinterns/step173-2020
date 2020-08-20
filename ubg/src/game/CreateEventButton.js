@@ -9,7 +9,7 @@ import Chip from '@material-ui/core/Chip';
 import Paper from '@material-ui/core/Paper';
 import ApiCalendar from 'react-google-calendar-api';
 import DateFnsUtils from '@date-io/date-fns';
-import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
@@ -34,13 +34,13 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @param {string} gameName game name
  * @param {string} gameId game id
- * @param {func} createRoomLink Creates game room 
+ * @param {func} createRoomLink Creates game room
  * @param {func} deleteRoom delete room from database
  * @return {ReactElement} Add game event button
  */
-
 export default function CreateEventButton({gameName, gameId, createRoomLink, deleteRoom}) {
   const classes = useStyles();
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const [open, setOpen] = useState(false);
   const [summary, setSummary] = useState('🎮 ' + gameName + ' 🎮');
   const [startTime, setStartTime] = useState(new Date());
@@ -55,9 +55,9 @@ export default function CreateEventButton({gameName, gameId, createRoomLink, del
     if (gameId === '925') {
       const newRoomId = await createRoomLink();
       setRoomId(newRoomId);
-      setDescription("Join game with this link: " + 
-      window.location.href.substring(0,window.location.href.lastIndexOf("/")) +
-      "/gameRoom/" + newRoomId);
+      setDescription('Join game with this link: ' +
+      window.location.href.substring(0, window.location.href.lastIndexOf('/')) +
+      '/gameRoom/' + newRoomId);
     }
   };
 
@@ -90,17 +90,17 @@ export default function CreateEventButton({gameName, gameId, createRoomLink, del
       'description': description,
       'start': {
         'dateTime': startTime.toISOString(),
-        'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone,
+        'timeZone': timeZone,
       },
       'end': {
         'dateTime': eventEndTime.toISOString(),
-        'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone,
+        'timeZone': timeZone,
       },
       'attendees': emails,
-    }
+    };
     ApiCalendar.createEvent(event)
-      .then((result) => {})
-      .catch((error) => {});
+        .then((result) => {})
+        .catch((error) => {});
     setSummary('🎮 ' + gameName + ' 🎮');
     setStartTime(new Date());
     setEndTime(new Date());
@@ -109,21 +109,22 @@ export default function CreateEventButton({gameName, gameId, createRoomLink, del
     setEmails([]);
   };
   const handleAddEmail = () => {
-    setEmails([...emails, {'email':email}]);
+    setEmails([...emails, {'email': email}]);
     setEmail('');
   };
 
   const handleDelete = (e) => () => {
-    setEmails((emails) => emails.filter((singleEmail) => singleEmail.email !== e));
+    setEmails((emails) => emails.filter(
+      (singleEmail) => singleEmail.email !== e));
   };
-  
+
   /**
    * @param {string} email email to verify
    * @return {boolean} whether email is valid
    */
   function isValidEmail(email) {
     if (email !== '' &&
-    /[\w\d-]+@[\w\d-]+\.[\w\d-]+/.test(email)){
+    /[\w\d-]+@[\w\d-]+\.[\w\d-]+/.test(email)) {
       let e;
       for (e of emails) {
         if (e.email === email) {
@@ -154,22 +155,22 @@ export default function CreateEventButton({gameName, gameId, createRoomLink, del
             fullWidth
           />
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <DateTimePicker
-            label="Start Time"
-            value={startTime}
-            onChange={setStartTime}
-            className={classes.textField}
-            showTodayButton
-            disablePast
-          />
-          <DateTimePicker
-            label="End Time"
-            value={endTime}
-            onChange={setEndTime}
-            className={classes.textField}
-            showTodayButton
-            disablePast
-          />
+            <DateTimePicker
+              label="Start Time"
+              value={startTime}
+              onChange={setStartTime}
+              className={classes.textField}
+              showTodayButton
+              disablePast
+            />
+            <DateTimePicker
+              label="End Time"
+              value={endTime}
+              onChange={setEndTime}
+              className={classes.textField}
+              showTodayButton
+              disablePast
+            />
           </MuiPickersUtilsProvider>
           <TextField
             margin="dense"

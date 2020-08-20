@@ -76,6 +76,7 @@ export default function Game() {
   }
 
   /**
+   * @param {string} id room id
    * Delete room in firebase
    */
   async function deleteRoom(id) {
@@ -203,7 +204,7 @@ function Spacer() {
  * @param {object} usersCollection User collection
  * @param {object} game Reference to game doc
  * @param {func} createRoom Creates game room for current game
- * @param {func} createRoomLink Creates game room 
+ * @param {func} createRoomLink Creates game room
  * @param {func} deleteRoom delete room from database
  * @return {ReactElement} Description of game
  */
@@ -268,29 +269,29 @@ function Description({usersCollection, game, createRoom, gameId, createRoomLink,
             </Icon>
             &emsp;
             <AuthCheck>
-            <Grid container spacing={3}>
-              {gameId === '925' ?
+              <Grid container spacing={3}>
+                {gameId === '925' ?
+                  <Grid item>
+                    <Button
+                      variant='contained'
+                      color='primary'
+                      onClick={createRoom}>
+                      Create Room
+                    </Button>
+                  </Grid> :
+                  null
+                }
                 <Grid item>
-                  <Button
-                    variant='contained'
-                    color='primary'
-                    onClick={createRoom}>
-                    Create Room
-                  </Button>
-                </Grid> :
-                null
-              }
-              <Grid item>
-                <FavoriteButton usersCollection={usersCollection} game={game}/>
-              </Grid>
-              <Grid item>
-                <CreateEventButton
-                  gameName={game.Name}
-                  gameId={gameId}
-                  createRoomLink={createRoomLink}
-                  deleteRoom={deleteRoom}
-                />
-              </Grid>
+                  <FavoriteButton usersCollection={usersCollection} game={game}/>
+                </Grid>
+                <Grid item>
+                  <CreateEventButton
+                    gameName={game.Name}
+                    gameId={gameId}
+                    createRoomLink={createRoomLink}
+                    deleteRoom={deleteRoom}
+                  />
+                </Grid>
               </Grid>
             </AuthCheck>
           </Typography>
