@@ -74,9 +74,12 @@ function UserStats({userCollection, uid}) {
             Mafia (Werewolf)
           </Typography>
           <br />
-          Wins: {userStats.wins}
-          <br />
-          Losses: {userStats.losses}
+          <Typography variant="body1">
+            Wins: {userStats.wins}
+          </Typography>
+          <Typography variant="body1">
+            Losses: {userStats.losses}
+          </Typography>
         </CardContent>
       </Card>
       <br /> <hr />
