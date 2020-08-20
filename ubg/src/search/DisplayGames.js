@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import Pagination from '@material-ui/lab/Pagination';
 import GameCard from './GameCard';
 import PropTypes from 'prop-types';
+import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles((theme) => ({
   pagination: {
@@ -14,6 +15,9 @@ const useStyles = makeStyles((theme) => ({
       justifyContent: 'center',
     },
   },
+  fonts: {
+    fontWeight: 'bold',
+  },
 }));
 
 /**
@@ -22,7 +26,8 @@ const useStyles = makeStyles((theme) => ({
  * @param {number} totalGames number of games in total
  * @return {ReactElement} Display all the games that satisfy conditions
  */
-export default function DisplayGames({games, paginationCount, totalGames}) {
+export default function DisplayGames({games, paginationCount, totalGames,
+  title}) {
   const classes = useStyles();
   const [page, setPage] = React.useState(1);
   let total = totalGames;
@@ -31,6 +36,16 @@ export default function DisplayGames({games, paginationCount, totalGames}) {
   }
   return (
     <Box m={10}>
+      {
+        title ?
+        <div>
+          <Typography variant='h4' className={classes.fonts}>
+            {title}
+          </Typography>
+          <br />
+        </div> :
+        null
+      }
       <Grid container justify="flex-start" alignItems="stretch" spacing={4}>
         {total === 0 ? null : games[page-1].map((item) =>
           <Grid key={item['id']} item xs={12} sm={6} xl={2} lg={3} md={4}>
@@ -62,4 +77,5 @@ DisplayGames.propTypes = {
   games: PropTypes.array,
   paginationCount: PropTypes.number,
   totalGames: PropTypes.number,
+  title: PropTypes.string,
 };
