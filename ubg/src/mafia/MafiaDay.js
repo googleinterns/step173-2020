@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia day element
  */
 function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
-  userUid, room, dayVote, aliveNum, showResult, endGame, dayNum, chat}) {
+  userUid, room, dayVote, aliveNum, showResult, endGame, dayNum, chat, win}) {
   const classes = useStyles();
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
@@ -55,7 +55,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
   function startDay() {
     endGame();
     setUserInfo(usersData.find((u) => u.uid === userUid));
-    if (!initialize) {
+    if (!initialize && (!win || win === 0)) {
       const allPlayers = [];
       const today = new Date();
       const hours = today.getUTCHours();
@@ -248,6 +248,7 @@ MafiaDay.propTypes = {
   endGame: PropTypes.func,
   dayNum: PropTypes.number,
   chat: PropTypes.array,
+  win: PropTypes.number,
 };
 
 const mapStateToProps = (state) => ({
@@ -259,6 +260,7 @@ const mapStateToProps = (state) => ({
   aliveNum: state.roomData.aliveCount,
   dayNum: state.roomData.dayCount,
   chat: state.roomData.chat,
+  win: state.roomData.win,
 });
 
 export default connect(
