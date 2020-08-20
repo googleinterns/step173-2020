@@ -3,6 +3,8 @@ import {makeStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
+import IconButton from '@material-ui/core/IconButton';
+import HomeIcon from '@material-ui/icons/Home';
 import SettingsModal from '../mafia/SettingsModal';
 import EndModal from '../mafia/EndModal';
 import PropTypes from 'prop-types';
@@ -11,6 +13,7 @@ import villager from '../mafia/images/villager.png';
 import mafia from '../mafia/images/mafia.png';
 import detective from '../mafia/images/detective.png';
 import doctor from '../mafia/images/doctor.png';
+import {useHistory} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -58,6 +61,9 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
+  home: {
+    float: 'left',
+  }
 }));
 
 /**
@@ -66,20 +72,7 @@ const useStyles = makeStyles((theme) => ({
 function WaitingRoom({gameName, gameDescription, leaveRoom, win,
   joinRoom, inRoom, isHost, usersCollection, startGame, gameId}) {
   const classes = useStyles();
-  const description = '<p>Mafia (also known as Werewolf) takes place in a ' +
-    'small town where a minority of the townsfolk hold a dangerous secret. ' +
-    'Each player is secretly assigned a role - Werewolf (mafia), Villager, ' +
-    'Detective (a special Villager), or Doctor (a special Villager).' +
-    'The game alternates between night and day phases. At night, the ' +
-    'Werewolves secretly choose a Villager to kill, the Detective checks ' +
-    'if another player is a Werewolf, and the Doctor chooses a person to ' +
-    'save. During the day, the person who was killed is revealed and is out ' +
-    'of the game. The remaining people then vote on the player they suspect ' +
-    'to be the Werewolf. The player with the majority of votes is out of ' +
-    'the game and their role is revealed. Villagers win when they have ' +
-    'killed all Werewolves, otherwise Werewolves win. Werewolf is a social ' +
-    'game that requires no equipment to play, and can accommodate almost ' +
-    'any large group of players.<p><br>';
+  const history = useHistory();
   const villagerImage = '<img src="' + villager +
     '" style="width:100%" alt="Villager">';
   const mafiaImage = '<img src="' + mafia +
@@ -94,7 +87,7 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
    * @return {object} inner HTML
    */
   function createMarkup() {
-    return {__html: description +
+    return {__html: gameDescription +
       '<div class="row">' +
         '<div class="column">' +
           villagerImage +
@@ -127,8 +120,17 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
   const [endOpen, setEndOpen] = useState(true);
 
   return (
+    // <div>
     <div className={classes.main}>
-      <div className={classes.title}>
+      
+      <div className={classes.title}><IconButton
+          color="primary"
+          component="span"
+          onClick={() => history.push('/')}
+          className={classes.home}
+        >
+          <HomeIcon fontSize="large" />
+        </IconButton>
         <Typography variant="h3" className={classes.fonts}>
           {gameName}
         </Typography>
@@ -210,6 +212,7 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
         }
       </div>
     </div>
+    // </div>
   );
 }
 
