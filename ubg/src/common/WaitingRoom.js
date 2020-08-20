@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
   },
   home: {
     float: 'left',
-  }
+  },
 }));
 
 /**
@@ -120,10 +120,9 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
   const [endOpen, setEndOpen] = useState(true);
 
   return (
-    // <div>
     <div className={classes.main}>
-      
-      <div className={classes.title}><IconButton
+      <div className={classes.title}>
+        <IconButton
           color="primary"
           component="span"
           onClick={() => history.push('/')}
@@ -212,7 +211,6 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
         }
       </div>
     </div>
-    // </div>
   );
 }
 

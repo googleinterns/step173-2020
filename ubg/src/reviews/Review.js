@@ -23,7 +23,7 @@ export default function Review({review}) {
 
   return (
     <div>
-      <ListItem 
+      <ListItem
         alignItems="flex-start">
         <ListItemText
           primary={

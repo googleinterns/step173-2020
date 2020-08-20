@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 
 /**
  * Renders all reviews for a game page
- * @param {object} reviews 
- * @param {boolean} profile 
+ * @param {object} reviews
+ * @param {boolean} profile
  * @return {ReactElement} List with ListItems of reviews
  */
 export default function Reviews({reviews, profile}) {
