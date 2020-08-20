@@ -27,6 +27,9 @@ export default class Reviews extends React.Component {
       <div>
         <List width="100%">
           {Array.from(this.props.reviews).map((review) => {
+            if (this.props.profile) {
+              review = {...review, name: review.gameName};
+            }
             return this.renderReview(review);
           })}
         </List>
@@ -37,5 +40,5 @@ export default class Reviews extends React.Component {
 
 Reviews.propTypes = {
   reviews: PropTypes.array,
+  profile: PropTypes.bool,
 };
-
