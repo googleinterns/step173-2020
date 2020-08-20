@@ -9,9 +9,6 @@ import {connect} from 'react-redux';
 import * as firebase from 'firebase/app';
 
 const useStyles = makeStyles((theme) => ({
-  main: {
-    height: '100vh',
-  },
   video: {
     background: theme.palette.primary.main,
     textAlign: '-webkit-center',
@@ -28,6 +25,9 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '10vh',
     flexGrow: 1,
     height: '300px',
+  },
+  confirmChoice: {
+    marginBottom: '70px',
   },
 }));
 
@@ -290,6 +290,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
               color="primary"
               onClick={confirmClick}
               disabled={chose}
+              className={classes.confirmChoice}
             >
               Confirm Choice
             </Button>
