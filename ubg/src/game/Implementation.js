@@ -37,6 +37,11 @@ export default function Implementation({gameId, gamesCollection, implementations
    */
   function addImplementationLink() {
     if (link !== '' && linkName !== '') {
+      try {
+        new URL(link);
+      } catch (_) {
+        return;  
+      }
       let links = implementations;
       links.push({'name': linkName, 'link': link});
       gamesCollection.doc(gameId).update({'implementations':links});
