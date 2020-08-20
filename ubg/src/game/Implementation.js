@@ -27,7 +27,8 @@ const useStyles = makeStyles((theme) => ({
  * @param {bool} bool if text is from game or user
  * @return {ReactElement} Div with message info
  */
-export default function Implementation({gameId, gamesCollection, implementations}) {
+export default function Implementation(
+    {gameId, gamesCollection, implementations}) {
   const classes = useStyles();
   const [link, setLink] = useState('');
   const [linkName, setLinkName] = useState('');
@@ -40,11 +41,11 @@ export default function Implementation({gameId, gamesCollection, implementations
       try {
         new URL(link);
       } catch (_) {
-        return;  
+        return;
       }
-      let links = implementations;
+      const links = implementations;
       links.push({'name': linkName, 'link': link});
-      gamesCollection.doc(gameId).update({'implementations':links});
+      gamesCollection.doc(gameId).update({'implementations': links});
     }
     setLink('');
     setLinkName('');
@@ -58,17 +59,17 @@ export default function Implementation({gameId, gamesCollection, implementations
           </Typography>
         </Grid>
         {implementations.map((l, index) => {
-            return (
-              <Grid item
-                key={index}
-                className={classes.section}
-              >
-                <Link target="_blank" href={l.link} >
-                  {l.name}
-                </Link>
-              </Grid>
-            );
-          })}
+          return (
+            <Grid item
+              key={index}
+              className={classes.section}
+            >
+              <Link target="_blank" href={l.link} >
+                {l.name}
+              </Link>
+            </Grid>
+          );
+        })}
       </Grid>
       <br />
       <AuthCheck>

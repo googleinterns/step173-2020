@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
     float: 'left',
     marginLeft: '0.4em',
     marginTop: '0.4em',
-  }
+  },
 }));
 
 /**
@@ -148,7 +148,7 @@ export default function Game() {
           onClick={() => history.goBack()}
           className={classes.arrowBack}
         >
-          <ArrowBack  fontSize="large" />
+          <ArrowBack fontSize="large" />
         </IconButton>
         <Box container='true' justify='center' alignItems='center' m={10}>
           <Description
@@ -444,4 +444,3 @@ FavoriteButton.propTypes = {
     id: PropTypes.number,
   }),
 };
-
