@@ -208,7 +208,8 @@ function Spacer() {
  * @param {func} deleteRoom delete room from database
  * @return {ReactElement} Description of game
  */
-function Description({usersCollection, game, createRoom, gameId, createRoomLink, deleteRoom}) {
+function Description(
+  {usersCollection, game, createRoom, gameId, createRoomLink, deleteRoom}) {
   const classes = useStyles();
   let playTime = game.minPlaytime + '-' + game.maxPlaytime;
   let players = game.minPlayer + '-' + game.maxPlayer;
@@ -282,7 +283,10 @@ function Description({usersCollection, game, createRoom, gameId, createRoomLink,
                   null
                 }
                 <Grid item>
-                  <FavoriteButton usersCollection={usersCollection} game={game}/>
+                  <FavoriteButton
+                    usersCollection={usersCollection}
+                    game={game}
+                  />
                 </Grid>
                 <Grid item>
                   <CreateEventButton

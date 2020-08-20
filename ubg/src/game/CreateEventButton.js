@@ -38,9 +38,11 @@ const useStyles = makeStyles((theme) => ({
  * @param {func} deleteRoom delete room from database
  * @return {ReactElement} Add game event button
  */
-export default function CreateEventButton({gameName, gameId, createRoomLink, deleteRoom}) {
+export default function CreateEventButton(
+  {gameName, gameId, createRoomLink, deleteRoom}) {
   const classes = useStyles();
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const moment = require('moment-timezone');
+  const timeZone = moment.tz.guess();
   const [open, setOpen] = useState(false);
   const [summary, setSummary] = useState('🎮 ' + gameName + ' 🎮');
   const [startTime, setStartTime] = useState(new Date());
@@ -115,7 +117,7 @@ export default function CreateEventButton({gameName, gameId, createRoomLink, del
 
   const handleDelete = (e) => () => {
     setEmails((emails) => emails.filter(
-      (singleEmail) => singleEmail.email !== e));
+        (singleEmail) => singleEmail.email !== e));
   };
 
   /**
