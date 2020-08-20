@@ -34,6 +34,9 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '300px',
   },
+  confirmChoice: {
+    marginBottom: '70px',
+  },
 }));
 
 /**
@@ -223,6 +226,7 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
             variant="contained"
             color="primary"
             onClick={confirmVote}
+            className={classes.confirmChoice}
             disabled={!userInfo.alive || usersData.find((u) =>
               u.uid === userUid).chose}
           >
