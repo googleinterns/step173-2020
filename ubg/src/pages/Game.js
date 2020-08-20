@@ -25,16 +25,9 @@ import SignalCellular3Bar from '@material-ui/icons/SignalCellular3Bar';
 import TextField from '@material-ui/core/TextField';
 import PropTypes from 'prop-types';
 import * as firebase from 'firebase/app';
-import Pagination from '@material-ui/lab/Pagination';
-import VideoCard from '../game/VideoCard';
+import Videos from '../game/Videos';
+import CreateEventButton from '../game/CreateEventButton';
 import NotFound from '../pages/NotFound';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import ApiCalendar from 'react-google-calendar-api';
-import DateFnsUtils from '@date-io/date-fns';
-import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
@@ -47,17 +40,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  pagination: {
-    '& > *': {
-      margin: theme.spacing(2),
-      display: 'flex',
-      justifyContent: 'center',
-    },
-  },
-  textField: {
-    marginRight: theme.spacing(2),
-    width: 200,
   },
 }));
 
@@ -120,6 +102,27 @@ export default function Game() {
       }
     }
     return true;
+  }
+
+  /**
+   * Sets up array of videos for pagination
+   * @param {array} videos Array of videos for game page
+   * @return {array} Nested array for videos
+   */
+  function paginateVideos(videos) {
+    const allVideos = [];
+    let list = [];
+    videos.forEach((video) => {
+      list.push(video);
+      if (list.length === 12) {
+        allVideos.push(list);
+        list = [];
+      }
+    });
+    if (list.length !== 0) {
+      allVideos.push(list);
+    }
+    return allVideos;
   }
 
   if (isEmpty(game)) {
@@ -265,23 +268,30 @@ function Description({usersCollection, game, createRoom, gameId, createRoomLink,
             </Icon>
             &emsp;
             <AuthCheck>
+            <Grid container spacing={3}>
               {gameId === '925' ?
-                <Button
-                  variant='contained'
-                  color='primary'
-                  onClick={createRoom}>
-                  Create Room
-                </Button> :
+                <Grid item>
+                  <Button
+                    variant='contained'
+                    color='primary'
+                    onClick={createRoom}>
+                    Create Room
+                  </Button>
+                </Grid> :
                 null
               }
-              &emsp;
-              <FavoriteButton usersCollection={usersCollection} game={game}/>
-              <CreateEventButton
-                gameName={game.Name}
-                gameId={gameId}
-                createRoomLink={createRoomLink}
-                deleteRoom={deleteRoom}
-              />
+              <Grid item>
+                <FavoriteButton usersCollection={usersCollection} game={game}/>
+              </Grid>
+              <Grid item>
+                <CreateEventButton
+                  gameName={game.Name}
+                  gameId={gameId}
+                  createRoomLink={createRoomLink}
+                  deleteRoom={deleteRoom}
+                />
+              </Grid>
+              </Grid>
             </AuthCheck>
           </Typography>
         </Grid>
@@ -313,183 +323,6 @@ function FavoriteButton({usersCollection, game}) {
         {favorite ? 'Delete from favorites' : 'Add to favorites'}
       </Button>
     ) : null
-  );
-}
-
-/**
- * @param {string} gameName game name
- * @param {string} gameId game id
- * @param {func} createRoomLink Creates game room 
- * @param {func} deleteRoom delete room from database
- * @return {ReactElement} Add game event button
- */
-
-function CreateEventButton({gameName, gameId, createRoomLink, deleteRoom}) {
-  const classes = useStyles();
-  const [open, setOpen] = useState(false);
-  const [summary, setSummary] = useState('🎮 ' + gameName + ' 🎮');
-  const [startTime, setStartTime] = useState(new Date());
-  const [endTime, setEndTime] = useState(new Date());
-  const [description, setDescription] = useState('');
-  const [roomId, setRoomId] = useState('');
-
-  
-
-  const handleClickOpen = async () => {
-    setOpen(true);
-    if (gameId === '925') {
-      const newRoomId = await createRoomLink();
-      setRoomId(newRoomId);
-      setDescription("Join game with this link: " + 
-      window.location.href.substring(0,window.location.href.lastIndexOf("/")) +
-      "/gameRoom/" + newRoomId);
-    }
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setSummary('🎮 ' + gameName + ' 🎮');
-    setStartTime(new Date());
-    setEndTime(new Date());
-    setDescription(window.location.href);
-    if (gameId === '925') {
-      deleteRoom(roomId);
-      setRoomId('');
-    }
-    
-  };
-
-  const handleSave = () => {
-    setOpen(false);
-    if (ApiCalendar.sign === false) {
-      ApiCalendar.handleAuthClick();
-      }
-      const event = {
-        'summary': summary,
-        'description': description,
-        'start': {
-          'dateTime': startTime.toISOString(),
-          'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone,
-        },
-        'end': {
-          'dateTime': endTime.toISOString(),
-          'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone,
-        },
-      }
-      ApiCalendar.createEvent(event)
-   .catch((error) => {
-     console.log(error);
-      });
-    setSummary('🎮 ' + gameName + ' 🎮');
-    setStartTime(new Date());
-    setEndTime(new Date());
-    setDescription(window.location.href);
-  };
-
-  return (
-    <div>
-      <Button variant='contained'
-        color='primary' onClick={handleClickOpen}>
-        Add Game Event
-      </Button>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Event Summary"
-            value={summary}
-            onChange={(e)=> setSummary(e.target.value)}
-            fullWidth
-          />
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <DateTimePicker
-            label="Start Time"
-            value={startTime}
-            onChange={setStartTime}
-            className={classes.textField}
-            showTodayButton
-            disablePast
-          />
-          <DateTimePicker
-            label="End Time"
-            value={endTime}
-            onChange={setEndTime}
-            className={classes.textField}
-            showTodayButton
-            disablePast
-          />
-          </MuiPickersUtilsProvider>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Event Description"
-            value={description}
-            onChange={(e)=> setDescription(e.target.value)}
-            fullWidth
-          />
-        </DialogContent>
-        
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleSave} color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
-  );
-}
-
-/**
- * @param {object} videos Object containing all videos
- * @return {ReactElement} Videos describing the game
- */
-function Videos({videos}) {
-  const classes = useStyles();
-  const [page, setPage] = React.useState(1);
-  if (Object.keys(videos).length === 0) {
-    return (
-      <Typography variant='h4'>
-        No videos available
-      </Typography>
-    );
-  }
-  return (
-    <Box>
-      <Box>
-        <Grid container>
-          <Grid item>
-            <Typography variant='h4'>
-              Videos
-            </Typography>
-          </Grid>
-        </Grid>
-        <br />
-        <Grid container justify="flex-start" alignItems="stretch" spacing={4}>
-          {videos[page-1].map((video) => {
-            return (
-              <Grid item
-                key={video.link}
-                className={classes.section}
-                xs={12} sm={6} xl={2} lg={3} md={4}
-              >
-                <VideoCard video={video} />
-              </Grid>
-            );
-          })}
-        </Grid>
-      </Box>
-      <Pagination
-        count={videos.length}
-        boundaryCount={2}
-        onChange={(e, p) => setPage(p)}
-        className={classes.pagination}
-      />
-    </Box>
   );
 }
 
@@ -558,27 +391,6 @@ function addFavorite(userGames, usersCollection,
   }
 }
 
-/**
- * Sets up array of videos for pagination
- * @param {array} videos Array of videos for game page
- * @return {array} Nested array for videos
- */
-function paginateVideos(videos) {
-  const allVideos = [];
-  let list = [];
-  videos.forEach((video) => {
-    list.push(video);
-    if (list.length === 12) {
-      allVideos.push(list);
-      list = [];
-    }
-  });
-  if (list.length !== 0) {
-    allVideos.push(list);
-  }
-  return allVideos;
-}
-
 Description.propTypes = {
   usersCollection: PropTypes.object,
   createRoom: PropTypes.func,
@@ -606,13 +418,3 @@ FavoriteButton.propTypes = {
   }),
 };
 
-CreateEventButton.propTypes = {
-  gameName: PropTypes.string,
-  gameId: PropTypes.string,
-  createRoomLink: PropTypes.func,
-  deleteRoom: PropTypes.func,
-};
-
-Videos.propTypes = {
-  videos: PropTypes.array,
-};
