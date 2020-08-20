@@ -3,7 +3,6 @@ import {makeStyles} from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Chip from '@material-ui/core/Chip';
@@ -117,7 +116,11 @@ export default function CreateEventButton({gameName, gameId, createRoomLink, del
   const handleDelete = (e) => () => {
     setEmails((emails) => emails.filter((singleEmail) => singleEmail.email !== e));
   };
-
+  
+  /**
+   * @param {string} email email to verify
+   * @return {boolean} whether email is valid
+   */
   function isValidEmail(email) {
     if (email !== '' &&
     /[\w\d-]+@[\w\d-]+\.[\w\d-]+/.test(email)){
@@ -135,11 +138,12 @@ export default function CreateEventButton({gameName, gameId, createRoomLink, del
   return (
     <div>
       <Button variant='contained'
-        color='primary' onClick={handleClickOpen}>
+        color='primary'
+        onClick={handleClickOpen}
+      >
         Add Game Event
       </Button>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Subscribe</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -168,7 +172,6 @@ export default function CreateEventButton({gameName, gameId, createRoomLink, del
           />
           </MuiPickersUtilsProvider>
           <TextField
-            autoFocus
             margin="dense"
             label="Event Description"
             value={description}
@@ -176,7 +179,6 @@ export default function CreateEventButton({gameName, gameId, createRoomLink, del
             fullWidth
           />
           <TextField
-            autoFocus
             margin="dense"
             label="Add Attendees Email and press Enter"
             value={email}
