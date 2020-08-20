@@ -23,8 +23,11 @@ import People from '@material-ui/icons/People';
 import Face from '@material-ui/icons/Face';
 import SignalCellular3Bar from '@material-ui/icons/SignalCellular3Bar';
 import TextField from '@material-ui/core/TextField';
+import IconButton from '@material-ui/core/IconButton';
+import ArrowBack from '@material-ui/icons/ArrowBack';
 import PropTypes from 'prop-types';
 import * as firebase from 'firebase/app';
+import Implementation from '../game/Implementation';
 import Videos from '../game/Videos';
 import CreateEventButton from '../game/CreateEventButton';
 import NotFound from '../pages/NotFound';
@@ -41,6 +44,11 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  arrowBack: {
+    float: 'left',
+    marginLeft: '0.4em',
+    marginTop: '0.4em',
+  },
 }));
 
 /**
@@ -54,9 +62,9 @@ export default function Game() {
   const [roomId, setRoomId] = useState('');
   const roomsCollection = useFirestore().collection('rooms');
   const usersCollection = useFirestore().collection('users');
+  const gamesCollection = useFirestore().collection('games');
 
-  const game = useFirestoreDocData(
-      useFirestore().collection('games').doc(gameId));
+  const game = useFirestoreDocData(gamesCollection.doc(gameId));
 
   /**
    * Creates a room in firebase and adds the current user as host
@@ -134,6 +142,14 @@ export default function Game() {
     return (
       <div>
         <Navbar />
+        <IconButton
+          color="primary"
+          component="span"
+          onClick={() => history.goBack()}
+          className={classes.arrowBack}
+        >
+          <ArrowBack fontSize="large" />
+        </IconButton>
         <Box container='true' justify='center' alignItems='center' m={10}>
           <Description
             usersCollection={usersCollection}
@@ -142,6 +158,12 @@ export default function Game() {
             gameId={gameId}
             createRoomLink={createRoomLink}
             deleteRoom={deleteRoom}
+          />
+          <Spacer />
+          <Implementation
+            gameId={gameId}
+            gamesCollection={gamesCollection}
+            implementations={game.implementations}
           />
           <Spacer />
           <Grid container spacing={5}>
@@ -422,4 +444,3 @@ FavoriteButton.propTypes = {
     id: PropTypes.number,
   }),
 };
-
