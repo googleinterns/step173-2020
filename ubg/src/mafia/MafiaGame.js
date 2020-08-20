@@ -6,6 +6,7 @@ import PersonalInfo from './PersonalInfo';
 import PropTypes from 'prop-types';
 import AlertDialog from './utils/AlertDialog';
 import {connect} from 'react-redux';
+import {useFirestore, useFirestoreDocData} from 'reactfire';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,6 +34,9 @@ function MafiaGame({day, room, usersCollection, usersData, userUid,
   const classes = useStyles();
   const [alert, setAlert] = useState(null);
   const [userInfo, setUserInfo] = useState('');
+  const userDoc = useFirestore().collection('users').doc(userUid);
+  const userDocData = useFirestoreDocData(userDoc);
+
   /**
    * @param {string} message message to display
    * @return {undefined}
@@ -49,11 +53,24 @@ function MafiaGame({day, room, usersCollection, usersData, userUid,
       u.alive).length;
     const villagerCount = usersData.filter((u) => u.role !== 2 &&
       u.alive).length;
+    const role = usersData.find((u) => u.uid === userUid).role;
+
     // all mafia are dead
     if (mafiaCount === 0) {
       room.update({
         win: 1,
       });
+      role === 2 ?
+      (
+        userDoc.update({
+          'mafiaStats.losses': userDocData.mafiaStats.losses + 1,
+        })
+      ) :
+      (
+        userDoc.update({
+          'mafiaStats.wins': userDocData.mafiaStats.wins + 1,
+        })
+      )
       playAgain();
     // all villagers are dead or one mafia and one villager alive
     } else if (villagerCount === 0 ||
@@ -61,6 +78,17 @@ function MafiaGame({day, room, usersCollection, usersData, userUid,
       room.update({
         win: 2,
       });
+      role === 2 ?
+      (
+        userDoc.update({
+          'mafiaStats.wins': userDocData.mafiaStats.wins + 1,
+        })
+      ) :
+      (
+        userDoc.update({
+          'mafiaStats.losses': userDocData.mafiaStats.losses + 1,
+        })
+      )
       playAgain();
     }
   }
