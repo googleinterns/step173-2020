@@ -168,7 +168,6 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
    * @param {object} offer
    */
   function createPeerConnection(socketId, offer = null) {
-    console.log('createPeerConnection');
     if (!peerConnections[socketId]) {
       peerConnections[socketId] = new RTCPeerConnection(configuration);
       localStream.getTracks().forEach((track) => {
@@ -203,7 +202,6 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
    * @param {string} socketId
    */
   async function createOffer(socketId) {
-    console.log('createOffer');
     if (peerConnections[socketId]) {
       const offer = await peerConnections[socketId].createOffer();
       await peerConnections[socketId].setLocalDescription(offer);
@@ -219,7 +217,6 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
    * @param {object} offer
    */
   async function createAnswer(socketId, offer) {
-    console.log('createAnswer');
     if (peerConnections[socketId]) {
       await peerConnections[socketId].setRemoteDescription(offer);
       const answer = await peerConnections[socketId].createAnswer();
@@ -236,7 +233,6 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
    * @param {object} answer
    */
   async function receiveAnswer(socketId, answer) {
-    console.log('receiveAnswer');
     if (peerConnections[socketId]) {
       await peerConnections[socketId].setRemoteDescription(answer);
     } else {
@@ -250,7 +246,6 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
    * @param {object} candidate
    */
   function receiveICE(socketId, candidate) {
-    console.log('receiveIce');
     if (peerConnections[socketId]) {
       peerConnections[socketId].addIceCandidate(candidate);
     }
@@ -261,7 +256,6 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
    * @param {string} socketId
    */
   function userLeft(socketId) {
-    console.log('userleft');
     if (peerConnections[socketId]) {
       peerConnections[socketId].close();
       peerConnections[socketId] = null;
@@ -377,7 +371,6 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     );
     setLocalAudio(true);
     setLocalVideo(true);
-    console.log('join socket room');
     socket.emit('joinSocketRoom', roomId, user.uid);
   }
 
@@ -416,14 +409,6 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     if (usersData.some((u) => u.uid === user.uid)) {
       startVideoAndJoinSocketRoom();
     }
-
-    socket.on('youJoined', (socketId, uid) => {
-      console.log('I joined the socket!');
-    });
-
-    socket.on('youJoinedRoom', (socketId, uid) => {
-      console.log('I joined the room!');
-    });
 
     socket.on('newUser', (socketId, uid) => {
       createPeerConnection(socketId);
