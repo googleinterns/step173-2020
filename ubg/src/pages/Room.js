@@ -651,12 +651,12 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                               toggleAudio: () => setLocalAudio(!localAudio),
                               toggleVideo: () => setLocalVideo(!localVideo),
                             }}
-                          />: 
+                          /> :
                           null
                       }
                       {
                         usersData.map((u) => {
-                          if(u.uid !== user.uid){
+                          if (u.uid !== user.uid) {
                             return (
                               <UserVideo
                                 video={remoteStreams[uidToSocketId[u.uid]]}
