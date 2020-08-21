@@ -56,7 +56,9 @@ export default function UserVideo({user, video, videoInfo}) {
         >
           {videoInfo.hasAudio ?
               <MicIcon fontSize="inherit" /> :
-              <MicOffIcon fontSize="inherit" />
+              videoInfo.hasAudio === false ?
+              <MicOffIcon fontSize="inherit" /> :
+              null
           }
         </IconButton>
         {user}
@@ -68,7 +70,9 @@ export default function UserVideo({user, video, videoInfo}) {
         >
           {videoInfo.hasVideo ?
               <VideoCamIcon fontSize="inherit" /> :
-              <VideoCamOffIcon fontSize="inherit" />
+              videoInfo.hasVideo === false ?
+              <VideoCamOffIcon fontSize="inherit" /> :
+              null
           }
         </IconButton>
       </div>
