@@ -34,6 +34,7 @@ let socket = null;
 const peerConnections = {};
 const remoteStreams = {};
 let localStream = null;
+const uidToSocketId = {};
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -127,7 +128,8 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
   const [mafiaChatSelected, setMafiaChatSelected] = useState(false);
   const [localAudio, setLocalAudio] = useState(false);
   const [localVideo, setLocalVideo] = useState(false);
-  const [uidToSocketId, setUidToSocketId] = useState({});
+  const [stateReloadVar, setStateReloadVar] = useState(false);
+  const inRoom = usersData.some((u) => u.uid === user.uid);
 
   const chatClasses = classNames({
     [classes.chatHeader]: true,
@@ -272,19 +274,29 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
    * Toggle local audio
    */
   function toggleAudio() {
-    setLocalAudio(!localAudio);
-    localStream.getAudioTracks()[0].enabled =
-    !localStream.getAudioTracks()[0].enabled;
+    if(localStream){
+      localStream.getAudioTracks()[0].enabled = localAudio;
+      usersCollection.doc(user.uid).update({
+        hasAudio: localAudio,
+      });
+    }
   }
+
+  useEffect(toggleAudio, [localAudio]);
 
   /**
    * Toggle local video
    */
   function toggleVideo() {
-    setLocalVideo(!localVideo);
-    localStream.getVideoTracks()[0].enabled =
-    !localStream.getVideoTracks()[0].enabled;
+    if(localStream){
+      localStream.getVideoTracks()[0].enabled = localVideo;
+      usersCollection.doc(user.uid).update({
+        hasVideo: localVideo,
+      });
+    }
   }
+
+  useEffect(toggleVideo, [localVideo]);
 
   /**
    * Check if current user is mafia
@@ -369,6 +381,10 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     localStream = await navigator.mediaDevices.getUserMedia(
         {video: true, audio: true},
     );
+    usersCollection.doc(user.uid).update({
+      hasVideo: true,
+      hasAudio: true,
+    });
     setLocalAudio(true);
     setLocalVideo(true);
     socket.emit('joinSocketRoom', roomId, user.uid);
@@ -395,6 +411,10 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
       track.stop();
     });
     localStream = null;
+    usersCollection.doc(user.uid).update({
+      hasVideo: false,
+      hasAudio: false,
+    });
     setLocalAudio(false);
     setLocalVideo(false);
   }
@@ -406,22 +426,19 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
   function socketConnection() {
     socket = socketIOClient('/');
 
-    if (usersData.some((u) => u.uid === user.uid)) {
+    if (inRoom) {
       startVideoAndJoinSocketRoom();
     }
 
     socket.on('newUser', (socketId, uid) => {
       createPeerConnection(socketId);
-      const newIdMap = {...uidToSocketId};
-      newIdMap[uid] = socketId;
-      setUidToSocketId(newIdMap);
+      uidToSocketId[uid] = socketId;
     });
 
     socket.on('receiveOffer', (offer, socketId, uid) => {
       createPeerConnection(socketId, offer);
-      const newIdMap = {...uidToSocketId};
-      newIdMap[uid] = socketId;
-      setUidToSocketId(newIdMap);
+      uidToSocketId[uid] = socketId;
+      setStateReloadVar(!stateReloadVar);
     });
 
     socket.on('receiveAnswer', (answer, socketId) => {
@@ -456,8 +473,17 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
   }, [roomData, setRoomData]);
 
   useEffect(() => {
-    setInGame(user && usersData.some((u) => u.uid === user.uid));
+    setInGame(user && inRoom);
   }, [user, usersData]);
+
+  window.onbeforeunload = (e) => {
+    if(inRoom){
+      usersCollection.doc(user.uid).update({
+        hasVideo: false,
+        hasAudio: false,
+      });
+    }
+  };
 
   /**
    * Add user to the users collection in the room
@@ -580,7 +606,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                       gameDescription={game.description}
                       leaveRoom={leaveRoom}
                       joinRoom={joinRoom}
-                      inRoom={usersData.some((u) => u.uid === user.uid)}
+                      inRoom={inRoom}
                       isHost={roomData.host === user.uid}
                       usersCollection={usersCollection}
                       startGame={startGame}
@@ -598,13 +624,18 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                                 remoteStreams[uidToSocketId[u.uid]]}
                               key={u.uid}
                               user={u.displayName}
-                              local={u.uid === user.uid ? {
-                                localAudio,
-                                localVideo,
-                                toggleAudio,
-                                toggleVideo,
+                              videoInfo={u.uid === user.uid ? {
+                                local: true,
+                                hasAudio: localAudio,
+                                hasVideo: localVideo,
+                                toggleAudio: () => setLocalAudio(!localAudio),
+                                toggleVideo: () => setLocalVideo(!localVideo),
                               } :
-                              null}
+                              {
+                                local: false,
+                                hasAudio: u.hasAudio,
+                                hasVideo: u.hasVideo,
+                              }}
                             />
                           );
                         })
