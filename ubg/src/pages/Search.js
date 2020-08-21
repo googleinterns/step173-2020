@@ -22,6 +22,8 @@ export default function Search() {
   const [searchDisplay, setSearchDisplay] = React.useState('none');
   const classes = useStyles(searchDisplay)();
   const [initialize, setInitialize] = React.useState(false);
+  // pagination page
+  const [page, setPage] = React.useState(1);
   // track total number of games
   const [totalGames, setTotalGames] = React.useState(0);
   // whether reset all the filters
@@ -35,6 +37,7 @@ export default function Search() {
     setSearchDisplay('block');
     setClear(true);
     setInitialize(false);
+    setPage(1);
   }
   /**
    * the situation where user is on Search page from Search Field and
@@ -45,6 +48,7 @@ export default function Search() {
     setSearchDisplay('none');
     setClear(true);
     setInitialize(false);
+    setPage(1);
   }
 
   return (
@@ -63,6 +67,8 @@ export default function Search() {
         setClear={setClear}
       />
       <DisplayGames
+        page={page}
+        setPage={setPage}
         games={games}
         paginationCount={paginationCount}
         totalGames={totalGames}
