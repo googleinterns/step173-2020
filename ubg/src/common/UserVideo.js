@@ -70,7 +70,7 @@ export default function UserVideo({user, video, videoInfo}) {
               <VideoCamIcon fontSize="inherit" /> :
               <VideoCamOffIcon fontSize="inherit" />
           }
-          </IconButton>
+        </IconButton>
       </div>
     </div>
   );

@@ -198,7 +198,6 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
         resolve();
       } else {
         console.error('connection already exists!');
-        reject('connection already exists!');
       }
     });
     promise.then(() => {
