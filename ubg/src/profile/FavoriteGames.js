@@ -2,6 +2,15 @@ import React, {useEffect} from 'react';
 import {useFirestoreDocData} from 'reactfire';
 import DisplayGames from '../search/DisplayGames';
 import PropTypes from 'prop-types';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
+import {makeStyles} from '@material-ui/core/styles';
+
+const useStyles = makeStyles((theme) => ({
+  fonts: {
+    fontWeight: 'bold',
+  },
+}));
 
 /**
  * Shows the favorite games for given user
@@ -11,6 +20,7 @@ import PropTypes from 'prop-types';
  */
 export default function FavoriteGames({userCollection, uid}) {
   const userGames = useFirestoreDocData(userCollection.doc(uid)).games;
+  const classes = useStyles();
   const [paginationCount, setPaginationCount] = React.useState(1);
   const [totalGames, setTotalGames] = React.useState(0);
   const [games, setGames] = React.useState([[]]);
@@ -43,12 +53,24 @@ export default function FavoriteGames({userCollection, uid}) {
 
   return (
     <div>
-      <DisplayGames
-        games={games}
-        paginationCount={paginationCount}
-        totalGames={totalGames}
-        title='Favorite Games'
-      />
+      {
+        userGames.length !== 0 ?
+        <DisplayGames
+          games={games}
+          paginationCount={paginationCount}
+          totalGames={totalGames}
+          title='Favorite Games'
+        /> :
+        <Box m={10}>
+          <Typography variant='h4' className={classes.fonts}>
+            Favorite Games
+          </Typography>
+          <br />
+          <Typography variant="body1">
+            No games to show
+          </Typography>
+        </Box>
+      }
     </div>
 
   );
