@@ -225,6 +225,7 @@ WaitingRoom.propTypes = {
   startGame: PropTypes.func,
   gameId: PropTypes.string,
   win: PropTypes.number,
+  usersData: PropTypes.array,
 };
 
 const mapStateToProps = (state) => ({
