@@ -48,28 +48,28 @@ export default function UserVideo({user, video, videoInfo}) {
         null
       }
       <div>
-          <IconButton
-            color="primary"
-            size="small"
-            disabled={!videoInfo.local}
-            onClick={videoInfo.local ? videoInfo.toggleAudio : null}
-          >
-            {videoInfo.hasAudio ?
-                <MicIcon fontSize="inherit" /> :
-                <MicOffIcon fontSize="inherit" />
-            }
-          </IconButton>
+        <IconButton
+          color="primary"
+          size="small"
+          disabled={!videoInfo.local}
+          onClick={videoInfo.local ? videoInfo.toggleAudio : null}
+        >
+          {videoInfo.hasAudio ?
+              <MicIcon fontSize="inherit" /> :
+              <MicOffIcon fontSize="inherit" />
+          }
+        </IconButton>
         {user}
-          <IconButton
-            color="primary"
-            size="small"
-            disabled={!videoInfo.local}
-            onClick={videoInfo.local ? videoInfo.toggleVideo : null}
-          >
-            {videoInfo.hasVideo ?
-                <VideoCamIcon fontSize="inherit" /> :
-                <VideoCamOffIcon fontSize="inherit" />
-            }
+        <IconButton
+          color="primary"
+          size="small"
+          disabled={!videoInfo.local}
+          onClick={videoInfo.local ? videoInfo.toggleVideo : null}
+        >
+          {videoInfo.hasVideo ?
+              <VideoCamIcon fontSize="inherit" /> :
+              <VideoCamOffIcon fontSize="inherit" />
+          }
           </IconButton>
       </div>
     </div>

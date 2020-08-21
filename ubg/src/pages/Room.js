@@ -170,7 +170,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
    * @param {object} offer
    */
   function createPeerConnection(socketId, offer = null) {
-    let promise = new Promise ((resolve, reject) => {
+    const promise = new Promise((resolve, reject) => {
       if (!peerConnections[socketId]) {
         peerConnections[socketId] = new RTCPeerConnection(configuration);
         localStream.getTracks().forEach((track) => {
@@ -198,12 +198,12 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
         resolve();
       } else {
         console.error('connection already exists!');
-        reject();
+        reject('connection already exists!');
       }
     });
     promise.then(() => {
       setStateReloadVar(!stateReloadVar);
-    })
+    });
   }
 
   /**
@@ -281,7 +281,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
    * Toggle local audio
    */
   function toggleAudio() {
-    if(localStream){
+    if (localStream) {
       localStream.getAudioTracks()[0].enabled = localAudio;
       usersCollection.doc(user.uid).update({
         hasAudio: localAudio,
@@ -295,7 +295,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
    * Toggle local video
    */
   function toggleVideo() {
-    if(localStream){
+    if (localStream) {
       localStream.getVideoTracks()[0].enabled = localVideo;
       usersCollection.doc(user.uid).update({
         hasVideo: localVideo,
@@ -483,7 +483,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
   }, [user, usersData]);
 
   window.onbeforeunload = (e) => {
-    if(inRoom){
+    if (inRoom) {
       usersCollection.doc(user.uid).update({
         hasVideo: false,
         hasAudio: false,
