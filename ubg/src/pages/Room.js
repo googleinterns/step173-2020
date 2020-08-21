@@ -170,33 +170,40 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
    * @param {object} offer
    */
   function createPeerConnection(socketId, offer = null) {
-    if (!peerConnections[socketId]) {
-      peerConnections[socketId] = new RTCPeerConnection(configuration);
-      localStream.getTracks().forEach((track) => {
-        peerConnections[socketId].addTrack(track, localStream);
-      });
-
-      remoteStreams[socketId] = new MediaStream();
-      peerConnections[socketId].addEventListener('track', (event) => {
-        event.streams[0].getTracks().forEach((track) => {
-          remoteStreams[socketId].addTrack(track);
+    let promise = new Promise ((resolve, reject) => {
+      if (!peerConnections[socketId]) {
+        peerConnections[socketId] = new RTCPeerConnection(configuration);
+        localStream.getTracks().forEach((track) => {
+          peerConnections[socketId].addTrack(track, localStream);
         });
-      });
 
-      peerConnections[socketId].addEventListener('icecandidate', (event) => {
-        if (!event.candidate) {
-          return;
+        remoteStreams[socketId] = new MediaStream();
+        peerConnections[socketId].addEventListener('track', (event) => {
+          event.streams[0].getTracks().forEach((track) => {
+            remoteStreams[socketId].addTrack(track);
+          });
+        });
+
+        peerConnections[socketId].addEventListener('icecandidate', (event) => {
+          if (!event.candidate) {
+            return;
+          }
+          socket.emit('newICE', event.candidate, socketId);
+        });
+        if (offer) {
+          createAnswer(socketId, offer);
+        } else {
+          createOffer(socketId);
         }
-        socket.emit('newICE', event.candidate, socketId);
-      });
-      if (offer) {
-        createAnswer(socketId, offer);
+        resolve();
       } else {
-        createOffer(socketId);
+        console.error('connection already exists!');
+        reject();
       }
-    } else {
-      console.error('connection already exists!');
-    }
+    });
+    promise.then(() => {
+      setStateReloadVar(!stateReloadVar);
+    })
   }
 
   /**
@@ -438,7 +445,6 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     socket.on('receiveOffer', (offer, socketId, uid) => {
       createPeerConnection(socketId, offer);
       uidToSocketId[uid] = socketId;
-      setStateReloadVar(!stateReloadVar);
     });
 
     socket.on('receiveAnswer', (answer, socketId) => {
