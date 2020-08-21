@@ -34,8 +34,8 @@ export default function Profile() {
   return (
     <div>
       <Navbar />
-      <Box container='true' justify='center' alignItems='center'
-        mt={10} ml={30} mr={30}>
+      <Box justify='center' alignItems='center'
+        mt={10} ml={10} mr={10}>
         <Box m={10}>
           <Typography variant='h2' className={classes.fonts}>
             {user ? user.displayName : 'Sign in to view your profile'}
@@ -68,7 +68,7 @@ function UserStats({userCollection, uid}) {
         Game Statistics
       </Typography>
       <br />
-      <Card container className={classes.card}>
+      <Card className={classes.card}>
         <CardContent>
           <Typography className={classes.fonts} variant="h5">
             Mafia (Werewolf)

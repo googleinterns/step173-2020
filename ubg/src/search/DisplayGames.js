@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Display all the games that satisfy conditions
  */
 export default function DisplayGames({page, setPage, games,
-  paginationCount, totalGames, title}) {
+  paginationCount, totalGames, title=null}) {
   const classes = useStyles();
   let total = totalGames;
   if (games.length < 1 || games === undefined) {
