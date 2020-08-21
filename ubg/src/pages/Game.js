@@ -22,7 +22,6 @@ import Star from '@material-ui/icons/Star';
 import People from '@material-ui/icons/People';
 import Face from '@material-ui/icons/Face';
 import SignalCellular3Bar from '@material-ui/icons/SignalCellular3Bar';
-import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import PropTypes from 'prop-types';
@@ -59,7 +58,6 @@ export default function Game() {
   const user = useUser();
   const {gameId} = useParams();
   const history = useHistory();
-  const [roomId, setRoomId] = useState('');
   const roomsCollection = useFirestore().collection('rooms');
   const usersCollection = useFirestore().collection('users');
   const gamesCollection = useFirestore().collection('games');
@@ -89,14 +87,6 @@ export default function Game() {
    */
   async function deleteRoom(id) {
     roomsCollection.doc(id).delete();
-  }
-
-
-  /**
-   * Go to a rooms url with the room id
-   */
-  function joinRoom() {
-    history.push(`/gameRoom/${roomId}`);
   }
 
   /**
