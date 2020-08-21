@@ -42,8 +42,9 @@ function MafiaGame({day, room, usersCollection, usersData, userUid,
   }
   /**
    * Determines if game has reached end
+   * @param {func} resolve Function that will let game proceed
    */
-  function endGame() {
+  async function endGame(resolve) {
     setUserInfo(usersData.find((u) => u.uid === userUid));
     const mafiaCount = usersData.filter((u) => u.role === 2 &&
       u.alive).length;
@@ -51,17 +52,20 @@ function MafiaGame({day, room, usersCollection, usersData, userUid,
       u.alive).length;
     // all mafia are dead
     if (mafiaCount === 0) {
-      room.update({
+      await room.update({
         win: 1,
       });
       playAgain();
     // all villagers are dead or one mafia and one villager alive
     } else if (villagerCount === 0 ||
       (mafiaCount === 1 && villagerCount === 1)) {
-      room.update({
+      await room.update({
         win: 2,
       });
       playAgain();
+    // continue game
+    } else {
+      resolve();
     }
   }
 

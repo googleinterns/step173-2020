@@ -517,13 +517,13 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
   /**
    * Sets up player to be able to play again
    */
-  function playAgain() {
-    usersCollection.doc(user.uid).update({
+  async function playAgain() {
+    await usersCollection.doc(user.uid).update({
       alive: true,
       chose: false,
       order: Math.floor(Math.random() * 20),
     });
-    room.update({
+    await room.update({
       started: false,
       dayCount: 1,
     });

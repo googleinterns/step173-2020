@@ -56,7 +56,19 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
    * @return {undefined}
    */
   function startDay() {
-    endGame();
+    // check if victory condition met
+    const endPromise = new Promise((resolve, reject)=> {
+      endGame(resolve);
+    });
+    endPromise.then(() => {
+      loadData();
+    });
+  }
+
+  /**
+   * Initializes the day phase
+   */
+  async function loadData() {
     setUserInfo(usersData.find((u) => u.uid === userUid));
     if (!initialize && (!win || win === 0)) {
       const allPlayers = [];
@@ -96,11 +108,11 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
               {text: '-------- DAY ' + dayNum + ' --------',
                 isGameText: true, hours, minutes},
           ),
+
         });
       }
       setPlayers(allPlayers);
       setInitialize(true);
-      endGame();
     }
   }
 

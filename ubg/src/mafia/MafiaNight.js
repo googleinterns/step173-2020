@@ -53,7 +53,19 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
    * @return {undefined}
    */
   function loadNightData() {
-    endGame();
+    // check if victory condition met
+    const endPromise = new Promise((resolve, reject)=> {
+      endGame(resolve);
+    });
+    endPromise.then(() => {
+      loadData();
+    });
+  }
+
+  /**
+   * Initializes the night phase
+   */
+  async function loadData() {
     setUserInfo(usersData.find((u) => u.uid === userUid));
     if (!initialize && (!win || win === 0)) {
       setInitialize(true);
@@ -117,9 +129,9 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
           ),
         });
       }
-      endGame();
     }
   }
+
   /**
    * Check if all mafias decide to kill the same person
    * @return {undefined}
