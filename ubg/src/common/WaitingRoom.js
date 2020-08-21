@@ -13,7 +13,6 @@ import villager from '../mafia/images/villager.png';
 import mafia from '../mafia/images/mafia.png';
 import detective from '../mafia/images/detective.png';
 import doctor from '../mafia/images/doctor.png';
-import {useHistory} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -72,7 +71,6 @@ const useStyles = makeStyles((theme) => ({
 function WaitingRoom({gameName, gameDescription, leaveRoom, win,
   joinRoom, inRoom, isHost, usersCollection, startGame, gameId}) {
   const classes = useStyles();
-  const history = useHistory();
   const villagerImage = '<img src="' + villager +
     '" style="width:100%" alt="Villager">';
   const mafiaImage = '<img src="' + mafia +
@@ -125,7 +123,7 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
         <IconButton
           color="primary"
           component="span"
-          onClick={() => history.push('/')}
+          onClick={() => window.open('/')}
           className={classes.home}
         >
           <HomeIcon fontSize="large" />
