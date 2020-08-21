@@ -479,7 +479,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
 
   useEffect(() => {
     setInGame(user && inRoom);
-  }, [user, usersData]);
+  }, [user, usersData, inRoom]);
 
   window.onbeforeunload = (e) => {
     if (inRoom) {

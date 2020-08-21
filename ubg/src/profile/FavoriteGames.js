@@ -24,6 +24,7 @@ export default function FavoriteGames({userCollection, uid}) {
   const [paginationCount, setPaginationCount] = React.useState(1);
   const [totalGames, setTotalGames] = React.useState(0);
   const [games, setGames] = React.useState([[]]);
+  const [page, setPage] = React.useState(1);
 
   /**
    * Sets up userGames for pagination
@@ -56,6 +57,8 @@ export default function FavoriteGames({userCollection, uid}) {
       {
         userGames.length !== 0 ?
         <DisplayGames
+          page={page}
+          setPage={setPage}
           games={games}
           paginationCount={paginationCount}
           totalGames={totalGames}
