@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
  * @param {string} user The current user's display name
  * @return {ReactElement} Box with the users video and name
  */
-export default function UserVideo({user, video, local}) {
+export default function UserVideo({user, video, videoInfo}) {
   const classes = useStyles();
   const setVideoRef = (videoElement) => {
     if (videoElement) {
@@ -40,41 +40,37 @@ export default function UserVideo({user, video, local}) {
       {
         video ?
         <video
-          className={local ? classes.videoMirror : classes.video}
+          className={videoInfo.local ? classes.videoMirror : classes.video}
           autoPlay={true}
           ref={setVideoRef}
-          muted={local}
+          muted={videoInfo.local}
         /> :
         null
       }
       <div>
-        {local ?
-          <IconButton
-            color="primary"
-            size="small"
-            onClick={local.toggleAudio}
-          >
-            {local.localAudio ?
-                <MicIcon fontSize="inherit" /> :
-                <MicOffIcon fontSize="inherit" />
-            }
-          </IconButton> :
-          null
-        }
+        <IconButton
+          color="primary"
+          size="small"
+          disabled={!videoInfo.local}
+          onClick={videoInfo.local ? videoInfo.toggleAudio : null}
+        >
+          {videoInfo.hasAudio ?
+              <MicIcon fontSize="inherit" /> :
+              <MicOffIcon fontSize="inherit" />
+          }
+        </IconButton>
         {user}
-        {local ?
-          <IconButton
-            color="primary"
-            size="small"
-            onClick={local.toggleVideo}
-          >
-            {local.localVideo ?
-                <VideoCamIcon fontSize="inherit" /> :
-                <VideoCamOffIcon fontSize="inherit" />
-            }
-          </IconButton> :
-          null
-        }
+        <IconButton
+          color="primary"
+          size="small"
+          disabled={!videoInfo.local}
+          onClick={videoInfo.local ? videoInfo.toggleVideo : null}
+        >
+          {videoInfo.hasVideo ?
+              <VideoCamIcon fontSize="inherit" /> :
+              <VideoCamOffIcon fontSize="inherit" />
+          }
+        </IconButton>
       </div>
     </div>
   );
@@ -83,10 +79,11 @@ export default function UserVideo({user, video, local}) {
 UserVideo.propTypes = {
   user: PropTypes.string,
   video: PropTypes.object,
-  local: PropTypes.shape({
+  videoInfo: PropTypes.shape({
+    local: PropTypes.bool,
     toggleAudio: PropTypes.func,
-    localAudio: PropTypes.bool,
+    hasAudio: PropTypes.bool,
     toggleVideo: PropTypes.func,
-    localVideo: PropTypes.bool,
+    hasVideo: PropTypes.bool,
   }),
 };
