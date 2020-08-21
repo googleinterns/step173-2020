@@ -430,7 +430,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
    * @return {func}
    */
   function socketConnection() {
-    socket = socketIOClient('/');
+    socket = socketIOClient('/', {transports: ['websocket']});
 
     if (inRoom) {
       startVideoAndJoinSocketRoom();
