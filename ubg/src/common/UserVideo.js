@@ -51,7 +51,7 @@ export default function UserVideo({user, video, videoInfo}) {
         <IconButton
           color="primary"
           size="small"
-          disabled={!videoInfo.local}
+          disabled={!videoInfo.local || videoInfo.night}
           onClick={videoInfo.local ? videoInfo.toggleAudio : null}
         >
           {videoInfo.hasAudio ?
@@ -65,7 +65,7 @@ export default function UserVideo({user, video, videoInfo}) {
         <IconButton
           color="primary"
           size="small"
-          disabled={!videoInfo.local}
+          disabled={!videoInfo.local || videoInfo.night}
           onClick={videoInfo.local ? videoInfo.toggleVideo : null}
         >
           {videoInfo.hasVideo ?
@@ -89,5 +89,6 @@ UserVideo.propTypes = {
     hasAudio: PropTypes.bool,
     toggleVideo: PropTypes.func,
     hasVideo: PropTypes.bool,
+    night: PropTypes.bool,
   }),
 };
