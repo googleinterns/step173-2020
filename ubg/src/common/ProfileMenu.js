@@ -58,6 +58,10 @@ export default function AuthButtons() {
           displayName: currUser.displayName,
           games: [],
           reviews: [],
+          mafiaStats: {
+            wins: 0,
+            losses: 0,
+          },
         });
       }
     }).catch(function(error) {
