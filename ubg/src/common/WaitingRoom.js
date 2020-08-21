@@ -69,8 +69,9 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Waiting room element
  */
 function WaitingRoom({gameName, gameDescription, leaveRoom, win,
-  joinRoom, inRoom, isHost, usersCollection, startGame, gameId}) {
+  joinRoom, inRoom, isHost, usersCollection, startGame, gameId, usersData}) {
   const classes = useStyles();
+  const playerLimit = 10;
   const villagerImage = '<img src="' + villager +
     '" style="width:100%" alt="Villager">';
   const mafiaImage = '<img src="' + mafia +
@@ -205,6 +206,7 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
               variant="contained"
               color="primary"
               onClick={joinRoom}
+              disabled={playerLimit < usersData.length}
             >Join Room</Button>
         }
       </div>
@@ -228,6 +230,7 @@ WaitingRoom.propTypes = {
 const mapStateToProps = (state) => ({
   gameId: state.roomData.gameId,
   win: state.roomData.win,
+  usersData: state.usersData,
 });
 
 export default connect(
