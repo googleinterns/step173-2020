@@ -166,38 +166,6 @@ export default function Game() {
             implementations={game.implementations}
           />
           <Spacer />
-          <Grid container spacing={5}>
-            <Grid item>
-              <Typography variant='h4'>
-                Play
-              </Typography>
-            </Grid>
-          </Grid>
-          <br />
-          <AuthCheck>
-            <Grid container spacing={3}>
-              <Grid item className={classes.roomJoin}>
-                <TextField
-                  value={roomId}
-                  onChange={(e) => {
-                    setRoomId(e.target.value);
-                  }}
-                  type='text'
-                  variant='outlined'
-                />
-              </Grid>
-              <Grid item className={classes.section}>
-                <Button
-                  variant='contained'
-                  color='primary'
-                  onClick={joinRoom}
-                  m={5}>
-                    Join Room
-                </Button>
-              </Grid>
-            </Grid>
-          </AuthCheck>
-          <Spacer />
           <Videos
             videos={paginateVideos(game.videos)}
           />
