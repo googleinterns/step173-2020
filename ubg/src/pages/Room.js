@@ -639,27 +639,37 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                   <div className={classes.flexColumn}>
                     <div className={classes.grow}>
                       {
+                        inRoom ?
+                          <UserVideo
+                            video={localStream}
+                            key={user.uid}
+                            user={user.displayName}
+                            videoInfo={{
+                              local: true,
+                              hasAudio: localAudio,
+                              hasVideo: localVideo,
+                              toggleAudio: () => setLocalAudio(!localAudio),
+                              toggleVideo: () => setLocalVideo(!localVideo),
+                            }}
+                          /> :
+                          null
+                      }
+                      {
                         usersData.map((u) => {
-                          return (
-                            <UserVideo
-                              video={u.uid === user.uid ? localStream :
-                                remoteStreams[uidToSocketId[u.uid]]}
-                              key={u.uid}
-                              user={u.displayName}
-                              videoInfo={u.uid === user.uid ? {
-                                local: true,
-                                hasAudio: localAudio,
-                                hasVideo: localVideo,
-                                toggleAudio: () => setLocalAudio(!localAudio),
-                                toggleVideo: () => setLocalVideo(!localVideo),
-                              } :
-                              {
-                                local: false,
-                                hasAudio: u.hasAudio,
-                                hasVideo: u.hasVideo,
-                              }}
-                            />
-                          );
+                          if (u.uid !== user.uid) {
+                            return (
+                              <UserVideo
+                                video={remoteStreams[uidToSocketId[u.uid]]}
+                                key={u.uid}
+                                user={u.displayName}
+                                videoInfo={{
+                                  local: false,
+                                  hasAudio: u.hasAudio,
+                                  hasVideo: u.hasVideo,
+                                }}
+                              />
+                            );
+                          }
                         })
                       }
                       {
