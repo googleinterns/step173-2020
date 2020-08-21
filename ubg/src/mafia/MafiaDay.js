@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia day element
  */
 function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
-  userUid, room, dayVote, aliveNum, showResult, endGame, dayNum}) {
+  userUid, room, dayVote, aliveNum, showResult, endGame, dayNum, chat, win}) {
   const classes = useStyles();
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
@@ -56,9 +56,21 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
    * @return {undefined}
    */
   function startDay() {
-    endGame();
+    // check if victory condition met
+    const endPromise = new Promise((resolve, reject)=> {
+      endGame(resolve);
+    });
+    endPromise.then(() => {
+      loadData();
+    });
+  }
+
+  /**
+   * Initializes the day phase
+   */
+  async function loadData() {
     setUserInfo(usersData.find((u) => u.uid === userUid));
-    if (!initialize) {
+    if (!initialize && (!win || win === 0)) {
       const allPlayers = [];
       const today = new Date();
       const hours = today.getUTCHours();
@@ -90,12 +102,15 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
           allPlayers.push(u);
         }
       });
-      room.update({
-        chat: firebase.firestore.FieldValue.arrayUnion(
-            {text: '-------- DAY ' + dayNum + ' --------',
-              isGameText: true, hours, minutes},
-        ),
-      });
+      if (!chat.includes('-------- DAY ' + dayNum + ' --------')) {
+        room.update({
+          chat: firebase.firestore.FieldValue.arrayUnion(
+              {text: '-------- DAY ' + dayNum + ' --------',
+                isGameText: true, hours, minutes},
+          ),
+
+        });
+      }
       setPlayers(allPlayers);
       setInitialize(true);
     }
@@ -249,6 +264,8 @@ MafiaDay.propTypes = {
   showResult: PropTypes.func,
   endGame: PropTypes.func,
   dayNum: PropTypes.number,
+  chat: PropTypes.array,
+  win: PropTypes.number,
 };
 
 const mapStateToProps = (state) => ({
@@ -259,6 +276,8 @@ const mapStateToProps = (state) => ({
   doctorSave: state.roomData.doctorSave,
   aliveNum: state.roomData.aliveCount,
   dayNum: state.roomData.dayCount,
+  chat: state.roomData.chat,
+  win: state.roomData.win,
 });
 
 export default connect(

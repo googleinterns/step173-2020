@@ -250,6 +250,7 @@ function Description(
             </Icon>
             &emsp;
             <AuthCheck>
+              <br /> <br />
               <Grid container spacing={3}>
                 {gameId === '925' ?
                   <Grid item>
