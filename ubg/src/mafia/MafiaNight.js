@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
  */
 function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
   mafiaKill, doctorSave, detectiveCheck, showResult, mafiaDecision,
-  endGame, dayNum}) {
+  endGame, dayNum, chat, win}) {
   const classes = useStyles();
   const [players, setPlayers] = useState([]);
   const [userInfo, setUserInfo] = useState('');
@@ -53,9 +53,21 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
    * @return {undefined}
    */
   function loadNightData() {
-    endGame();
+    // check if victory condition met
+    const endPromise = new Promise((resolve, reject)=> {
+      endGame(resolve);
+    });
+    endPromise.then(() => {
+      loadData();
+    });
+  }
+
+  /**
+   * Initializes the night phase
+   */
+  async function loadData() {
     setUserInfo(usersData.find((u) => u.uid === userUid));
-    if (!initialize) {
+    if (!initialize && (!win || win === 0)) {
       setInitialize(true);
       const roles = new Set();
       const allPlayers = [];
@@ -109,14 +121,17 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
       setPlayers(allPlayers);
       // dayNum can show up as undefined on first night
       dayNum = dayNum ? (initialize ? 1 : dayNum) : 1;
-      room.update({
-        chat: firebase.firestore.FieldValue.arrayUnion(
-            {text: '-------- NIGHT ' + dayNum + ' --------',
-              isGameText: true, hours, minutes},
-        ),
-      });
+      if (!chat.includes('-------- NIGHT ' + dayNum + ' --------')) {
+        room.update({
+          chat: firebase.firestore.FieldValue.arrayUnion(
+              {text: '-------- NIGHT ' + dayNum + ' --------',
+                isGameText: true, hours, minutes},
+          ),
+        });
+      }
     }
   }
+
   /**
    * Check if all mafias decide to kill the same person
    * @return {undefined}
@@ -315,6 +330,8 @@ MafiaNight.propTypes = {
   mafiaDecision: PropTypes.array,
   endGame: PropTypes.func,
   dayNum: PropTypes.number,
+  chat: PropTypes.array,
+  win: PropTypes.number,
 };
 
 const mapStateToProps = (state) => ({
@@ -326,6 +343,8 @@ const mapStateToProps = (state) => ({
   detectiveCheck: state.roomData.detectiveCheck,
   mafiaDecision: state.roomData.mafiaDecision,
   dayNum: state.roomData.dayCount,
+  chat: state.roomData.chat,
+  win: state.roomData.win,
 });
 
 export default connect(
