@@ -433,6 +433,9 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     setStateReloadVar(false);
   }
 
+  /**
+   * Handle video chat state change
+   */
   function handleVideoChatChange() {
     if (inVideoChat && !localStream) {
       startVideoAndJoinSocketRoom();
