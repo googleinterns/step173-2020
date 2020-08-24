@@ -70,6 +70,7 @@ GameRoom.propTypes = {
   room: PropTypes.object,
   usersCollection: PropTypes.object,
   playAgain: PropTypes.func,
+  leaveRoom: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({

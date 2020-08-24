@@ -518,6 +518,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
       alive: true,
       chose: false,
       order: Math.floor(Math.random() * 20),
+      exitGame: false,
     });
   }
 

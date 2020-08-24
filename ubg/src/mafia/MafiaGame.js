@@ -47,8 +47,13 @@ function MafiaGame({day, room, usersCollection, usersData, userUid,
   function showResult(message) {
     setAlert(<AlertDialog message={message}></AlertDialog>);
   }
+  /**
+   * Show exit dialog
+   * @return {undefined}
+   */
   function exitGame() {
-    setExit(<ExitDialog leaveRoom={leaveRoom} setExit={setExit} />);
+    setExit(<ExitDialog leaveRoom={leaveRoom} setExit={setExit}
+      endGame={endGame} room={room}/>);
   }
   /**
    * Determines if game has reached end
@@ -148,6 +153,7 @@ MafiaGame.propTypes = {
   usersData: PropTypes.array,
   userUid: PropTypes.string,
   playAgain: PropTypes.func,
+  leaveRoom: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({

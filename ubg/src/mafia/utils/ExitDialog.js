@@ -6,11 +6,12 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import PropTypes from 'prop-types';
 import {useHistory} from 'react-router-dom';
+import {connect} from 'react-redux';
 
 /**
  * @return {ReactElement} ExitDialog element
  */
-export default function ExitDialog({leaveRoom, setExit}) {
+function ExitDialog({leaveRoom, setExit, endGame, room, aliveNum, day}) {
   const [open, setOpen] = React.useState(true);
   const history = useHistory();
 
@@ -19,11 +20,18 @@ export default function ExitDialog({leaveRoom, setExit}) {
     setExit(null);
   };
 
-  const handleExit = () => {
+  const handleExit = async () => {
+    if (day) {
+      await room.update({
+        aliveCount: aliveNum - 1,
+      });
+    }
     setOpen(false);
+    // must pass in resolve function
+    await endGame(() => {});
     leaveRoom();
     history.push('/');
-  }
+  };
 
   return (
     <div>
@@ -50,6 +58,20 @@ export default function ExitDialog({leaveRoom, setExit}) {
 }
 
 ExitDialog.propTypes = {
+  day: PropTypes.bool,
   leaveRoom: PropTypes.func,
+  endGame: PropTypes.func,
   setExit: PropTypes.func,
+  room: PropTypes.object,
+  aliveNum: PropTypes.number,
 };
+
+const mapStateToProps = (state) => ({
+  day: state.roomData.day,
+  aliveNum: state.roomData.aliveCount,
+});
+
+export default connect(
+    mapStateToProps,
+    {},
+)(ExitDialog);
