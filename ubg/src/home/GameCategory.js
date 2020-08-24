@@ -7,29 +7,29 @@ import PropTypes from 'prop-types';
 
 const responsive = {
   extremelyLargeDesktop: {
-    breakpoint: {max:5000, min: 1921 },
-    items: 6
+    breakpoint: {max:5000, min: 1921},
+    items: 6,
   },
   superLargeDesktop: {
     breakpoint: {max: 1920, min: 1701},
-    items: 5
+    items: 5,
   },
   LargeDesktop: {
-    breakpoint: { max: 1700, min: 1280 },
-    items: 4
+    breakpoint: {max: 1700, min: 1280},
+    items: 4,
   },
   desktop: {
-    breakpoint: { max: 1280, min: 961 },
-    items: 3
+    breakpoint: {max: 1280, min: 961},
+    items: 3,
   },
   tablet: {
-    breakpoint: { max: 960, min: 601 },
-    items: 2
+    breakpoint: {max: 960, min: 601},
+    items: 2,
   },
   mobile: {
-    breakpoint: { max: 600, min: 1},
-    items: 1
-  }
+    breakpoint: {max: 600, min: 1},
+    items: 1,
+  },
 };
 
 /**
