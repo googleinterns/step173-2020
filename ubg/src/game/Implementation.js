@@ -50,26 +50,29 @@ export default function Implementation(
     setLink('');
     setLinkName('');
   }
+
   return (
     <Box>
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Typography variant='h4'>
-            Implementations
+            Where to Play
           </Typography>
         </Grid>
-        {implementations.map((l, index) => {
-          return (
-            <Grid item
-              key={index}
-              className={classes.section}
-            >
-              <Link target="_blank" href={l.link} >
-                {l.name}
-              </Link>
-            </Grid>
-          );
-        })}
+        {implementations.length > 0 ?
+          implementations.map((l, index) => {
+            return (
+              <Grid item
+                key={index}
+                className={classes.section}
+              >
+                <Link target="_blank" href={l.link} >
+                  {l.name}
+                </Link>
+              </Grid>
+            );
+          }) : <Grid item>No implementations available</Grid>
+        }
       </Grid>
       <br />
       <AuthCheck>

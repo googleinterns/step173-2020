@@ -13,7 +13,6 @@ import villager from '../mafia/images/villager.png';
 import mafia from '../mafia/images/mafia.png';
 import detective from '../mafia/images/detective.png';
 import doctor from '../mafia/images/doctor.png';
-import {useHistory} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -70,9 +69,9 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Waiting room element
  */
 function WaitingRoom({gameName, gameDescription, leaveRoom, win,
-  joinRoom, inRoom, isHost, usersCollection, startGame, gameId}) {
+  joinRoom, inRoom, isHost, usersCollection, startGame, gameId, usersData}) {
   const classes = useStyles();
-  const history = useHistory();
+  const playerLimit = 10;
   const villagerImage = '<img src="' + villager +
     '" style="width:100%" alt="Villager">';
   const mafiaImage = '<img src="' + mafia +
@@ -125,7 +124,7 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
         <IconButton
           color="primary"
           component="span"
-          onClick={() => history.push('/')}
+          onClick={() => window.open('/')}
           className={classes.home}
         >
           <HomeIcon fontSize="large" />
@@ -207,6 +206,7 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
               variant="contained"
               color="primary"
               onClick={joinRoom}
+              disabled={playerLimit < usersData.length}
             >Join Room</Button>
         }
       </div>
@@ -225,11 +225,13 @@ WaitingRoom.propTypes = {
   startGame: PropTypes.func,
   gameId: PropTypes.string,
   win: PropTypes.number,
+  usersData: PropTypes.array,
 };
 
 const mapStateToProps = (state) => ({
   gameId: state.roomData.gameId,
   win: state.roomData.win,
+  usersData: state.usersData,
 });
 
 export default connect(
