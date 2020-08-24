@@ -113,7 +113,6 @@ function MafiaGame({day, room, usersCollection, usersData, userUid,
         <MafiaDay
           usersCollection={usersCollection}
           room={room}
-          showResult={showResult}
           endGame={endGame}
         /> :
         <MafiaNight

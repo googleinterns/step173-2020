@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia day element
  */
 function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
-  userUid, room, dayVote, aliveNum, showResult, endGame, dayNum, chat, win}) {
+  userUid, room, dayVote, aliveNum, endGame, dayNum, chat, win}) {
   const classes = useStyles();
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
@@ -102,7 +102,8 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
           allPlayers.push(u);
         }
       });
-      if (!chat.includes('-------- DAY ' + dayNum + ' --------')) {
+      if (!chat.some((message) => message.text ===
+        '-------- DAY ' + dayNum + ' --------')) {
         room.update({
           chat: firebase.firestore.FieldValue.arrayUnion(
               {text: '-------- DAY ' + dayNum + ' --------',
@@ -163,7 +164,16 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
         default:
           executionMessage = 'No one was executed.';
       }
-      showResult(executionMessage);
+      dayVote.forEach((vote) => {
+        room.update({
+          chat: firebase.firestore.FieldValue.arrayUnion({
+            text: vote.playerName + ' voted for ' + vote.name,
+            isGameText: true,
+            hours,
+            minutes,
+          }),
+        });
+      });
       room.update({
         doctorSave: {'uid': '', 'displayName': ''},
         mafiaKill: {'uid': '', 'displayName': ''},
@@ -173,9 +183,9 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
         dayVote: [],
         aliveCount: aliveNum,
         dayCount: dayNum,
-        chat: firebase.firestore.FieldValue.arrayUnion(
-            {text: executionMessage, isGameText: true, hours, minutes},
-        ),
+        chat: firebase.firestore.FieldValue.arrayUnion({
+          text: executionMessage, isGameText: true, hours, minutes,
+        }),
       });
     }
   }
@@ -188,20 +198,14 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
    * @param {object} player Clicked on user object
    */
   function confirmVote() {
-    const today = new Date();
-    const hours = today.getUTCHours();
-    const minutes = today.getUTCMinutes();
     room.update({
       dayVote: firebase.firestore.FieldValue.arrayUnion({
-        player: userUid,
+        playerUid: userUid,
+        playerName: userInfo.displayName,
         uid: choice.uid,
         name: choice.displayName,
         role: choice.role,
       }),
-      chat: firebase.firestore.FieldValue.arrayUnion(
-          {text: userInfo.displayName + ' voted for ' + choice.displayName,
-            isGameText: true, hours, minutes},
-      ),
     });
     room.collection('users').doc(userInfo.uid).update({
       chose: true,
@@ -261,7 +265,6 @@ MafiaDay.propTypes = {
   mafiaKill: PropTypes.object,
   doctorSave: PropTypes.object,
   aliveNum: PropTypes.number,
-  showResult: PropTypes.func,
   endGame: PropTypes.func,
   dayNum: PropTypes.number,
   chat: PropTypes.array,

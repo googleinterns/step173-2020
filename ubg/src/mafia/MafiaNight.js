@@ -121,7 +121,8 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
       setPlayers(allPlayers);
       // dayNum can show up as undefined on first night
       dayNum = dayNum ? (initialize ? 1 : dayNum) : 1;
-      if (!chat.includes('-------- NIGHT ' + dayNum + ' --------')) {
+      if (!chat.some((message) => message.text ===
+        '-------- NIGHT ' + dayNum + ' --------')) {
         room.update({
           chat: firebase.firestore.FieldValue.arrayUnion(
               {text: '-------- NIGHT ' + dayNum + ' --------',
