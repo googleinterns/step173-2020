@@ -38,7 +38,7 @@ export default function UserVideo({user, video, videoInfo}) {
   return (
     <div className={classes.videoDiv}>
       {
-        video ?
+        (videoInfo.hasVideo === true && video != null) ?
         <video
           className={videoInfo.local ? classes.videoMirror : classes.video}
           autoPlay={true}

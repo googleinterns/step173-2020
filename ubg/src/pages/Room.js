@@ -681,6 +681,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                               />
                             );
                           }
+                          return null;
                         })
                       }
                       {
