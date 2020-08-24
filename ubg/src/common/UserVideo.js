@@ -11,16 +11,23 @@ const useStyles = makeStyles((theme) => ({
   videoDiv: {
     background: 'white',
     margin: '15px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   videoMirror: {
     'transform': 'rotateY(180deg)',
     '-webkit-transform': 'rotateY(180deg)',
     '-moz-transform': 'rotateY(180deg)',
-    'width': '100%',
+    'width': '20%',
+    flexGrow: 1,
   },
   video: {
-    width: '100%',
+    width: '25%',
   },
+  userInfo: {
+    flexGrow: 1,
+  }
 }));
 
 /**
@@ -47,7 +54,7 @@ export default function UserVideo({user, video, videoInfo}) {
         /> :
         null
       }
-      <div>
+      <div className={classes.userInfo}>
         <IconButton
           color="primary"
           size="small"
