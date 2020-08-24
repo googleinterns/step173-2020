@@ -53,7 +53,7 @@ function MafiaGame({day, room, usersCollection, usersData, userUid,
    */
   function exitGame() {
     setExit(<ExitDialog leaveRoom={leaveRoom} setExit={setExit}
-      endGame={endGame} room={room}/>);
+      endGame={endGame} room={room} role={userInfo.role}/>);
   }
   /**
    * Determines if game has reached end

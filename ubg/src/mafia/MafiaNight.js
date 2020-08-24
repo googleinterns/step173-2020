@@ -74,14 +74,10 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
       const today = new Date();
       const hours = today.getUTCHours();
       const minutes = today.getUTCMinutes();
-      let totalMafia = 0;
       usersData.forEach(function(u) {
         if (u.alive === true) {
           roles.add(u.role);
           allPlayers.push(u);
-          if (u.role === 2) {
-            totalMafia += 1;
-          }
         }
         if (u.uid === userUid) {
           setUserInfo(u);
@@ -108,7 +104,6 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
           }
         }
       });
-      setMafiaTotal(totalMafia);
       if (!roles.has(2)) {
         room.update({mafiaKill: {uid: '#', displayName: ''}});
       }
@@ -139,6 +134,13 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
    */
   function mafiaVote() {
     if (userInfo.role === 2) {
+      let totalMafia = 0;
+      usersData.forEach(function(u) {
+        if (u.alive === true && u.role === 2) {
+          totalMafia += 1;
+        }
+      });
+      setMafiaTotal(totalMafia);
       if (mafiaDecision && mafiaDecision.length !== 0 &&
         mafiaDecision.length === mafiaTotal) {
         const today = new Date();
@@ -199,7 +201,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
    * Load the all the mafia related data
    */
   useEffect(loadNightData, []);
-  useEffect(mafiaVote, [mafiaDecision]);
+  useEffect(mafiaVote, [mafiaDecision, usersData]);
   useEffect(endNight, [mafiaKill, doctorSave, detectiveCheck]);
 
   /**

@@ -107,6 +107,9 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
           allPlayers.push(u);
         }
       });
+      await room.update({
+        aliveCount: allPlayers.length,
+      });
       if (!chat.some((message) => message.text ===
         '-------- DAY ' + dayNum + ' --------')) {
         room.update({
@@ -114,7 +117,6 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
               {text: '-------- DAY ' + dayNum + ' --------',
                 isGameText: true, hours, minutes},
           ),
-
         });
       }
       setPlayers(allPlayers);

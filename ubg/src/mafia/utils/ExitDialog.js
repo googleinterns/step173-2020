@@ -11,7 +11,8 @@ import {connect} from 'react-redux';
 /**
  * @return {ReactElement} ExitDialog element
  */
-function ExitDialog({leaveRoom, setExit, endGame, room, aliveNum, day}) {
+function ExitDialog({leaveRoom, setExit, endGame, room, aliveNum, day,
+  userUid, hostUid, usersData, role}) {
   const [open, setOpen] = React.useState(true);
   const history = useHistory();
 
@@ -26,9 +27,26 @@ function ExitDialog({leaveRoom, setExit, endGame, room, aliveNum, day}) {
         aliveCount: aliveNum - 1,
       });
     }
-    setOpen(false);
     // must pass in resolve function
     await endGame(() => {});
+    if (userUid === hostUid) {
+      await room.update({
+        host: usersData[0].uid,
+      });
+    }
+    switch (role) {
+      case 3:
+        await room.update(
+            {detectiveCheck: {uid: 'none', displayName: 'none'}},
+        );
+        break;
+      case 4:
+        await room.update(
+            {doctorSave: {uid: 'none', displayName: 'none'}},
+        );
+        break;
+      default:
+    }
     leaveRoom();
     history.push('/');
   };
@@ -64,11 +82,18 @@ ExitDialog.propTypes = {
   setExit: PropTypes.func,
   room: PropTypes.object,
   aliveNum: PropTypes.number,
+  userUid: PropTypes.string,
+  hostUid: PropTypes.string,
+  usersData: PropTypes.array,
+  role: PropTypes.number,
 };
 
 const mapStateToProps = (state) => ({
   day: state.roomData.day,
   aliveNum: state.roomData.aliveCount,
+  userUid: state.currentUser.uid,
+  hostUid: state.roomData.host,
+  usersData: state.usersData,
 });
 
 export default connect(
