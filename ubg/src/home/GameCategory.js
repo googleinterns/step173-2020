@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 
 const responsive = {
   extremelyLargeDesktop: {
-    breakpoint: {max:5000, min: 1921},
+    breakpoint: {max: 5000, min: 1921},
     items: 6,
   },
   superLargeDesktop: {
