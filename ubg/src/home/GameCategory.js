@@ -1,16 +1,36 @@
 import React from 'react';
 import Box from '@material-ui/core/Box';
 import GameCard from '../search/GameCard';
-import Carousel from 'react-elastic-carousel';
+import Carousel from 'react-multi-carousel';
+import 'react-multi-carousel/lib/styles.css';
 import PropTypes from 'prop-types';
 
-const breakPoints = [
-  {width: 1, itemsToShow: 1},
-  {width: 600, itemsToShow: 2},
-  {width: 960, itemsToShow: 3},
-  {width: 1280, itemsToShow: 4},
-  {width: 1920, itemsToShow: 6},
-];
+const responsive = {
+  extremelyLargeDesktop: {
+    breakpoint: {max:5000, min: 1921 },
+    items: 6
+  },
+  superLargeDesktop: {
+    breakpoint: {max: 1920, min: 1701},
+    items: 5
+  },
+  LargeDesktop: {
+    breakpoint: { max: 1700, min: 1280 },
+    items: 4
+  },
+  desktop: {
+    breakpoint: { max: 1280, min: 961 },
+    items: 3
+  },
+  tablet: {
+    breakpoint: { max: 960, min: 601 },
+    items: 2
+  },
+  mobile: {
+    breakpoint: { max: 600, min: 1},
+    items: 1
+  }
+};
 
 /**
  * @param {string} category category of games
@@ -21,10 +41,7 @@ export default function GameCategory({category, games}) {
   return (
     <Box m={10} container='true'>
       <h1>{category}</h1>
-      <Carousel
-        itemPadding={[10, 15]}
-        breakPoints={breakPoints}
-      >
+      <Carousel responsive={responsive} infinite={false} >
         {games.map((game) => {
           return (
             <GameCard

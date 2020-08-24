@@ -53,7 +53,7 @@ export default function GameCard({id, image, name, minTime, maxTime,
   }
 
   const ref = useRef(null);
-  const [height, setHeight] = useState(0);
+  const [height, setHeight] = useState(100);
   useEffect(() => {
     if (ref.current) {
       setHeight(ref.current.offsetWidth * 1.2);
