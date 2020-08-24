@@ -41,7 +41,10 @@ export default function GameCategory({category, games}) {
   return (
     <Box m={10} container='true'>
       <h1>{category}</h1>
-      <Carousel responsive={responsive} infinite={false} >
+      <Carousel
+        responsive={responsive}
+        infinite={false}
+      >
         {games.map((game) => {
           return (
             <GameCard
