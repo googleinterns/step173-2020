@@ -501,7 +501,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
   }, [user, usersData]);
 
   useEffect(disableVideoChatDuringNight,
-    [roomData.day, inVideoChat, roomData.started]);
+      [roomData.day, inVideoChat, roomData.started]);
 
   window.onbeforeunload = (e) => {
     if (inVideoChat) {
@@ -509,8 +509,11 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     }
   };
 
+  /**
+   * Disable video chat during night
+   */
   function disableVideoChatDuringNight() {
-    if(!roomData.day && inVideoChat && roomData.started){
+    if (!roomData.day && inVideoChat && roomData.started) {
       setLocalAudio(false);
       setLocalVideo(false);
     }
@@ -660,7 +663,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                               hasVideo: localVideo,
                               toggleAudio: () => setLocalAudio(!localAudio),
                               toggleVideo: () => setLocalVideo(!localVideo),
-                              night: !roomData.day && roomData.started
+                              night: !roomData.day && roomData.started,
                             }}
                           /> :
                           null

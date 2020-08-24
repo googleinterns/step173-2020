@@ -20,14 +20,14 @@ const useStyles = makeStyles((theme) => ({
     '-webkit-transform': 'rotateY(180deg)',
     '-moz-transform': 'rotateY(180deg)',
     'width': '20%',
-    flexGrow: 1,
+    'flexGrow': 1,
   },
   video: {
     width: '25%',
   },
   userInfo: {
     flexGrow: 1,
-  }
+  },
 }));
 
 /**
