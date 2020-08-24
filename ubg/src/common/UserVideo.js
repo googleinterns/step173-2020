@@ -7,6 +7,8 @@ import VideoCamOffIcon from '@material-ui/icons/VideocamOff';
 import MicIcon from '@material-ui/icons/Mic';
 import MicOffIcon from '@material-ui/icons/MicOff';
 
+const classNames = require('classnames');
+
 const useStyles = makeStyles((theme) => ({
   videoDiv: {
     background: 'white',
@@ -19,14 +21,15 @@ const useStyles = makeStyles((theme) => ({
     'transform': 'rotateY(180deg)',
     '-webkit-transform': 'rotateY(180deg)',
     '-moz-transform': 'rotateY(180deg)',
-    'width': '20%',
-    'flexGrow': 1,
   },
   video: {
-    width: '25%',
+    width: '35%',
   },
   userInfo: {
     flexGrow: 1,
+  },
+  hidden: {
+    display: 'none',
   },
 }));
 
@@ -42,12 +45,18 @@ export default function UserVideo({user, video, videoInfo}) {
     }
   };
 
+  const videoClasses = classNames({
+    [classes.video]: true,
+    [classes.videoMirror]: videoInfo.local,
+    [classes.hidden]: videoInfo.hasVideo === false,
+  });
+
   return (
     <div className={classes.videoDiv}>
       {
-        (videoInfo.hasVideo === true && video != null) ?
+        video != null ?
         <video
-          className={videoInfo.local ? classes.videoMirror : classes.video}
+          className={videoClasses}
           autoPlay={true}
           ref={setVideoRef}
           muted={videoInfo.local}
