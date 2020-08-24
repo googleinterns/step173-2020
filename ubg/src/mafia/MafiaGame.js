@@ -5,7 +5,9 @@ import MafiaNight from './MafiaNight';
 import PersonalInfo from './PersonalInfo';
 import PropTypes from 'prop-types';
 import AlertDialog from './utils/AlertDialog';
+import Button from '@material-ui/core/Button';
 import {connect} from 'react-redux';
+import {useHistory} from 'react-router-dom';
 import {useFirestore, useFirestoreDocData} from 'reactfire';
 
 const useStyles = makeStyles((theme) => ({
@@ -30,12 +32,13 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia game element
  */
 function MafiaGame({day, room, usersCollection, usersData, userUid,
-  playAgain}) {
+  playAgain, leaveRoom}) {
   const classes = useStyles();
   const [alert, setAlert] = useState(null);
   const [userInfo, setUserInfo] = useState('');
   const userDoc = useFirestore().collection('users').doc(userUid);
   const userDocData = useFirestoreDocData(userDoc);
+  const history = useHistory();
 
   /**
    * @param {string} message message to display
@@ -97,6 +100,11 @@ function MafiaGame({day, room, usersCollection, usersData, userUid,
     }
   }
 
+  function leaveGame() {
+    leaveRoom();
+    history.push('/');
+  }
+
   return (
     <div className={day ? classes.root : classes.rootNight}>
       {alert}
@@ -107,6 +115,14 @@ function MafiaGame({day, room, usersCollection, usersData, userUid,
           role={userInfo.role}
           alive={userInfo.alive}
         />
+        <br />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => leaveGame()}
+        >
+          Leave Game
+        </Button>
       </div>
       {
         day ?

@@ -609,6 +609,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                       room={room}
                       usersCollection={usersCollection}
                       playAgain={playAgain}
+                      leaveRoom={leaveRoom}
                     /> :
                     <div className={classes.signInContainer}>
                       <Button

@@ -31,7 +31,8 @@ const useStyles = makeStyles((theme) => ({
 /**
  * @return {ReactElement} Game room element
  */
-function GameRoom({gameRules, gameId, room, usersCollection, playAgain}) {
+function GameRoom({gameRules, gameId, room, usersCollection, playAgain,
+  leaveRoom}) {
   const [openRules, setOpenRules] = useState(false);
   const classes = useStyles();
 
@@ -45,6 +46,7 @@ function GameRoom({gameRules, gameId, room, usersCollection, playAgain}) {
             room={room}
             usersCollection={usersCollection}
             playAgain={playAgain}
+            leaveRoom={leaveRoom}
           /> :
           'no game'
         }
