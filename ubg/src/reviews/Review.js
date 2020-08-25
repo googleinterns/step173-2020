@@ -1,5 +1,4 @@
 import React from 'react';
-import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import {makeStyles} from '@material-ui/core/styles';
@@ -51,7 +50,6 @@ export default function Review({review}) {
           }
         />
       </ListItem>
-      <Divider />
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import React from 'react';
 import Review from './Review';
+import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
@@ -39,9 +40,10 @@ export default function Reviews({reviews, profile, reviewsRef=null,
             review = {...review, name: review.gameName};
           } else if (review.userId === uid) {
             editDelete = <Button
-              variant="contained"
+              variant="outlined"
               color="secondary"
               onClick={()=>deleteComment(review)}
+              size="small"
             >
                 Delete
             </Button>;
@@ -49,6 +51,7 @@ export default function Reviews({reviews, profile, reviewsRef=null,
           return <div key={review.name + review.timestamp}>
             <Review review={review}/>
             {editDelete}
+            <Divider />
           </div>;
         })}
       </List>
