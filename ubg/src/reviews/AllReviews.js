@@ -37,7 +37,10 @@ function AllReviews({gameId}) {
       setReviewed(true);
     });
   };
-
+  
+  /**
+   * Load reviews data of this game
+   */
   function loadReviews() {
     if (initialize === false) {
       const tempReviews = [];
@@ -68,7 +71,7 @@ function AllReviews({gameId}) {
   }
 
   /**
-   * Populates array reviews with reviews from database in the beginning
+   * Load reviews data
    */
   useEffect(loadReviews, [reviewsRef, initialize]);
 
