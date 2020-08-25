@@ -14,6 +14,7 @@ import * as firebase from 'firebase/app';
 export default function Reviews({reviews, profile, reviewsRef=null,
   usersDoc=null, setInitialize=null, setReviewed=null, uid=null}) {
   /**
+   * @param {object} review
    * delete comment
    */
   function deleteComment(review) {
@@ -39,16 +40,16 @@ export default function Reviews({reviews, profile, reviewsRef=null,
           } else if (review.userId === uid) {
             editDelete = <Button
               variant="contained"
-              color="secondary" 
+              color="secondary"
               onClick={()=>deleteComment(review)}
-              >
+            >
                 Delete
-              </Button>
+            </Button>;
           }
           return <div key={review.name + review.timestamp}>
-                <Review review={review}/>
-                {editDelete}
-              </div>;
+            <Review review={review}/>
+            {editDelete}
+          </div>;
         })}
       </List>
     </div>

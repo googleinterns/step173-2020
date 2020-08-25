@@ -57,7 +57,6 @@ function App() {
               <Route exact path="/gameRoom/:roomId">
                 <Room />
               </Route>
-              
               <Route path="/">
                 <NotFound />
               </Route>

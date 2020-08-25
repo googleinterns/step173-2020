@@ -54,7 +54,12 @@ export default function NewReview(props) {
           />
           <br />
           <br />
-          <Button variant="contained" color="primary" type="submit" disabled={props.reviewed}>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            disabled={props.reviewed}
+          >
             Submit</Button>
         </form>
       </Box>
