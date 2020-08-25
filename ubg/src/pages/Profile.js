@@ -7,6 +7,8 @@ import {makeStyles} from '@material-ui/core/styles';
 import FavoriteGames from '../profile/FavoriteGames';
 import Reviews from '../reviews/Reviews';
 import PropTypes from 'prop-types';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
@@ -32,7 +34,8 @@ export default function Profile() {
   return (
     <div>
       <Navbar />
-      <Box container='true' justify='center' alignItems='center' m={10}>
+      <Box justify='center' alignItems='center'
+        mt={10} ml={10} mr={10}>
         <Box m={10}>
           <Typography variant='h2' className={classes.fonts}>
             {user ? user.displayName : 'Sign in to view your profile'}
@@ -41,12 +44,46 @@ export default function Profile() {
         </Box>
         {user ? (
           <div>
+            <UserStats userCollection={userCollection} uid={user.uid} />
             <FavoriteGames userCollection={userCollection} uid={user.uid} />
             <UserReviews userCollection={userCollection} uid={user.uid} />
           </div>
         ) : ''}
       </Box>
     </div>
+  );
+}
+
+/**
+ * @param {object} userCollection Reference to user collection
+ * @param {string} uid User ID of current user
+ * @return {ReactElement} Returns game statistics for user
+ */
+function UserStats({userCollection, uid}) {
+  const classes = useStyles();
+  const userStats = useFirestoreDocData(userCollection.doc(uid)).mafiaStats;
+  return (
+    <Box m={10}>
+      <Typography variant='h4' className={classes.fonts}>
+        Game Statistics
+      </Typography>
+      <br />
+      <Card className={classes.card}>
+        <CardContent>
+          <Typography className={classes.fonts} variant="h5">
+            Mafia (Werewolf)
+          </Typography>
+          <br />
+          <Typography variant="body1">
+            Wins: {userStats.wins}
+          </Typography>
+          <Typography variant="body1">
+            Losses: {userStats.losses}
+          </Typography>
+        </CardContent>
+      </Card>
+      <br /> <hr />
+    </Box>
   );
 }
 
@@ -76,11 +113,25 @@ function UserReviews({userCollection, uid}) {
         <Typography variant='h4' className={classes.fonts}>
           Reviews
         </Typography>
-        <Reviews reviews={userReviews.sort(compare)} profile={true}/>
+        {
+          userReviews.length !== 0 ?
+          <Reviews reviews={userReviews.sort(compare)} profile={true}/> :
+          <div>
+            <br />
+            <Typography variant='body1'>
+              No reviews to show
+            </Typography>
+          </div>
+        }
       </Box>
     </div>
   );
 }
+
+UserStats.propTypes = {
+  userCollection: PropTypes.object,
+  uid: PropTypes.string,
+};
 
 UserReviews.propTypes = {
   userCollection: PropTypes.object,

@@ -7,19 +7,29 @@ import VideoCamOffIcon from '@material-ui/icons/VideocamOff';
 import MicIcon from '@material-ui/icons/Mic';
 import MicOffIcon from '@material-ui/icons/MicOff';
 
+const classNames = require('classnames');
+
 const useStyles = makeStyles((theme) => ({
   videoDiv: {
     background: 'white',
     margin: '15px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   videoMirror: {
     'transform': 'rotateY(180deg)',
     '-webkit-transform': 'rotateY(180deg)',
     '-moz-transform': 'rotateY(180deg)',
-    'width': '100%',
   },
   video: {
-    width: '100%',
+    width: '35%',
+  },
+  userInfo: {
+    flexGrow: 1,
+  },
+  hidden: {
+    display: 'none',
   },
 }));
 
@@ -27,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
  * @param {string} user The current user's display name
  * @return {ReactElement} Box with the users video and name
  */
-export default function UserVideo({user, video, local}) {
+export default function UserVideo({user, video, videoInfo}) {
   const classes = useStyles();
   const setVideoRef = (videoElement) => {
     if (videoElement) {
@@ -35,46 +45,52 @@ export default function UserVideo({user, video, local}) {
     }
   };
 
+  const videoClasses = classNames({
+    [classes.video]: true,
+    [classes.videoMirror]: videoInfo.local,
+    [classes.hidden]: videoInfo.hasVideo === false,
+  });
+
   return (
     <div className={classes.videoDiv}>
       {
-        video ?
+        video != null ?
         <video
-          className={local ? classes.videoMirror : classes.video}
+          className={videoClasses}
           autoPlay={true}
           ref={setVideoRef}
-          muted={local}
+          muted={videoInfo.local}
         /> :
         null
       }
-      <div>
-        {local ?
-          <IconButton
-            color="primary"
-            size="small"
-            onClick={local.toggleAudio}
-          >
-            {local.localAudio ?
-                <MicIcon fontSize="inherit" /> :
-                <MicOffIcon fontSize="inherit" />
-            }
-          </IconButton> :
-          null
-        }
+      <div className={classes.userInfo}>
+        <IconButton
+          color="primary"
+          size="small"
+          disabled={!videoInfo.local || videoInfo.night}
+          onClick={videoInfo.local ? videoInfo.toggleAudio : null}
+        >
+          {videoInfo.hasAudio ?
+              <MicIcon fontSize="inherit" /> :
+              videoInfo.hasAudio === false ?
+              <MicOffIcon fontSize="inherit" /> :
+              null
+          }
+        </IconButton>
         {user}
-        {local ?
-          <IconButton
-            color="primary"
-            size="small"
-            onClick={local.toggleVideo}
-          >
-            {local.localVideo ?
-                <VideoCamIcon fontSize="inherit" /> :
-                <VideoCamOffIcon fontSize="inherit" />
-            }
-          </IconButton> :
-          null
-        }
+        <IconButton
+          color="primary"
+          size="small"
+          disabled={!videoInfo.local || videoInfo.night}
+          onClick={videoInfo.local ? videoInfo.toggleVideo : null}
+        >
+          {videoInfo.hasVideo ?
+              <VideoCamIcon fontSize="inherit" /> :
+              videoInfo.hasVideo === false ?
+              <VideoCamOffIcon fontSize="inherit" /> :
+              null
+          }
+        </IconButton>
       </div>
     </div>
   );
@@ -83,10 +99,12 @@ export default function UserVideo({user, video, local}) {
 UserVideo.propTypes = {
   user: PropTypes.string,
   video: PropTypes.object,
-  local: PropTypes.shape({
+  videoInfo: PropTypes.shape({
+    local: PropTypes.bool,
     toggleAudio: PropTypes.func,
-    localAudio: PropTypes.bool,
+    hasAudio: PropTypes.bool,
     toggleVideo: PropTypes.func,
-    localVideo: PropTypes.bool,
+    hasVideo: PropTypes.bool,
+    night: PropTypes.bool,
   }),
 };
