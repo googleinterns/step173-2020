@@ -35,7 +35,6 @@ function AllReviews({gameId}) {
       tempReviews.unshift(review);
       setReviews(tempReviews);
       setReviewed(true);
-      console.log(review)
     });
   };
 
@@ -50,7 +49,6 @@ function AllReviews({gameId}) {
           .then(function(querySnapshot) {
             setInitialize(true);
             querySnapshot.forEach((doc) => {
-              console.log(doc.id);
               tempReviews.push({
                 name: doc.data().name,
                 rating: doc.data().rating,

@@ -17,7 +17,6 @@ export default function Reviews({reviews, profile, reviewsRef=null,
    * delete comment
    */
   function deleteComment(review) {
-    console.log(review);
     reviewsRef.doc(review.reviewId).delete();
     usersDoc.update({
       reviews: firebase.firestore.FieldValue.arrayRemove(review.reviewData),
@@ -39,16 +38,16 @@ export default function Reviews({reviews, profile, reviewsRef=null,
             review = {...review, name: review.gameName};
           } else if (review.userId === uid) {
             editDelete = <Button
-              key={review.timestamp + review.name}
               variant="contained"
               color="secondary" 
               onClick={()=>deleteComment(review)}>
                 Delete
               </Button>
           }
-          return <div><Review review={review}
-            key={review.name + review.timestamp}
-          />{editDelete}</div>;
+          return <div key={review.name + review.timestamp}>
+                <Review review={review}/>
+                {editDelete}
+              </div>;
         })}
       </List>
     </div>
@@ -60,4 +59,7 @@ Reviews.propTypes = {
   profile: PropTypes.bool,
   reviewsRef: PropTypes.object,
   usersDoc: PropTypes.object,
+  setInitialize: PropTypes.object,
+  setReviewed: PropTypes.object,
+  uid: PropTypes.string,
 };
