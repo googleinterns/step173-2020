@@ -531,6 +531,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
       alive: true,
       chose: false,
       order: Math.floor(Math.random() * 20),
+      exitGame: false,
     });
   }
 
@@ -622,6 +623,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                       room={room}
                       usersCollection={usersCollection}
                       playAgain={playAgain}
+                      leaveRoom={leaveRoom}
                     /> :
                     <div className={classes.signInContainer}>
                       <Button
@@ -683,6 +685,8 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                                 }}
                               />
                             );
+                          } else {
+                            return null;
                           }
                           return null;
                         })

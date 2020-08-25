@@ -5,8 +5,10 @@ import MafiaNight from './MafiaNight';
 import PersonalInfo from './PersonalInfo';
 import PropTypes from 'prop-types';
 import AlertDialog from './utils/AlertDialog';
+import Button from '@material-ui/core/Button';
 import {connect} from 'react-redux';
 import {useFirestore, useFirestoreDocData} from 'reactfire';
+import ExitDialog from './utils/ExitDialog';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,9 +32,10 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia game element
  */
 function MafiaGame({day, room, usersCollection, usersData, userUid,
-  playAgain}) {
+  playAgain, leaveRoom}) {
   const classes = useStyles();
   const [alert, setAlert] = useState(null);
+  const [exit, setExit] = useState(null);
   const [userInfo, setUserInfo] = useState('');
   const userDoc = useFirestore().collection('users').doc(userUid);
   const userDocData = useFirestoreDocData(userDoc);
@@ -43,6 +46,14 @@ function MafiaGame({day, room, usersCollection, usersData, userUid,
    */
   function showResult(message) {
     setAlert(<AlertDialog message={message}></AlertDialog>);
+  }
+  /**
+   * Show exit dialog
+   * @return {undefined}
+   */
+  function exitGame() {
+    setExit(<ExitDialog leaveRoom={leaveRoom} setExit={setExit}
+      endGame={endGame} room={room} role={userInfo.role}/>);
   }
   /**
    * Determines if game has reached end
@@ -100,6 +111,7 @@ function MafiaGame({day, room, usersCollection, usersData, userUid,
   return (
     <div className={day ? classes.root : classes.rootNight}>
       {alert}
+      {exit}
       <div>
         <h1 className={classes.time}>{day ? 'DAY' : 'NIGHT'}</h1>
         <PersonalInfo
@@ -107,6 +119,14 @@ function MafiaGame({day, room, usersCollection, usersData, userUid,
           role={userInfo.role}
           alive={userInfo.alive}
         />
+        <br />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => exitGame()}
+        >
+          Leave Game
+        </Button>
       </div>
       {
         day ?
@@ -133,6 +153,7 @@ MafiaGame.propTypes = {
   usersData: PropTypes.array,
   userUid: PropTypes.string,
   playAgain: PropTypes.func,
+  leaveRoom: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({

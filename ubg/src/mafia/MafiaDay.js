@@ -77,21 +77,26 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
       const minutes = today.getUTCMinutes();
       if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
         let deathText = mafiaKill.displayName + ' was killed last night. ';
-        switch (usersData.find((u) => u.uid === mafiaKill.uid).role) {
-          case 1:
-            deathText += 'They were a villager.';
-            break;
-          case 2:
-            deathText += 'They were mafia.';
-            break;
-          case 3:
-            deathText += 'They were a detective.';
-            break;
-          case 4:
-            deathText += 'They were a doctor.';
-            break;
-          default:
-            deathText = 'No one was killed last night.';
+        const targetUser = usersData.find((u) => u.uid === mafiaKill.uid);
+        if (targetUser) {
+          switch (targetUser.role) {
+            case 1:
+              deathText += 'They were a villager.';
+              break;
+            case 2:
+              deathText += 'They were mafia.';
+              break;
+            case 3:
+              deathText += 'They were a detective.';
+              break;
+            case 4:
+              deathText += 'They were a doctor.';
+              break;
+            default:
+              deathText = 'No one was killed last night.';
+          }
+        } else {
+          deathText = 'No one was killed last night';
         }
         setDeathText(deathText);
       } else {
@@ -102,6 +107,9 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
           allPlayers.push(u);
         }
       });
+      await room.update({
+        aliveCount: allPlayers.length,
+      });
       if (!chat.some((message) => message.text ===
         '-------- DAY ' + dayNum + ' --------')) {
         room.update({
@@ -109,7 +117,6 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
               {text: '-------- DAY ' + dayNum + ' --------',
                 isGameText: true, hours, minutes},
           ),
-
         });
       }
       setPlayers(allPlayers);
