@@ -40,7 +40,8 @@ export default function Reviews({reviews, profile, reviewsRef=null,
             editDelete = <Button
               variant="contained"
               color="secondary" 
-              onClick={()=>deleteComment(review)}>
+              onClick={()=>deleteComment(review)}
+              >
                 Delete
               </Button>
           }
@@ -59,7 +60,7 @@ Reviews.propTypes = {
   profile: PropTypes.bool,
   reviewsRef: PropTypes.object,
   usersDoc: PropTypes.object,
-  setInitialize: PropTypes.object,
-  setReviewed: PropTypes.object,
+  setInitialize: PropTypes.func,
+  setReviewed: PropTypes.func,
   uid: PropTypes.string,
 };
