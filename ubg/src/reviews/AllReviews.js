@@ -16,6 +16,7 @@ import * as firebase from 'firebase/app';
 function AllReviews({gameId}) {
   const user = useUser();
   const [reviews, setReviews] = useState([]);
+  const [reviewed, setReviewed] = useState(false);
   const [initialize, setInitialize] = useState(false);
   const reviewsRef = useFirestore()
       .collection('gameReviews')
@@ -26,10 +27,26 @@ function AllReviews({gameId}) {
     const tempReviews = [...reviews];
     tempReviews.unshift(review);
     setReviews(tempReviews);
+    // let reviewed = false;
+    // reviewsRef.get()
+    //     .then(function(querySnapshot) {
+    //       querySnapshot.forEach(function(doc) {
+    //         if (doc.data()['userId'] === user.uid) {
+    //           console.log("34");
+    //           reviewed = true;
+    //           return;
+    //         }
+    //       });
+    //     })
+    //     .catch(function(error) {
+    //       console.log('Error getting documents: ', error);
+    //     });
+    // console.log(reviewed);
     reviewsRef.add(review);
     usersCollection.doc(user.uid).update({
       reviews: firebase.firestore.FieldValue.arrayUnion(review),
     });
+    setReviewed(true);
   };
 
   /**
@@ -50,6 +67,9 @@ function AllReviews({gameId}) {
                 timestamp: doc.data().timestamp,
                 userId: doc.data().userId,
               });
+              if (doc.data()['userId'] === user.uid) {
+                setReviewed(true);
+              }
             });
             setReviews(tempReviews);
           })
@@ -57,7 +77,7 @@ function AllReviews({gameId}) {
             console.log('error: ', error);
           });
     }
-  }, [reviewsRef, initialize]);
+  }, [reviewsRef, initialize, user.uid]);
 
   return (
     <div className='reviews'>
@@ -75,8 +95,12 @@ function AllReviews({gameId}) {
             </div>
           }
         >
-          <NewReview gameId={gameId} user={user}
-            handleAddReview={handleAddReview} />
+          <NewReview
+            gameId={gameId}
+            user={user}
+            handleAddReview={handleAddReview}
+            reviewed={reviewed}
+          />
         </AuthCheck>
         <Reviews reviews={reviews} />
       </Box>

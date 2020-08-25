@@ -15,7 +15,6 @@ const useStyles = makeStyles((theme) => ({
   },
   text: {
     color: '#3f51b5',
-    
   },
 }));
 
