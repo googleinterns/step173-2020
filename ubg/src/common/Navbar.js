@@ -53,12 +53,6 @@ export default function Navbar() {
   return (
     <AppBar position="static">
       <Toolbar>
-        <IconButton edge="start"
-          className={classes.menuButton}
-          color="inherit"
-          aria-label="menu">
-          <MenuIcon />
-        </IconButton>
         <div className={classes.titleButton}>
           <Button color="inherit" onClick={homePage}>
             <Typography variant="h6">
