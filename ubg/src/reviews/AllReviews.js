@@ -16,6 +16,7 @@ import * as firebase from 'firebase/app';
 function AllReviews({gameId}) {
   const user = useUser();
   const [reviews, setReviews] = useState([]);
+  const [reviewed, setReviewed] = useState(false);
   const [initialize, setInitialize] = useState(false);
   const reviewsRef = useFirestore()
       .collection('gameReviews')
@@ -23,12 +24,17 @@ function AllReviews({gameId}) {
       .collection('reviews');
   const usersCollection = useFirestore().collection('users');
   const handleAddReview = (review) => {
-    const tempReviews = [...reviews];
-    tempReviews.unshift(review);
-    setReviews(tempReviews);
-    reviewsRef.add(review);
     usersCollection.doc(user.uid).update({
       reviews: firebase.firestore.FieldValue.arrayUnion(review),
+    });
+    reviewsRef.add(review).then(function(docRef) {
+      const copy = {...review};
+      review.reviewData = copy;
+      review.reviewId = docRef.id;
+      const tempReviews = [...reviews];
+      tempReviews.unshift(review);
+      setReviews(tempReviews);
+      setReviewed(true);
     });
   };
 
@@ -49,7 +55,12 @@ function AllReviews({gameId}) {
                 text: doc.data().text,
                 timestamp: doc.data().timestamp,
                 userId: doc.data().userId,
+                reviewId: doc.id,
+                reviewData: doc.data(),
               });
+              if (doc.data()['userId'] === user.uid) {
+                setReviewed(true);
+              }
             });
             setReviews(tempReviews);
           })
@@ -57,7 +68,7 @@ function AllReviews({gameId}) {
             console.log('error: ', error);
           });
     }
-  }, [reviewsRef, initialize]);
+  }, [reviewsRef, initialize, user.uid]);
 
   return (
     <div className='reviews'>
@@ -75,10 +86,22 @@ function AllReviews({gameId}) {
             </div>
           }
         >
-          <NewReview gameId={gameId} user={user}
-            handleAddReview={handleAddReview} />
+          <NewReview
+            gameId={gameId}
+            user={user}
+            handleAddReview={handleAddReview}
+            reviewed={reviewed}
+          />
         </AuthCheck>
-        <Reviews reviews={reviews} />
+        <Reviews
+          reviews={reviews}
+          profile={false}
+          reviewsRef={reviewsRef}
+          usersDoc={usersCollection.doc(user.uid)}
+          setInitialize={setInitialize}
+          setReviewed={setReviewed}
+          uid={user.uid}
+        />
       </Box>
     </div>
   );

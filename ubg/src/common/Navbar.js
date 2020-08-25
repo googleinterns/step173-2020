@@ -44,6 +44,12 @@ export default function Navbar() {
   function searchGames() {
     history.push('/search');
   }
+  /**
+   * Go to the about page
+   */
+  function about() {
+    history.push('/about');
+  }
   return (
     <AppBar position="static">
       <Toolbar>
@@ -60,6 +66,9 @@ export default function Navbar() {
             </Typography>
           </Button>
         </div>
+        <Button color="inherit" onClick={about}>
+          About
+        </Button>
         <Button color="inherit" onClick={searchGames}>
           Search Games
         </Button>
