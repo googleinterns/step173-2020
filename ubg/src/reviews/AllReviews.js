@@ -38,10 +38,7 @@ function AllReviews({gameId}) {
     });
   };
 
-  /**
-   * Populates array reviews with reviews from database in the beginning
-   */
-  useEffect(() => {
+  function loadReviews() {
     if (initialize === false) {
       const tempReviews = [];
       reviewsRef.orderBy('timestamp', 'desc')
@@ -68,7 +65,12 @@ function AllReviews({gameId}) {
             console.log('error: ', error);
           });
     }
-  }, [reviewsRef, initialize]);
+  }
+
+  /**
+   * Populates array reviews with reviews from database in the beginning
+   */
+  useEffect(loadReviews, [reviewsRef, initialize]);
 
   return (
     <div className='reviews'>
@@ -99,7 +101,6 @@ function AllReviews({gameId}) {
             usersDoc={usersCollection}
             setInitialize={setInitialize}
             setReviewed={setReviewed}
-            user={user}
           />
         </AuthCheck>
       </Box>

@@ -5,6 +5,7 @@ import List from '@material-ui/core/List';
 import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
 import * as firebase from 'firebase/app';
+import {useUser} from 'reactfire';
 
 /**
  * Renders all reviews for a game page
@@ -13,7 +14,8 @@ import * as firebase from 'firebase/app';
  * @return {ReactElement} List with ListItems of reviews
  */
 export default function Reviews({reviews, profile, reviewsRef=null,
-  usersDoc=null, setInitialize=null, setReviewed=null, user=null}) {
+  usersDoc=null, setInitialize=null, setReviewed=null}) {
+  const user = useUser();
   /**
    * @param {object} review
    * delete comment
@@ -38,7 +40,7 @@ export default function Reviews({reviews, profile, reviewsRef=null,
           let editDelete = null;
           if (profile) {
             review = {...review, name: review.gameName};
-          } else if (review.userId === user.uid) {
+          } else if (user.uid && review.userId === user.uid) {
             editDelete = <Button
               variant="outlined"
               color="secondary"
@@ -66,5 +68,4 @@ Reviews.propTypes = {
   usersDoc: PropTypes.object,
   setInitialize: PropTypes.func,
   setReviewed: PropTypes.func,
-  user: PropTypes.object,
 };
