@@ -92,16 +92,16 @@ function AllReviews({gameId}) {
             handleAddReview={handleAddReview}
             reviewed={reviewed}
           />
-        
-        <Reviews
-          reviews={reviews}
-          profile={false}
-          reviewsRef={reviewsRef}
-          usersDoc={usersCollection}
-          setInitialize={setInitialize}
-          setReviewed={setReviewed}
-          user={user}
-        /></AuthCheck>
+          <Reviews
+            reviews={reviews}
+            profile={false}
+            reviewsRef={reviewsRef}
+            usersDoc={usersCollection}
+            setInitialize={setInitialize}
+            setReviewed={setReviewed}
+            user={user}
+          />
+        </AuthCheck>
       </Box>
     </div>
   );
