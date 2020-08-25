@@ -500,11 +500,24 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     setInRoom(user && usersData.some((u) => u.uid === user.uid));
   }, [user, usersData]);
 
+  useEffect(disableVideoChatDuringNight,
+      [roomData.day, inVideoChat, roomData.started]);
+
   window.onbeforeunload = (e) => {
     if (inVideoChat) {
       leaveSocketRoomEndPeerConnection();
     }
   };
+
+  /**
+   * Disable video chat during night
+   */
+  function disableVideoChatDuringNight() {
+    if (!roomData.day && inVideoChat && roomData.started) {
+      setLocalAudio(false);
+      setLocalVideo(false);
+    }
+  }
 
   /**
    * Add user to the users collection in the room
@@ -652,6 +665,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                               hasVideo: localVideo,
                               toggleAudio: () => setLocalAudio(!localAudio),
                               toggleVideo: () => setLocalVideo(!localVideo),
+                              night: !roomData.day && roomData.started,
                             }}
                           /> :
                           null
@@ -674,6 +688,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                           } else {
                             return null;
                           }
+                          return null;
                         })
                       }
                       {
