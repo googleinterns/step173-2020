@@ -13,14 +13,14 @@ import * as firebase from 'firebase/app';
  * @return {ReactElement} List with ListItems of reviews
  */
 export default function Reviews({reviews, profile, reviewsRef=null,
-  usersDoc=null, setInitialize=null, setReviewed=null, uid=null}) {
+  usersDoc=null, setInitialize=null, setReviewed=null, user=null}) {
   /**
    * @param {object} review
    * delete comment
    */
   function deleteComment(review) {
     reviewsRef.doc(review.reviewId).delete();
-    usersDoc.update({
+    usersDoc.doc(user.uid).update({
       reviews: firebase.firestore.FieldValue.arrayRemove(review.reviewData),
     });
     setInitialize(false);
@@ -38,7 +38,7 @@ export default function Reviews({reviews, profile, reviewsRef=null,
           let editDelete = null;
           if (profile) {
             review = {...review, name: review.gameName};
-          } else if (review.userId === uid) {
+          } else if (review.userId === user.uid) {
             editDelete = <Button
               variant="outlined"
               color="secondary"
@@ -66,5 +66,5 @@ Reviews.propTypes = {
   usersDoc: PropTypes.object,
   setInitialize: PropTypes.func,
   setReviewed: PropTypes.func,
-  uid: PropTypes.string,
+  user: PropTypes.object,
 };

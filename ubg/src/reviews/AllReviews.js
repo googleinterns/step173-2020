@@ -68,7 +68,7 @@ function AllReviews({gameId}) {
             console.log('error: ', error);
           });
     }
-  }, [reviewsRef, initialize, user.uid]);
+  }, [reviewsRef, initialize]);
 
   return (
     <div className='reviews'>
@@ -81,7 +81,7 @@ function AllReviews({gameId}) {
             <div>
               <br />
               <Typography variant='body1'>
-                Sign in to leave a review.
+                Sign in to leave a review or see other reviews.
               </Typography>
             </div>
           }
@@ -92,16 +92,16 @@ function AllReviews({gameId}) {
             handleAddReview={handleAddReview}
             reviewed={reviewed}
           />
-        </AuthCheck>
+        
         <Reviews
           reviews={reviews}
           profile={false}
           reviewsRef={reviewsRef}
-          usersDoc={usersCollection.doc(user.uid)}
+          usersDoc={usersCollection}
           setInitialize={setInitialize}
           setReviewed={setReviewed}
-          uid={user.uid}
-        />
+          user={user}
+        /></AuthCheck>
       </Box>
     </div>
   );
