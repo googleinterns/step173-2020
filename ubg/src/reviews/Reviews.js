@@ -1,7 +1,9 @@
 import React from 'react';
 import Review from './Review';
 import List from '@material-ui/core/List';
+import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
+import * as firebase from 'firebase/app';
 
 /**
  * Renders all reviews for a game page
@@ -9,7 +11,20 @@ import PropTypes from 'prop-types';
  * @param {boolean} profile
  * @return {ReactElement} List with ListItems of reviews
  */
-export default function Reviews({reviews, profile}) {
+export default function Reviews({reviews, profile, reviewsRef=null,
+  usersDoc=null, setInitialize=null, setReviewed=null, uid=null}) {
+  /**
+   * delete comment
+   */
+  function deleteComment(review) {
+    console.log(review);
+    reviewsRef.doc(review.reviewId).delete();
+    usersDoc.update({
+      reviews: firebase.firestore.FieldValue.arrayRemove(review.reviewData),
+    });
+    setInitialize(false);
+    setReviewed(false);
+  }
   /**
    * Renders all formatted reviews from most to least recent
    * @return {ReactElement} List with ListItems of reviews
@@ -19,12 +34,21 @@ export default function Reviews({reviews, profile}) {
     <div>
       <List width="100%">
         {Array.from(reviews).map((review) => {
+          let editDelete = null;
           if (profile) {
             review = {...review, name: review.gameName};
+          } else if (review.userId === uid) {
+            editDelete = <Button
+              key={review.timestamp + review.name}
+              variant="contained"
+              color="secondary" 
+              onClick={()=>deleteComment(review)}>
+                Delete
+              </Button>
           }
-          return <Review review={review}
+          return <div><Review review={review}
             key={review.name + review.timestamp}
-          />;
+          />{editDelete}</div>;
         })}
       </List>
     </div>
@@ -34,4 +58,6 @@ export default function Reviews({reviews, profile}) {
 Reviews.propTypes = {
   reviews: PropTypes.array,
   profile: PropTypes.bool,
+  reviewsRef: PropTypes.object,
+  usersDoc: PropTypes.object,
 };
