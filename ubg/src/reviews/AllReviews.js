@@ -37,7 +37,7 @@ function AllReviews({gameId}) {
       setReviewed(true);
     });
   };
-  
+
   /**
    * Load reviews data of this game
    */
