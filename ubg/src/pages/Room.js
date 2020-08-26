@@ -489,7 +489,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
   }, [usersData, setUsersData]);
 
   useEffect(() => {
-    setCurrentUser(user);
+    setCurrentUser(user ? user : {});
   }, [user, setCurrentUser]);
 
   useEffect(() => {
