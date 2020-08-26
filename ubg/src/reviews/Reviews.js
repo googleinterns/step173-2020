@@ -1,9 +1,11 @@
 import React from 'react';
 import Review from './Review';
+import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
 import * as firebase from 'firebase/app';
+import {useUser} from 'reactfire';
 
 /**
  * Renders all reviews for a game page
@@ -12,14 +14,15 @@ import * as firebase from 'firebase/app';
  * @return {ReactElement} List with ListItems of reviews
  */
 export default function Reviews({reviews, profile, reviewsRef=null,
-  usersDoc=null, setInitialize=null, setReviewed=null, uid=null}) {
+  usersDoc=null, setInitialize=null, setReviewed=null}) {
+  const user = useUser();
   /**
    * @param {object} review
    * delete comment
    */
   function deleteComment(review) {
     reviewsRef.doc(review.reviewId).delete();
-    usersDoc.update({
+    usersDoc.doc(user.uid).update({
       reviews: firebase.firestore.FieldValue.arrayRemove(review.reviewData),
     });
     setInitialize(false);
@@ -37,11 +40,12 @@ export default function Reviews({reviews, profile, reviewsRef=null,
           let editDelete = null;
           if (profile) {
             review = {...review, name: review.gameName};
-          } else if (review.userId === uid) {
+          } else if (user && review.userId === user.uid) {
             editDelete = <Button
-              variant="contained"
+              variant="outlined"
               color="secondary"
               onClick={()=>deleteComment(review)}
+              size="small"
             >
                 Delete
             </Button>;
@@ -49,6 +53,7 @@ export default function Reviews({reviews, profile, reviewsRef=null,
           return <div key={review.name + review.timestamp}>
             <Review review={review}/>
             {editDelete}
+            <Divider />
           </div>;
         })}
       </List>
@@ -63,5 +68,4 @@ Reviews.propTypes = {
   usersDoc: PropTypes.object,
   setInitialize: PropTypes.func,
   setReviewed: PropTypes.func,
-  uid: PropTypes.string,
 };

@@ -44,6 +44,12 @@ export default function Implementation(
         return;
       }
       const links = implementations;
+      let l;
+      for (l of links) {
+        if (l.name === linkName || l.link === link) {
+          return;
+        }
+      }
       links.push({'name': linkName, 'link': link});
       gamesCollection.doc(gameId).update({'implementations': links});
     }
@@ -75,7 +81,16 @@ export default function Implementation(
         }
       </Grid>
       <br />
-      <AuthCheck>
+      <AuthCheck
+        fallback={
+          <div>
+            <br />
+            <Typography variant='body1'>
+              Sign in to add existing implementations.
+            </Typography>
+          </div>
+        }
+      >
         <Typography variant='h6'>
           Add Implementation Link
         </Typography>
