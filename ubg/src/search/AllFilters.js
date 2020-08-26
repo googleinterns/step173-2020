@@ -56,8 +56,9 @@ const checkMatch = (values, name) => {
  * @param {object} setClear function to reset filters
  * @return {ReactElement} All Filters and related buttons
  */
-export default function AllFilters({setPaginationCount, setGames, value,
-  initialize, setInitialize, totalGames, setTotalGames, clear, setClear}) {
+export default function AllFilters({setPaginationCount, setGames,
+  value, initialize, setInitialize, totalGames, setTotalGames,
+  clear, setClear, setPage}) {
   const classes = useStyles();
   const ref = useFirestore().collection('games');
   const [minAge, setMinAge] = React.useState(21);
@@ -148,6 +149,7 @@ export default function AllFilters({setPaginationCount, setGames, value,
             if (list.length !== 0) {
               newGames.push(list);
             }
+            setPage(1);
             setGames(newGames);
             setTotalGames(total);
             setPaginationCount(newGames.length);
@@ -242,4 +244,5 @@ AllFilters.propTypes = {
   setTotalGames: PropTypes.func,
   clear: PropTypes.bool,
   setClear: PropTypes.func,
+  setPage: PropTypes.func,
 };
