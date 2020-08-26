@@ -73,6 +73,7 @@ function EndModal({winMessage, usersData, setEndOpen}) {
 EndModal.propTypes = {
   usersData: PropTypes.array,
   winMessage: PropTypes.string,
+  setEndOpen: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({

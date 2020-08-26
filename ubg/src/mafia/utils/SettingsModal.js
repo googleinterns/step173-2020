@@ -192,6 +192,7 @@ SettingsModal.propTypes = {
   usersCollection: PropTypes.object,
   startGame: PropTypes.func,
   usersDataLength: PropTypes.number,
+  setSettingsOpen: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
