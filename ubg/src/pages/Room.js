@@ -688,7 +688,6 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                           } else {
                             return null;
                           }
-                          return null;
                         })
                       }
                       {

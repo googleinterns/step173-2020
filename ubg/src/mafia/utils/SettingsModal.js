@@ -7,6 +7,8 @@ import {makeStyles} from '@material-ui/core/styles';
 import {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
@@ -17,6 +19,9 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     minWidth: 120,
   },
+  closeButton: {
+    float: 'right',
+  },
 }));
 
 /**
@@ -25,7 +30,8 @@ const useStyles = makeStyles((theme) => ({
  * @param {func} startGame Updates the game to start
  * @return {ReactElement} Mafia modal element
  */
-function SettingsModal({usersDataLength, usersCollection, startGame}) {
+function SettingsModal({usersDataLength, usersCollection, startGame,
+  setSettingsOpen}) {
   const classes = useStyles();
   //  const minPlayers = 4;  for when we have enough players
   const users = [];
@@ -89,6 +95,12 @@ function SettingsModal({usersDataLength, usersCollection, startGame}) {
 
   return (
     <div>
+      <IconButton
+        onClick={() => setSettingsOpen(false)}
+        className={classes.closeButton}
+      >
+        <CloseIcon />
+      </IconButton>
       <Typography variant='h4' className={classes.fonts}>
         SETTINGS
       </Typography>
@@ -180,6 +192,7 @@ SettingsModal.propTypes = {
   usersCollection: PropTypes.object,
   startGame: PropTypes.func,
   usersDataLength: PropTypes.number,
+  setSettingsOpen: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({

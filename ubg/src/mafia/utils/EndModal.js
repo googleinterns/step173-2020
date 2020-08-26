@@ -3,11 +3,17 @@ import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
     fontWeight: 'bold',
     color: theme.palette.primary.main,
+    whiteSpace: 'nowrap',
+  },
+  closeButton: {
+    float: 'right',
   },
 }));
 
@@ -16,13 +22,19 @@ const useStyles = makeStyles((theme) => ({
  * @param {array} usersData Array of player objects
  * @return {ReactElement} End result modal
  */
-function EndModal({winMessage, usersData}) {
+function EndModal({winMessage, usersData, setEndOpen}) {
   const classes = useStyles();
 
   return (
     <div>
+      <IconButton
+        onClick={() => setEndOpen(false)}
+        className={classes.closeButton}
+      >
+        <CloseIcon />
+      </IconButton>
       <Typography variant='h4' className={classes.fonts}>
-        {winMessage}
+        {winMessage}&emsp;&emsp;&ensp;
       </Typography>
       <br />
       {
@@ -61,6 +73,7 @@ function EndModal({winMessage, usersData}) {
 EndModal.propTypes = {
   usersData: PropTypes.array,
   winMessage: PropTypes.string,
+  setEndOpen: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({

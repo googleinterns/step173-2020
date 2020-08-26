@@ -5,8 +5,8 @@ import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import IconButton from '@material-ui/core/IconButton';
 import HomeIcon from '@material-ui/icons/Home';
-import SettingsModal from '../mafia/SettingsModal';
-import EndModal from '../mafia/EndModal';
+import SettingsModal from '../mafia/utils/SettingsModal';
+import EndModal from '../mafia/utils/EndModal';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import villager from '../mafia/images/villager.png';
@@ -151,6 +151,7 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
               <div className={classes.paper}>
                 <EndModal
                   winMessage={win === 1 ? 'Town wins!' : 'Mafia wins!'}
+                  setEndOpen={setEndOpen}
                 />
               </div>
             </Modal>
@@ -185,6 +186,7 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
                           <SettingsModal
                             usersCollection={usersCollection}
                             startGame={startGame}
+                            setSettingsOpen={setSettingsOpen}
                           />
                         </div>
                       </Modal>
