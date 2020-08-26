@@ -40,7 +40,7 @@ export default function Reviews({reviews, profile, reviewsRef=null,
           let editDelete = null;
           if (profile) {
             review = {...review, name: review.gameName};
-          } else if (user.uid && review.userId === user.uid) {
+          } else if (user && review.userId === user.uid) {
             editDelete = <Button
               variant="outlined"
               color="secondary"

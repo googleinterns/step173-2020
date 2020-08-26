@@ -58,7 +58,7 @@ function AllReviews({gameId}) {
                 reviewId: doc.id,
                 reviewData: doc.data(),
               });
-              if (doc.data()['userId'] === user.uid) {
+              if (user && doc.data()['userId'] === user.uid) {
                 setReviewed(true);
               }
             });
@@ -86,7 +86,7 @@ function AllReviews({gameId}) {
             <div>
               <br />
               <Typography variant='body1'>
-                Sign in to leave a review or see other reviews.
+                Sign in to leave a review.
               </Typography>
             </div>
           }
@@ -97,15 +97,15 @@ function AllReviews({gameId}) {
             handleAddReview={handleAddReview}
             reviewed={reviewed}
           />
-          <Reviews
-            reviews={reviews}
-            profile={false}
-            reviewsRef={reviewsRef}
-            usersDoc={usersCollection}
-            setInitialize={setInitialize}
-            setReviewed={setReviewed}
-          />
         </AuthCheck>
+        <Reviews
+          reviews={reviews}
+          profile={false}
+          reviewsRef={reviewsRef}
+          usersDoc={usersCollection}
+          setInitialize={setInitialize}
+          setReviewed={setReviewed}
+        />
       </Box>
     </div>
   );
