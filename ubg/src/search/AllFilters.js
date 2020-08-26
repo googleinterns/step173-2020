@@ -73,7 +73,6 @@ export default function AllFilters({setPaginationCount, setGames,
    */
   const handleFilter = () => {
     setInitialize(false);
-    
   };
   /**
    * Reset all the filters
