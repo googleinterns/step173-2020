@@ -193,16 +193,17 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
       });
 
       peerConnections[socketId].addEventListener('connectionstatechange',
-      (event) => {
-        connectionStatus[socketId] = peerConnections[socketId].connectionState;
-        console.log(connectionStatus);
-        console.log(peerConnections[socketId].connectionState);
-        setStateReloadVar({[socketId]:
-          peerConnections[socketId].connectionState});
-        if (peerConnections[socketId].connectionState === 'failed') {
-          socket.emit('connectionFailed', socketId);
-        }
-      });
+          (event) => {
+            connectionStatus[socketId] =
+              peerConnections[socketId].connectionState;
+            console.log(connectionStatus);
+            console.log(peerConnections[socketId].connectionState);
+            setStateReloadVar({[socketId]:
+              peerConnections[socketId].connectionState});
+            if (peerConnections[socketId].connectionState === 'failed') {
+              socket.emit('connectionFailed', socketId);
+            }
+          });
 
       if (offer) {
         createAnswer(socketId, offer);
@@ -454,7 +455,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     setLocalAudio(null);
     setLocalVideo(null);
     connectionStatus = {};
-    if(stateReloadVar){
+    if (stateReloadVar) {
       setStateReloadVar({});
     }
   }
