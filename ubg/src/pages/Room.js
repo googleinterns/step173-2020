@@ -288,8 +288,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
   function reloadConnection(uid){
     if (peerConnections[uidToSocketId[uid]] && connectionStatus[uidToSocketId[uid]] === 'failed') {
       userLeft(uidToSocketId[uid]);
-      createPeerConnection(uidToSocketId[uid]);
-      socket.emit('deleteConnection', uidToSocketId[uid]);
+      socket.emit('reloadConnection', uidToSocketId[uid]);
     }
   }
 
@@ -496,7 +495,16 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     socket.on('connectionFailed', (socketId) => {
       connectionStatus[socketId] = 'failed';
       setStateReloadVar({[socketId] : 'failed'});
-    })
+    });
+
+    socket.on('retringConnection', (socketId) => {
+      connectionStatus[socketId] = 'connecting';
+      setStateReloadVar({[socketId] : 'connecting'});
+    });
+
+    socket.on('createNewConnection', (socketId) => {
+      createPeerConnection(socketId);
+    });
 
     return () => socket.disconnect();
   }

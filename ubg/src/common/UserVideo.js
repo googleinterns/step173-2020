@@ -6,6 +6,7 @@ import VideoCamIcon from '@material-ui/icons/Videocam';
 import VideoCamOffIcon from '@material-ui/icons/VideocamOff';
 import MicIcon from '@material-ui/icons/Mic';
 import MicOffIcon from '@material-ui/icons/MicOff';
+import RetryIcon from '@material-ui/icons/Cached';
 
 const classNames = require('classnames');
 
@@ -49,6 +50,12 @@ const useStyles = makeStyles((theme) => ({
   failed: {
     background: 'red',
   },
+  retryBtn: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    color: 'red',
+  }
 }));
 
 /**
@@ -78,13 +85,18 @@ export default function UserVideo({user, video, videoInfo, connection}) {
 
   return (
     <div className={classes.videoDiv}>
-
-      <div 
-        className={connectionClasses} 
-        onClick={connection ?
-          connection.reload : null
+        {connection && connection.status === 'failed' ?
+          <IconButton
+            size="small"
+            onClick={connection.reload}
+            className={classes.retryBtn}
+          >
+            <RetryIcon />
+          </IconButton> :
+          <div 
+          className={connectionClasses} 
+          />
         }
-      />
       {
         video != null ?
         <video

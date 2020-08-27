@@ -43,8 +43,14 @@ io.on('connection', function (socket) {
         io.to(socketId).emit('connectionFailed', socket.id);
     });
 
-    socket.on('deleteConnection', (socketId) => {
+    socket.on('reloadConnection', (socketId) => {
         io.to(socketId).emit('userLeft', socket.id);
+        io.to(socketId).emit('reloadingConnection', socket.id);
+        if (socketId > socket.id) {
+            io.to(socketId).emit('createNewConnection', socket.id);
+        } else {
+            io.to(socket.id).emit('createNewConnection', socketId);
+        }
     })
 
 });
