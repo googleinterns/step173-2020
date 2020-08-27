@@ -290,7 +290,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
 
   /**
    * Reload connection with user
-   * @param {string} uid 
+   * @param {string} uid
    */
   function reloadConnection(uid) {
     if (peerConnections[uidToSocketId[uid]] &&
