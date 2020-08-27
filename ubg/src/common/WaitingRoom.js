@@ -107,7 +107,14 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
           doctorImage +
           '<h3>Doctor</h3>' +
           '<p>A role that can choose a person to save each night. ' +
-          'If the mafia targets the same person, they will remain alive.</p>' +
+          'If the mafia or hunter targets the same person, they ' +
+          'will remain alive.</p>' +
+        '</div>' +
+        '<div class="column">' +
+          villagerImage +
+          '<h3>Hunter</h3>' +
+          '<p>A role that can choose one player to kill after ' +
+          'being executed during the daytime.</p>' +
         '</div>' +
       '</div>' +
       '<style>' +

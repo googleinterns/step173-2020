@@ -43,7 +43,8 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia day element
  */
 function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
-  userUid, room, dayVote, aliveNum, endGame, dayNum, chat, win}) {
+  userUid, room, dayVote, aliveNum, endGame, dayNum, chat, win,
+  hunterKill}) {
   const classes = useStyles();
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
@@ -168,6 +169,10 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
         case 4:
           executionMessage += 'They were a doctor.';
           break;
+        case 5:
+          executionMessage += 'They were a hunter. The hunter will get ' +
+            'their revenge!';
+          break;
         default:
           executionMessage = 'No one was executed.';
       }
@@ -288,6 +293,7 @@ const mapStateToProps = (state) => ({
   dayNum: state.roomData.dayCount,
   chat: state.roomData.chat,
   win: state.roomData.win,
+  hunterKill: state.roomData.hunterKill,
 });
 
 export default connect(

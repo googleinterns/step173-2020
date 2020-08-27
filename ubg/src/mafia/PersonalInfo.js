@@ -41,6 +41,8 @@ export default function PersonalInfo({name, role, alive}) {
     roleName = 'detective';
   } else if (role === 4) {
     roleName = 'doctor';
+  } else if (role === 5) {
+    roleName = 'hunter';
   }
 
   return (
