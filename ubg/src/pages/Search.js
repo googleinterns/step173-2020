@@ -37,7 +37,6 @@ export default function Search() {
     setSearchDisplay('block');
     setClear(true);
     setInitialize(false);
-    setPage(1);
   }
   /**
    * the situation where user is on Search page from Search Field and
@@ -48,7 +47,6 @@ export default function Search() {
     setSearchDisplay('none');
     setClear(true);
     setInitialize(false);
-    setPage(1);
   }
 
   return (
@@ -65,6 +63,7 @@ export default function Search() {
         setTotalGames={setTotalGames}
         clear={clear}
         setClear={setClear}
+        setPage={setPage}
       />
       <DisplayGames
         page={page}

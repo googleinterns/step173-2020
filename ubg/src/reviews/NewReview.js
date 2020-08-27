@@ -54,7 +54,12 @@ export default function NewReview(props) {
           />
           <br />
           <br />
-          <Button variant="contained" color="primary" type="submit">
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            disabled={props.reviewed}
+          >
             Submit</Button>
         </form>
       </Box>
@@ -66,4 +71,5 @@ NewReview.propTypes = {
   user: PropTypes.object,
   handleAddReview: PropTypes.func,
   gameId: PropTypes.string,
+  reviewed: PropTypes.bool,
 };
