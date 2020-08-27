@@ -36,6 +36,7 @@ let peerConnections = {};
 let remoteStreams = {};
 let localStream = null;
 let uidToSocketId = {};
+let connectionStatus = {};
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -131,7 +132,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
   const [localVideo, setLocalVideo] = useState(null);
   const [inVideoChat, setInVideoChat] = useState(false);
   const [inRoom, setInRoom] = useState(false);
-  const [stateReloadVar, setStateReloadVar] = useState(false);
+  const [stateReloadVar, setStateReloadVar] = useState({});
 
   const chatClasses = classNames({
     [classes.chatHeader]: true,
@@ -170,40 +171,48 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
    * @param {string} socketId
    * @param {object} offer
    */
-  function createPeerConnection(socketId, offer = null) {
-    const promise = new Promise(async (resolve, reject) => {
-      if (!peerConnections[socketId]) {
-        peerConnections[socketId] = await new RTCPeerConnection(configuration);
-        localStream.getTracks().forEach((track) => {
-          peerConnections[socketId].addTrack(track, localStream);
-        });
+  async function createPeerConnection(socketId, offer = null) {
+    if (!peerConnections[socketId]) {
+      peerConnections[socketId] = await new RTCPeerConnection(configuration);
+      localStream.getTracks().forEach((track) => {
+        peerConnections[socketId].addTrack(track, localStream);
+      });
 
-        remoteStreams[socketId] = await new MediaStream();
-        peerConnections[socketId].addEventListener('track', (event) => {
-          event.streams[0].getTracks().forEach((track) => {
-            remoteStreams[socketId].addTrack(track);
-          });
+      remoteStreams[socketId] = await new MediaStream();
+      peerConnections[socketId].addEventListener('track', (event) => {
+        event.streams[0].getTracks().forEach((track) => {
+          remoteStreams[socketId].addTrack(track);
         });
+      });
 
-        peerConnections[socketId].addEventListener('icecandidate', (event) => {
-          if (!event.candidate) {
-            return;
-          }
-          socket.emit('newICE', event.candidate, socketId);
-        });
-        if (offer) {
-          createAnswer(socketId, offer);
-        } else {
-          createOffer(socketId);
+      peerConnections[socketId].addEventListener('icecandidate', (event) => {
+        if (!event.candidate) {
+          return;
         }
-        resolve();
+        socket.emit('newICE', event.candidate, socketId);
+      });
+
+      peerConnections[socketId].addEventListener('connectionstatechange',
+          (event) => {
+            connectionStatus[socketId] =
+              peerConnections[socketId].connectionState;
+            console.log(connectionStatus);
+            console.log(peerConnections[socketId].connectionState);
+            setStateReloadVar({[socketId]:
+              peerConnections[socketId].connectionState});
+            if (peerConnections[socketId].connectionState === 'failed') {
+              socket.emit('connectionFailed', socketId);
+            }
+          });
+
+      if (offer) {
+        createAnswer(socketId, offer);
       } else {
-        console.error('connection already exists!');
+        createOffer(socketId);
       }
-    });
-    promise.then(() => {
-      setStateReloadVar(!stateReloadVar);
-    });
+    } else {
+      console.error('connection already exists!');
+    }
   }
 
   /**
@@ -274,6 +283,20 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
         track.stop();
       });
       remoteStreams[socketId] = null;
+    }
+    connectionStatus[socketId] = 'none';
+    setStateReloadVar({[socketId]: 'none'});
+  }
+
+  /**
+   * Reload connection with user
+   * @param {string} uid
+   */
+  function reloadConnection(uid) {
+    if (peerConnections[uidToSocketId[uid]] &&
+      connectionStatus[uidToSocketId[uid]] === 'failed') {
+      userLeft(uidToSocketId[uid]);
+      socket.emit('reloadConnection', uidToSocketId[uid]);
     }
   }
 
@@ -431,7 +454,10 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     }
     setLocalAudio(null);
     setLocalVideo(null);
-    setStateReloadVar(false);
+    connectionStatus = {};
+    if (stateReloadVar) {
+      setStateReloadVar({});
+    }
   }
 
   /**
@@ -475,6 +501,20 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
 
     socket.on('userLeft', (socketId) => {
       userLeft(socketId);
+    });
+
+    socket.on('connectionFailed', (socketId) => {
+      connectionStatus[socketId] = 'failed';
+      setStateReloadVar({[socketId]: 'failed'});
+    });
+
+    socket.on('retringConnection', (socketId) => {
+      connectionStatus[socketId] = 'connecting';
+      setStateReloadVar({[socketId]: 'connecting'});
+    });
+
+    socket.on('createNewConnection', (socketId) => {
+      createPeerConnection(socketId);
     });
 
     return () => socket.disconnect();
@@ -682,6 +722,11 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                                   local: false,
                                   hasAudio: u.hasAudio,
                                   hasVideo: u.hasVideo,
+                                }}
+                                connection={{
+                                  status:
+                                    connectionStatus[uidToSocketId[u.uid]],
+                                  reload: () => reloadConnection(u.uid),
                                 }}
                               />
                             );

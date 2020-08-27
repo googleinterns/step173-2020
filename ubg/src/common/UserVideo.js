@@ -6,6 +6,7 @@ import VideoCamIcon from '@material-ui/icons/Videocam';
 import VideoCamOffIcon from '@material-ui/icons/VideocamOff';
 import MicIcon from '@material-ui/icons/Mic';
 import MicOffIcon from '@material-ui/icons/MicOff';
+import RetryIcon from '@material-ui/icons/Cached';
 
 const classNames = require('classnames');
 
@@ -16,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative',
   },
   videoMirror: {
     'transform': 'rotateY(180deg)',
@@ -31,13 +33,36 @@ const useStyles = makeStyles((theme) => ({
   hidden: {
     display: 'none',
   },
+  connection: {
+    width: '10px',
+    height: '10px',
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    borderRadius: '50%',
+  },
+  connected: {
+    background: 'green',
+  },
+  loading: {
+    background: 'gray',
+  },
+  failed: {
+    background: 'red',
+  },
+  retryBtn: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    color: 'red',
+  },
 }));
 
 /**
  * @param {string} user The current user's display name
  * @return {ReactElement} Box with the users video and name
  */
-export default function UserVideo({user, video, videoInfo}) {
+export default function UserVideo({user, video, videoInfo, connection}) {
   const classes = useStyles();
   const setVideoRef = (videoElement) => {
     if (videoElement) {
@@ -51,8 +76,27 @@ export default function UserVideo({user, video, videoInfo}) {
     [classes.hidden]: videoInfo.hasVideo === false,
   });
 
+  const connectionClasses = classNames({
+    [classes.connection]: true,
+    [classes.connected]: connection ? connection.status === 'connected' : false,
+    [classes.loading]: connection ? connection.status === 'connecting' : false,
+    [classes.failed]: connection ? connection.status === 'failed' : false,
+  });
+
   return (
     <div className={classes.videoDiv}>
+      {connection && connection.status === 'failed' ?
+          <IconButton
+            size="small"
+            onClick={connection.reload}
+            className={classes.retryBtn}
+          >
+            <RetryIcon />
+          </IconButton> :
+          <div
+            className={connectionClasses}
+          />
+      }
       {
         video != null ?
         <video
@@ -106,5 +150,9 @@ UserVideo.propTypes = {
     toggleVideo: PropTypes.func,
     hasVideo: PropTypes.bool,
     night: PropTypes.bool,
+  }),
+  connection: PropTypes.shape({
+    status: PropTypes.string,
+    reload: PropTypes.func,
   }),
 };
