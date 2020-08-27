@@ -36,6 +36,15 @@ io.on('connection', function (socket) {
 
     socket.on('leaveSocketRoom', (roomId) => {
         io.to(roomId).emit('userLeft', socket.id);
+        socket.leave(roomId);
+    });
+
+    socket.on('connectionFailed', (socketId) => {
+        io.to(socketId).emit('connectionFailed', socket.id);
+    });
+
+    socket.on('deleteConnection', (socketId) => {
+        io.to(socketId).emit('userLeft', socket.id);
     })
 
 });
