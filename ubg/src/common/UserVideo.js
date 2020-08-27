@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     right: 0,
     bottom: 0,
     color: 'red',
-  }
+  },
 }));
 
 /**
@@ -81,11 +81,11 @@ export default function UserVideo({user, video, videoInfo, connection}) {
     [classes.connected]: connection ? connection.status === 'connected' : false,
     [classes.loading]: connection ? connection.status === 'connecting' : false,
     [classes.failed]: connection ? connection.status === 'failed' : false,
-  })
+  });
 
   return (
     <div className={classes.videoDiv}>
-        {connection && connection.status === 'failed' ?
+      {connection && connection.status === 'failed' ?
           <IconButton
             size="small"
             onClick={connection.reload}
@@ -93,10 +93,10 @@ export default function UserVideo({user, video, videoInfo, connection}) {
           >
             <RetryIcon />
           </IconButton> :
-          <div 
-          className={connectionClasses} 
+          <div
+            className={connectionClasses}
           />
-        }
+      }
       {
         video != null ?
         <video

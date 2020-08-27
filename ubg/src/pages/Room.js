@@ -192,11 +192,13 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
         socket.emit('newICE', event.candidate, socketId);
       });
 
-      peerConnections[socketId].addEventListener('connectionstatechange', event => {
+      peerConnections[socketId].addEventListener('connectionstatechange',
+      (event) => {
         connectionStatus[socketId] = peerConnections[socketId].connectionState;
         console.log(connectionStatus);
         console.log(peerConnections[socketId].connectionState);
-        setStateReloadVar({[socketId] : peerConnections[socketId].connectionState});
+        setStateReloadVar({[socketId]:
+          peerConnections[socketId].connectionState});
         if (peerConnections[socketId].connectionState === 'failed') {
           socket.emit('connectionFailed', socketId);
         }
@@ -285,8 +287,13 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     setStateReloadVar({[socketId]: 'none'});
   }
 
-  function reloadConnection(uid){
-    if (peerConnections[uidToSocketId[uid]] && connectionStatus[uidToSocketId[uid]] === 'failed') {
+  /**
+   * Reload connection with user
+   * @param {string} uid 
+   */
+  function reloadConnection(uid) {
+    if (peerConnections[uidToSocketId[uid]] &&
+      connectionStatus[uidToSocketId[uid]] === 'failed') {
       userLeft(uidToSocketId[uid]);
       socket.emit('reloadConnection', uidToSocketId[uid]);
     }
@@ -447,6 +454,9 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
     setLocalAudio(null);
     setLocalVideo(null);
     connectionStatus = {};
+    if(stateReloadVar){
+      setStateReloadVar({});
+    }
   }
 
   /**
@@ -494,12 +504,12 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
 
     socket.on('connectionFailed', (socketId) => {
       connectionStatus[socketId] = 'failed';
-      setStateReloadVar({[socketId] : 'failed'});
+      setStateReloadVar({[socketId]: 'failed'});
     });
 
     socket.on('retringConnection', (socketId) => {
       connectionStatus[socketId] = 'connecting';
-      setStateReloadVar({[socketId] : 'connecting'});
+      setStateReloadVar({[socketId]: 'connecting'});
     });
 
     socket.on('createNewConnection', (socketId) => {
@@ -713,8 +723,9 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
                                   hasVideo: u.hasVideo,
                                 }}
                                 connection={{
-                                  status: connectionStatus[uidToSocketId[u.uid]],
-                                  reload: () => reloadConnection(u.uid)
+                                  status:
+                                    connectionStatus[uidToSocketId[u.uid]],
+                                  reload: () => reloadConnection(u.uid),
                                 }}
                               />
                             );
