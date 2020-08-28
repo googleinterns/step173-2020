@@ -196,8 +196,6 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
           (event) => {
             connectionStatus[socketId] =
               peerConnections[socketId].connectionState;
-            console.log(connectionStatus);
-            console.log(peerConnections[socketId].connectionState);
             setStateReloadVar({[socketId]:
               peerConnections[socketId].connectionState});
             if (peerConnections[socketId].connectionState === 'failed') {
