@@ -26,6 +26,12 @@ Create a web application dedicated to helping at-home, quarantined users find
 
 ![Alt Text](https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif)
 
+## Links
+
+[Design doc](https://docs.google.com/document/d/1JC-K7OPBfHL1jGsVWpNmvLtQxx4zzSRoH6wFVxCcVNU/edit)
+[Showcase slides](https://docs.google.com/presentation/d/1SzMfizfy4y_Ajc_521ecyh-eyJGnJs-32cc1Tpcfu_k/edit#slide=id.g90d5cdd7ba_0_451)
+[Deployed web app](https://ultimate-board-game.uc.r.appspot.com/)
+
 ## Presubmit Status
 
 ![Markdown Presubmit](https://github.com/googleinterns/step173-2020/workflows/Markdown%20Presubmit/badge.svg)
