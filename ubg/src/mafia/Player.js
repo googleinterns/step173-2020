@@ -52,6 +52,8 @@ function Player({player, setChoice, choice, user=null, userUid}) {
     roleName = 'detective';
   } else if (player.role === 4) {
     roleName = 'doctor';
+  } else if(player.role === 5) {
+    roleName = 'hunter';
   }
 
   useEffect(changeBorder, [choice]);
