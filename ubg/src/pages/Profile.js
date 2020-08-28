@@ -30,6 +30,7 @@ export default function Profile() {
   const user = useUser();
   const classes = useStyles();
   const userCollection = useFirestore().collection('users');
+  console.log(user);
 
   return (
     <div>
@@ -39,6 +40,9 @@ export default function Profile() {
         <Box m={10}>
           <Typography variant='h2' className={classes.fonts}>
             {user ? user.displayName : 'Sign in to view your profile'}
+          </Typography>
+          <Typography variant='h6' className={classes.fonts}>
+            {user ? 'unique id: ' + user.uid : null}
           </Typography>
           <hr />
         </Box>
