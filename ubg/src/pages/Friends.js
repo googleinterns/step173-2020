@@ -32,7 +32,7 @@ export default function Friends() {
   const ref = useFirestore().collection('users');
 
   function searchId() {
-    const docRef = ref.doc(id);
+    const docRef = ref.doc(id.trim());
     docRef.get().then(function(doc) {
       if (doc.exists) {
         setUser(doc.data());
@@ -89,7 +89,7 @@ export default function Friends() {
         >
           Id not Found
         </Typography> : 
-        <Link href="#">
+        <Link href={"/profile/" + id.trim()}>
           {user.displayName}
         </Link> :
         null
