@@ -10,6 +10,7 @@ import Search from './pages/Search';
 import Room from './pages/Room';
 import Profile from './pages/Profile';
 import About from './pages/About';
+import Friends from './pages/Friends';
 import NotFound from './pages/NotFound';
 import {FirebaseAppProvider} from 'reactfire';
 import {Provider} from 'react-redux';
@@ -45,10 +46,16 @@ function App() {
               <Route exact path="/about">
                 <About />
               </Route>
+              <Route exact path="/friends">
+                <Friends />
+              </Route>
               <Route exact path="/search/:query">
                 <Search />
               </Route>
               <Route exact path="/profile">
+                <Profile />
+              </Route>
+              <Route exact path="/profile/:uid">
                 <Profile />
               </Route>
               <Route exact path="/:gameId">
