@@ -26,6 +26,8 @@ const useStyles = (border) => makeStyles((theme) => ({
 */
 function Player({player, setChoice, choice, user=null, userUid}) {
   const [border, setBorder] = useState('none');
+  let text = '';
+  let roleName = '';
 
   /**
   * @return {undefined}
@@ -37,7 +39,7 @@ function Player({player, setChoice, choice, user=null, userUid}) {
       setBorder('none');
     }
   }
-  let text = '';
+
   if (user !== null && user.role === 2) {
     if (player.role === 2) {
       text = 'mafia';
@@ -45,13 +47,22 @@ function Player({player, setChoice, choice, user=null, userUid}) {
       text = 'villager';
     }
   }
-  let roleName = 'villager';
-  if (player.role === 2) {
-    roleName = 'mafia';
-  } else if (player.role === 3) {
-    roleName = 'detective';
-  } else if (player.role === 4) {
-    roleName = 'doctor';
+
+  switch (player.role) {
+    case 2:
+      roleName = 'mafia';
+      break;
+    case 3:
+      roleName = 'detective';
+      break;
+    case 4:
+      roleName = 'doctor';
+      break;
+    case 5:
+      roleName = 'hunter';
+      break;
+    default:
+      roleName = 'villager';
   }
 
   useEffect(changeBorder, [choice]);

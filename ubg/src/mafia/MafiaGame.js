@@ -26,6 +26,10 @@ const useStyles = makeStyles((theme) => ({
     float: 'right',
     marginRight: '4vw',
   },
+  personalInfo: {
+    marginTop: '1vw',
+    marginLeft: '1vw',
+  },
 }));
 
 /**
@@ -112,7 +116,7 @@ function MafiaGame({day, room, usersCollection, usersData, userUid,
     <div className={day ? classes.root : classes.rootNight}>
       {alert}
       {exit}
-      <div>
+      <div className={classes.personalInfo}>
         <h1 className={classes.time}>{day ? 'DAY' : 'NIGHT'}</h1>
         <PersonalInfo
           name={userInfo.displayName}

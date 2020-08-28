@@ -53,6 +53,9 @@ function EndModal({winMessage, usersData, setEndOpen}) {
             case 4:
               roleString = 'doctor';
               break;
+            case 5:
+              roleString = 'hunter';
+              break;
             default:
               roleString = 'invalid';
           }

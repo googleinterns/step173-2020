@@ -1,4 +1,30 @@
-# TODO: choose a name for your project
+# UltimateBoardGame
+
+## How to run
+
+`npm run build`
+`npm start`
+
+## Objective
+
+Create a web application dedicated to helping at-home, quarantined users find
+ and play the right board game for them while connecting with others virtually
+
+- Organize board game information with simple UI and useful search filters
+- Allow for face-to-face communication with video chat options in Mafia
+
+## What we used
+
+- React
+- Redux
+- Firebase
+- Express
+- WebRTC
+- SocketIO
+
+## Demo
+
+![Alt Text](https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif)
 
 ## Presubmit Status
 

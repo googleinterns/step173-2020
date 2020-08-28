@@ -41,6 +41,7 @@ function SettingsModal({usersDataLength, usersCollection, startGame,
   const [mafia, setMafia] = useState(0);
   const [detective, setDetective] = useState(0);
   const [doctor, setDoctor] = useState(0);
+  const [hunter, setHunter] = useState(0);
   const [disabled, setDisabled] = useState(false);
 
   /**
@@ -63,6 +64,7 @@ function SettingsModal({usersDataLength, usersCollection, startGame,
           assignRole(mafia, 2);
           assignRole(detective, 3);
           assignRole(doctor, 4);
+          assignRole(hunter, 5);
           startGame();
         });
   }
@@ -85,13 +87,13 @@ function SettingsModal({usersDataLength, usersCollection, startGame,
   useEffect(() => {
     setDisabled(
         (usersDataLength !== parseInt(villager) + parseInt(mafia) +
-      parseInt(detective) + parseInt(doctor)),
+      parseInt(detective) + parseInt(doctor) + parseInt(hunter)),
         //  ||  for when we have enough players
         //  (usersData.length < minPlayers) ||
         //  (parseInt(villager) < 1) ||
         //  (parseInt(mafia) < 1)
     );
-  }, [villager, mafia, detective, doctor, usersDataLength]);
+  }, [villager, mafia, detective, doctor, hunter, usersDataLength]);
 
   return (
     <div>
@@ -171,6 +173,22 @@ function SettingsModal({usersDataLength, usersCollection, startGame,
               },
             }}
             onChange={(event) => (setDoctor(event.target.value))}
+            required
+          />
+        </FormControl>
+        <FormControl className={classes.formControl}>
+          <TextField
+            id="hunter-text"
+            label="Hunter"
+            variant="outlined"
+            type='number'
+            defaultValue={hunter}
+            InputProps={{
+              inputProps: {
+                max: 1, min: 0,
+              },
+            }}
+            onChange={(event) => (setHunter(event.target.value))}
             required
           />
         </FormControl>
