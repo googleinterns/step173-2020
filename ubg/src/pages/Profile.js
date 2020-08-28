@@ -32,8 +32,11 @@ export default function Profile() {
   const classes = useStyles();
   const userCollection = useFirestore().collection('users');
   const {uid} = useParams();
+  /**
+   * Get user with entered Id
+   * @return {void}
+   */
   function getUser() {
-    
     if (uid) {
       const docRef = userCollection.doc(uid);
       docRef.get().then(function(doc) {
@@ -44,7 +47,7 @@ export default function Profile() {
         }
       }).catch(function(error) {
         setUser(null);
-          console.log("Error getting document:", error);
+        console.log('Error getting document:', error);
       });
     }
   }

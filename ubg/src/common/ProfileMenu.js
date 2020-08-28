@@ -52,9 +52,8 @@ export default function AuthButtons() {
   async function signIn() {
     await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
     const currUser = firebase.auth().currentUser;
-    await ref.doc(currUser.uid).get().then((doc) => {console.log(currUser);
+    await ref.doc(currUser.uid).get().then((doc) => {
       if (!doc.exists) {
-        
         ref.doc(currUser.uid).set({
           displayName: currUser.displayName,
           games: [],

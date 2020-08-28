@@ -12,17 +12,12 @@ import {useFirestore} from 'reactfire';
 
 const useStyles = makeStyles((theme) => ({
   grid: {
-    // backgroundColor: '#dcdef5',
-    margin
-    : '1em',
+    margin: '1em',
   },
-  // text: {
-  //   color: '#3f51b5',
-  // },
 }));
 
 /**
- * @return {ReactElement} About page
+ * @return {ReactElement} Friend page
  */
 export default function Friends() {
   const classes = useStyles();
@@ -36,14 +31,13 @@ export default function Friends() {
     docRef.get().then(function(doc) {
       if (doc.exists) {
         setUser(doc.data());
-          console.log("Document data:", doc.data());
-          setSearch(true);
+        setSearch(true);
       } else {
         setUser('');
         setSearch(true);
       }
     }).catch(function(error) {
-        console.log("Error getting document:", error);
+      console.log('Error getting document:', error);
     });
   }
 
@@ -82,14 +76,14 @@ export default function Friends() {
           </Grid>
         </Grid>
         <Divider />
-        {search ? 
-        user === '' ? 
+        {search ?
+        user === '' ?
         <Typography
           variant='h6'
         >
           Id not Found
-        </Typography> : 
-        <Link href={"/profile/" + id.trim()}>
+        </Typography> :
+        <Link href={'/profile/' + id.trim()}>
           {user.displayName}
         </Link> :
         null
