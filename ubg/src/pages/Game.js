@@ -360,7 +360,7 @@ function addFavorite(userGames, usersCollection,
     userGames.push({
       id: game.id,
       image: game.image,
-      name: game.Name,
+      Name: game.Name,
       year: game.year,
       minPlaytime: game.minPlaytime,
       maxPlaytime: game.maxPlaytime,
