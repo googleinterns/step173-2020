@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {useUser, useFirestoreDocData, useFirestore} from 'reactfire';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
@@ -9,6 +9,7 @@ import Reviews from '../reviews/Reviews';
 import PropTypes from 'prop-types';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import {useParams} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
@@ -27,10 +28,27 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Displays profile page
  */
 export default function Profile() {
-  const user = useUser();
+  const [user, setUser] = useState(useUser());
   const classes = useStyles();
   const userCollection = useFirestore().collection('users');
-  console.log(user);
+  const {uid} = useParams();
+  function getUser() {
+    
+    if (uid) {
+      const docRef = userCollection.doc(uid);
+      docRef.get().then(function(doc) {
+        if (doc.exists) {
+          const newUser = doc.data();
+          newUser.uid = uid;
+          setUser(newUser);
+        }
+      }).catch(function(error) {
+        setUser(null);
+          console.log("Error getting document:", error);
+      });
+    }
+  }
+  useEffect(getUser, [uid]);
 
   return (
     <div>

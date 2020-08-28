@@ -55,6 +55,9 @@ function App() {
               <Route exact path="/profile">
                 <Profile />
               </Route>
+              <Route exact path="/profile/:uid">
+                <Profile />
+              </Route>
               <Route exact path="/:gameId">
                 <Game />
               </Route>
