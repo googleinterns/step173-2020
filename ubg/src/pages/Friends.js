@@ -26,7 +26,7 @@ export default function Friends() {
   const [user, setUser] = useState('');
   const ref = useFirestore().collection('users');
   /**
-   * @return {void} 
+   * @return {void}
    */
   function searchId() {
     const docRef = ref.doc(id.trim());
