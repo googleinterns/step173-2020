@@ -82,7 +82,7 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
   const doctorImage = '<img src="' + doctor +
     '" style="width:100%" alt="Doctor">';
   const hunterImage = '<img src="' + hunter +
-    '" style="width:100%" alt="Hunter">'
+    '" style="width:100%" alt="Hunter">';
 
   const [settingsOpen, setSettingsOpen] = useState(false);
   /**

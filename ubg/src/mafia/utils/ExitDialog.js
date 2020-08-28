@@ -47,7 +47,7 @@ function ExitDialog({leaveRoom, setExit, endGame, room, aliveNum, day,
         break;
       case 5:
         await room.update(
-          {hunterKill: {uid: 'none', displayName: 'none', chose: false}},
+            {hunterKill: {uid: 'none', displayName: 'none', chose: false}},
         );
         break;
       default:

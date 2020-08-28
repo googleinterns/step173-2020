@@ -108,7 +108,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
                   (
                     setRoleText('Hunter, pick someone to kill.')
                   )
-                )
+                );
                 break;
               default:
                 setMessage('Role is invalid.');
@@ -127,6 +127,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
       if (!roles.has(4)) {
         room.update({doctorSave: {uid: '#', displayName: ''}});
       }
+
       setPlayers(allPlayers);
       // dayNum can show up as undefined on first night
       dayNum = dayNum ? (initialize ? 1 : dayNum) : 1;
@@ -211,13 +212,13 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
         usersCollection.doc(hunterKill.uid).update({alive: false});
         room.update({
           'hunterKill.chose': true,
-          chat: firebase.firestore.FieldValue.arrayUnion({
-            text: 'The hunter has killed ' + hunterKill.uid + '.',
+          'chat': firebase.firestore.FieldValue.arrayUnion({
+            text: 'The hunter has killed ' + hunterKill.displayName + '.',
             isGameText: true,
             hours,
             minutes,
           }),
-        })
+        });
         if (mafiaKill && mafiaKill.uid !== hunterKill.uid) {
           aliveNum -= 1;
         }
@@ -294,8 +295,8 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
         break;
       case 5:
         room.update(
-          {hunterKill: {uid: player.uid, displayName: player.displayName,
-            chose: true}}
+            {hunterKill: {uid: player.uid, displayName: player.displayName,
+              chose: true}},
         );
         showResult('You have chosen to kill ' + player.displayName +
           ' tonight.');
@@ -383,6 +384,7 @@ MafiaNight.propTypes = {
   dayNum: PropTypes.number,
   chat: PropTypes.array,
   win: PropTypes.number,
+  hunterKill: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({

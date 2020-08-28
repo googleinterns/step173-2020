@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   personalInfo: {
     marginTop: '1vw',
     marginLeft: '1vw',
-  }
+  },
 }));
 
 /**

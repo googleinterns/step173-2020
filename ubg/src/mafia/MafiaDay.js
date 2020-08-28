@@ -143,8 +143,9 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
         voteMap.set(vote, voteMap.get(vote) + 1);
       });
       const entries = [...voteMap.entries()];
+      // sort by number of votes descending
       entries.sort(function(a, b) {
-        return b[1] - a[1];
+        return a[1] - b[1];
       });
       executedPlayer = entries[0];
       usersCollection.doc(executedPlayer[0].uid).update({
@@ -281,6 +282,7 @@ MafiaDay.propTypes = {
   dayNum: PropTypes.number,
   chat: PropTypes.array,
   win: PropTypes.number,
+  hunterKill: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
