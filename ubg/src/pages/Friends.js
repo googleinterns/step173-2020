@@ -61,25 +61,25 @@ export default function Friends() {
         </Typography>
         <Grid container spacing={3} className={classes.grid}>
           <Grid item>
-        <TextField
-          value={id}
-          onChange={(e) => {
-            setId(e.target.value);
-          }}
-          type='text'
-          variant='outlined'
-          placeholder='Enter ID'
-        />
-        </Grid>
+            <TextField
+              value={id}
+              onChange={(e) => {
+                setId(e.target.value);
+              }}
+              type='text'
+              variant='outlined'
+              placeholder='Enter ID'
+            />
+          </Grid>
           <Grid item>
-        <Button
-          variant='contained'
-          color='primary'
-          onClick={searchId}
-          m={5}>
-            Search Friend
-        </Button>
-        </Grid>
+            <Button
+              variant='contained'
+              color='primary'
+              onClick={searchId}
+              m={5}>
+                Search Friend
+            </Button>
+          </Grid>
         </Grid>
         <Divider />
         {search ? 
