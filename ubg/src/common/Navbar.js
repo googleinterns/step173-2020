@@ -48,6 +48,12 @@ export default function Navbar() {
   function about() {
     history.push('/about');
   }
+  /**
+   * Go to the friends page
+   */
+  function friends() {
+    history.push('/friends');
+  }
   return (
     <AppBar position="static">
       <Toolbar>
@@ -58,6 +64,9 @@ export default function Navbar() {
             </Typography>
           </Button>
         </div>
+        <Button color="inherit" onClick={friends}>
+          Friends
+        </Button>
         <Button color="inherit" onClick={about}>
           About
         </Button>
