@@ -43,7 +43,8 @@ const useStyles = makeStyles((theme) => ({
  * @return {ReactElement} Mafia day element
  */
 function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
-  userUid, room, dayVote, aliveNum, endGame, dayNum, chat, win}) {
+  userUid, room, dayVote, aliveNum, endGame, dayNum, chat, win,
+  hunterKill}) {
   const classes = useStyles();
   const [players, setPlayers] = React.useState([]);
   const [userInfo, setUserInfo] = React.useState('');
@@ -142,8 +143,9 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
         voteMap.set(vote, voteMap.get(vote) + 1);
       });
       const entries = [...voteMap.entries()];
+      // sort by number of votes descending
       entries.sort(function(a, b) {
-        return b[1] - a[1];
+        return a[1] - b[1];
       });
       executedPlayer = entries[0];
       usersCollection.doc(executedPlayer[0].uid).update({
@@ -167,6 +169,10 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
           break;
         case 4:
           executionMessage += 'They were a doctor.';
+          break;
+        case 5:
+          executionMessage += 'They were a hunter. The hunter will get ' +
+            'their revenge!';
           break;
         default:
           executionMessage = 'No one was executed.';
@@ -276,6 +282,7 @@ MafiaDay.propTypes = {
   dayNum: PropTypes.number,
   chat: PropTypes.array,
   win: PropTypes.number,
+  hunterKill: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
@@ -288,6 +295,7 @@ const mapStateToProps = (state) => ({
   dayNum: state.roomData.dayCount,
   chat: state.roomData.chat,
   win: state.roomData.win,
+  hunterKill: state.roomData.hunterKill,
 });
 
 export default connect(
