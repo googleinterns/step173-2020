@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
  */
 function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
   mafiaKill, doctorSave, detectiveCheck, showResult, mafiaDecision,
-  endGame, dayNum, chat, win}) {
+  endGame, dayNum, chat, win, hunterKill}) {
   const classes = useStyles();
   const [players, setPlayers] = useState([]);
   const [userInfo, setUserInfo] = useState('');
@@ -82,7 +82,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
         if (u.uid === userUid) {
           setUserInfo(u);
           setChose(u.chose);
-          if (u.alive === true) {
+          if (u.alive === true || u.role === 5) {
             switch (u.role) {
               case 1:
                 setRoleText('Pretend to be clicking, tapping or thinking :)');
@@ -95,6 +95,20 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
                 break;
               case 4:
                 setRoleText('Doctor, who do you want to save tonight?');
+                break;
+              case 5:
+                u.alive ? (
+                  setRoleText('Pretend to be clicking, tapping or thinking :)')
+                ) :
+                (
+                  hunterKill.chose ?
+                  (
+                    setRoleText('Sorry but you are dead :/')
+                  ) :
+                  (
+                    setRoleText('Hunter, pick someone to kill.')
+                  )
+                );
                 break;
               default:
                 setMessage('Role is invalid.');
@@ -113,6 +127,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
       if (!roles.has(4)) {
         room.update({doctorSave: {uid: '#', displayName: ''}});
       }
+
       setPlayers(allPlayers);
       // dayNum can show up as undefined on first night
       dayNum = dayNum ? (initialize ? 1 : dayNum) : 1;
@@ -181,12 +196,32 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
     if (mafiaKill &&
       doctorSave &&
       detectiveCheck &&
+      hunterKill &&
       mafiaKill.uid !== '' &&
       doctorSave.uid !== '' &&
       detectiveCheck.uid !== '') {
       if (mafiaKill && mafiaKill.uid !== doctorSave.uid) {
         usersCollection.doc(mafiaKill.uid).update({alive: false});
         aliveNum -= 1;
+      }
+      if (hunterKill && hunterKill.chose && hunterKill.uid !==
+        doctorSave.uid) {
+        const today = new Date();
+        const hours = today.getUTCHours();
+        const minutes = today.getUTCMinutes();
+        usersCollection.doc(hunterKill.uid).update({alive: false});
+        room.update({
+          'hunterKill.chose': true,
+          'chat': firebase.firestore.FieldValue.arrayUnion({
+            text: 'The hunter has killed ' + hunterKill.displayName + '.',
+            isGameText: true,
+            hours,
+            minutes,
+          }),
+        });
+        if (mafiaKill && mafiaKill.uid !== hunterKill.uid) {
+          aliveNum -= 1;
+        }
       }
       usersCollection.doc(userUid).update({
         chose: false,
@@ -237,7 +272,7 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
           ),
         });
         changeChose(true);
-        setMessage('You have chose to kill ' + player.displayName);
+        setMessage('You have chosen to kill ' + player.displayName);
         break;
       case 3:
         if (player.role === 2) {
@@ -255,6 +290,16 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
         room.update(
             {doctorSave: {uid: player.uid, displayName: player.displayName}});
         showResult('You have saved ' + player.displayName + ' tonight.');
+        setMessage('Please wait for other players before jumping to day.');
+        changeChose(true);
+        break;
+      case 5:
+        room.update(
+            {hunterKill: {uid: player.uid, displayName: player.displayName,
+              chose: true}},
+        );
+        showResult('You have chosen to kill ' + player.displayName +
+          ' tonight.');
         setMessage('Please wait for other players before jumping to day.');
         changeChose(true);
         break;
@@ -284,7 +329,11 @@ function MafiaNight({userUid, usersData, room, usersCollection, aliveNum,
           <h2>{message}</h2>
         </Grid>
         <br />
-        {userInfo.role === 1 || userInfo.alive === false ? null :
+        {userInfo.role === 1 ||
+          (!userInfo.alive && userInfo.role !== 5) ||
+          (userInfo.role === 5 &&
+            ((hunterKill.chose && !userInfo.alive) ||
+            (!hunterKill.chose && userInfo.alive))) ? null :
         <div>
           <Grid container justify="center" alignItems="center" spacing={4}>
             {
@@ -335,6 +384,7 @@ MafiaNight.propTypes = {
   dayNum: PropTypes.number,
   chat: PropTypes.array,
   win: PropTypes.number,
+  hunterKill: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
@@ -348,6 +398,7 @@ const mapStateToProps = (state) => ({
   dayNum: state.roomData.dayCount,
   chat: state.roomData.chat,
   win: state.roomData.win,
+  hunterKill: state.roomData.hunterKill,
 });
 
 export default connect(

@@ -13,6 +13,7 @@ import villager from '../mafia/images/villager.png';
 import mafia from '../mafia/images/mafia.png';
 import detective from '../mafia/images/detective.png';
 import doctor from '../mafia/images/doctor.png';
+import hunter from '../mafia/images/hunter.png';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -80,6 +81,8 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
     '" style="width:100%" alt="Detective">';
   const doctorImage = '<img src="' + doctor +
     '" style="width:100%" alt="Doctor">';
+  const hunterImage = '<img src="' + hunter +
+    '" style="width:100%" alt="Hunter">';
 
   const [settingsOpen, setSettingsOpen] = useState(false);
   /**
@@ -107,7 +110,14 @@ function WaitingRoom({gameName, gameDescription, leaveRoom, win,
           doctorImage +
           '<h3>Doctor</h3>' +
           '<p>A role that can choose a person to save each night. ' +
-          'If the mafia targets the same person, they will remain alive.</p>' +
+          'If the mafia or hunter targets the same person, they ' +
+          'will remain alive.</p>' +
+        '</div>' +
+        '<div class="column">' +
+          hunterImage +
+          '<h3>Hunter</h3>' +
+          '<p>A role that can choose one player to kill after ' +
+          'being executed during the daytime.</p>' +
         '</div>' +
       '</div>' +
       '<style>' +

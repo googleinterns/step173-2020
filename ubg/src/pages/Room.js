@@ -603,6 +603,7 @@ function Room({setUsersData, setCurrentUser, setRoomData}) {
       mafiaKill: {'uid': '', 'displayName': ''},
       mafiaDecision: [],
       detectiveCheck: {'uid': '', 'displayName': ''},
+      hunterKill: {'uid': '', 'displayName': '', 'chose': false},
       started: true,
       aliveCount: usersData.length,
       chat: [],
