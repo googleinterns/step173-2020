@@ -7,7 +7,8 @@
 
 ## Objective
 
-Create a web application dedicated to helping at-home, quarantined users find and play the right board game for them while connecting with others virtually
+Create a web application dedicated to helping at-home, quarantined users find
+ and play the right board game for them while connecting with others virtually
 
 - Organize board game information with simple UI and useful search filters
 - Allow for face-to-face communication with video chat options in Mafia
