@@ -59,17 +59,17 @@ export default function Friends() {
     ref.get()
         .then(function(querySnapshot) {
           querySnapshot.forEach(function(doc) {
-              if (checkMatch(values, doc.data()['displayName'])) {
-                const newUser = doc.data();
-                newUser.id = doc.id;
-                allUsers.push(newUser);
-              }
+            if (checkMatch(values, doc.data()['displayName'])) {
+              const newUser = doc.data();
+              newUser.id = doc.id;
+              allUsers.push(newUser);
+            }
           });
           setUsers(allUsers);
         })
         .catch(function(error) {
           console.log('Error getting documents: ', error);
-        }); 
+        });
   }
 
   return (

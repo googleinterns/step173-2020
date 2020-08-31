@@ -16,14 +16,14 @@ export default function UserResults({users}) {
     // iterate through all users
     <div>
       <List width="100%">
-        {users.map((user) => 
+        {users.map((user) =>
           <ListItem key={user.id}>
             <AccountCircleIcon />
             <Link href={'/profile/' + user.id}>
               {user.displayName}
-            </Link> 
+            </Link>
             <Divider />
-          </ListItem>
+          </ListItem>,
         )}
       </List>
     </div>
@@ -31,10 +31,5 @@ export default function UserResults({users}) {
 }
 
 UserResults.propTypes = {
-  reviews: PropTypes.array,
-  profile: PropTypes.bool,
-  reviewsRef: PropTypes.object,
-  usersDoc: PropTypes.object,
-  setInitialize: PropTypes.func,
-  setReviewed: PropTypes.func,
+  users: PropTypes.array,
 };
