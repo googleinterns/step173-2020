@@ -28,6 +28,10 @@ Create a web application dedicated to helping at-home, quarantined users find
 
 ![Homepage](https://github.com/googleinterns/step173-2020/blob/readme/gifs/homepage.gif)
 
+### Searchpage
+
+![Searchpage](https://github.com/googleinterns/step173-2020/blob/readme/gifs/searchField.gif)
+
 ### Mafia
 
 ![Waitingroom](https://github.com/googleinterns/step173-2020/blob/readme/gifs/waitingRoom.gif)
