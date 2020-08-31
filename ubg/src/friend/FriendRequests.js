@@ -13,6 +13,7 @@ import {useFirestore} from 'reactfire';
  */
 export default function FriendRequests({users, currUser}) {
   const userCollection = useFirestore().collection('users');
+  console.log(users);
 
   return (
     // iterate through all users

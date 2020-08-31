@@ -49,7 +49,7 @@ export default function Request({user, userCollection, currUser}) {
           });
         } else {
           userCollection.doc(currUser.uid).update({
-            requests: currUserData,
+            requests: currUserData.requests,
           });
         }
       }
@@ -90,7 +90,7 @@ export default function Request({user, userCollection, currUser}) {
 }
 
 Request.propTypes = {
-  user: PropTypes.object,
+  user: PropTypes.string,
   userCollection: PropTypes.object,
   currUser: PropTypes.object,
 };
