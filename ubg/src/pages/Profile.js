@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {useUser, useFirestoreDocData, useFirestore} from 'reactfire';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
 import Navbar from '../common/Navbar';
 import {makeStyles} from '@material-ui/core/styles';
 import FavoriteGames from '../profile/FavoriteGames';
@@ -11,6 +12,7 @@ import Card from '@material-ui/core/Card';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import CardContent from '@material-ui/core/CardContent';
+import AddFriendButton from '../profile/AddFriendButton';
 import {useParams, useHistory} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
@@ -23,6 +25,9 @@ const useStyles = makeStyles((theme) => ({
       display: 'flex',
       justifyContent: 'center',
     },
+  },
+  friendContainer: {
+    position: 'relative',
   },
   arrowBack: {
     float: 'left',
@@ -40,6 +45,7 @@ export default function Profile() {
   const classes = useStyles();
   const userCollection = useFirestore().collection('users');
   const {uid} = useParams();
+
   /**
    * Get user with entered Id
    * @return {void}
@@ -75,11 +81,23 @@ export default function Profile() {
       <Box justify='center' alignItems='center'
         m={10}>
         <Box m={10}>
-          <Typography variant='h2' className={classes.fonts}>
-            {user ? user.displayName : 'Sign in to view your profile'}
-          </Typography>
+          <Grid container justify="flex-start" alignItems="stretch" spacing={4}>
+            <Grid item>
+              <Typography variant='h2' className={classes.fonts}>
+                {user ? user.displayName : 'Sign in to view your profile'}
+              </Typography>
+            </Grid>
+            {
+              uid === undefined ?
+              null :
+              <Grid item className={classes.friendContainer}
+                xs={12} sm={6} xl={2} lg={3} md={4}>
+                <AddFriendButton userCollection={userCollection}/>
+              </Grid>
+            }
+          </Grid>
           <Typography variant='h6' className={classes.fonts}>
-            {user ? 'unique id: ' + user.uid : null}
+            {user ? 'user id: ' + user.uid : null}
           </Typography>
           <hr />
         </Box>
