@@ -9,9 +9,11 @@ import FavoriteGames from '../profile/FavoriteGames';
 import Reviews from '../reviews/Reviews';
 import PropTypes from 'prop-types';
 import Card from '@material-ui/core/Card';
+import IconButton from '@material-ui/core/IconButton';
+import ArrowBack from '@material-ui/icons/ArrowBack';
 import CardContent from '@material-ui/core/CardContent';
-import {useParams} from 'react-router-dom';
 import AddFriendButton from '../profile/AddFriendButton';
+import {useParams, useHistory} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   fonts: {
@@ -27,12 +29,18 @@ const useStyles = makeStyles((theme) => ({
   friendContainer: {
     position: 'relative',
   },
+  arrowBack: {
+    float: 'left',
+    marginLeft: '0.4em',
+    marginTop: '0.4em',
+  },
 }));
 
 /**
  * @return {ReactElement} Displays profile page
  */
 export default function Profile() {
+  const history = useHistory();
   const [user, setUser] = useState(useUser());
   const classes = useStyles();
   const userCollection = useFirestore().collection('users');
@@ -62,8 +70,16 @@ export default function Profile() {
   return (
     <div>
       <Navbar />
+      <IconButton
+        color="primary"
+        component="span"
+        onClick={() => history.goBack()}
+        className={classes.arrowBack}
+      >
+        <ArrowBack fontSize="large" />
+      </IconButton>
       <Box justify='center' alignItems='center'
-        mt={10} ml={10} mr={10}>
+        m={10}>
         <Box m={10}>
           <Grid container justify="flex-start" alignItems="stretch" spacing={4}>
             <Grid item>
