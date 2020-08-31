@@ -24,7 +24,15 @@ Create a web application dedicated to helping at-home, quarantined users find
 
 ## Demo
 
-![Alt Text](https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif)
+### Homepage
+
+![Homepage](https://github.com/googleinterns/step173-2020/blob/readme/gifs/homepage.gif)
+
+### Mafia
+
+![Waitingroom](https://github.com/googleinterns/step173-2020/blob/readme/gifs/waitingRoom.gif)
+![mafia Night](https://github.com/googleinterns/step173-2020/blob/readme/gifs/mafiaNight.gif)
+![mafia Day](https://github.com/googleinterns/step173-2020/blob/readme/gifs/mafiaDay.gif)
 
 ## Links
 
