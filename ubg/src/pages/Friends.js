@@ -45,7 +45,6 @@ export default function Friends() {
   function searchFriend() {
     const docRef = ref.doc(value.trim());
     const allUsers = [];
-    setSearch(true);
     docRef.get().then(function(doc) {
       if (doc.exists) {
         const newUser = doc.data();
@@ -66,6 +65,7 @@ export default function Friends() {
             }
           });
           setUsers(allUsers);
+          setSearch(true);
         })
         .catch(function(error) {
           console.log('Error getting documents: ', error);
@@ -108,11 +108,11 @@ export default function Friends() {
         </Grid>
         <Divider />
         {search ?
-        users === [] ?
+        users.length === 0 ?
         <Typography
           variant='h6'
         >
-          Id not Found
+          User not Found
         </Typography> :
         <UserResults users={users}></UserResults>:
         null
