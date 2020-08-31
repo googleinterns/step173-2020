@@ -62,6 +62,7 @@ export default function AuthButtons() {
             wins: 0,
             losses: 0,
           },
+          email: currUser.email,
         });
       }
     }).catch(function(error) {
