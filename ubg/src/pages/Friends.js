@@ -3,12 +3,12 @@ import Navbar from '../common/Navbar';
 import {makeStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import {useFirestore} from 'reactfire';
+import UserResults from '../friend/UserResults';
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -17,30 +17,59 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 /**
+ * @param {object} values input in Search Friend
+ * @param {string} name name of user
+ * @return {boolean} whether user name match search input
+ */
+const checkMatch = (values, name) => {
+  for (let i = 0; i < values.length; i++) {
+    if (name.toLowerCase().includes(values[i].toLowerCase())) {
+      return true;
+    }
+  }
+  return false;
+};
+
+/**
  * @return {ReactElement} Friend page
  */
 export default function Friends() {
   const classes = useStyles();
-  const [id, setId] = useState('');
+  const [value, setValue] = useState('');
   const [search, setSearch] = useState(false);
-  const [user, setUser] = useState('');
+  const [users, setUsers] = useState([]);
   const ref = useFirestore().collection('users');
   /**
    * @return {void}
    */
-  function searchId() {
-    const docRef = ref.doc(id.trim());
+  function searchFriend() {
+    const docRef = ref.doc(value.trim());
+    const allUsers = [];
+    setSearch(true);
     docRef.get().then(function(doc) {
       if (doc.exists) {
-        setUser(doc.data());
-        setSearch(true);
-      } else {
-        setUser('');
-        setSearch(true);
+        const newUser = doc.data();
+        newUser.id = value.trim();
+        allUsers.push(newUser);
       }
     }).catch(function(error) {
       console.log('Error getting document:', error);
     });
+    const values = value.trim().split(/ +/);
+    ref.get()
+        .then(function(querySnapshot) {
+          querySnapshot.forEach(function(doc) {
+              if (checkMatch(values, doc.data()['displayName'])) {
+                const newUser = doc.data();
+                newUser.id = doc.id;
+                allUsers.push(newUser);
+              }
+          });
+          setUsers(allUsers);
+        })
+        .catch(function(error) {
+          console.log('Error getting documents: ', error);
+        }); 
   }
 
   return (
@@ -58,20 +87,20 @@ export default function Friends() {
         <Grid container spacing={3} className={classes.grid}>
           <Grid item>
             <TextField
-              value={id}
+              value={value}
               onChange={(e) => {
-                setId(e.target.value);
+                setValue(e.target.value);
               }}
               type='text'
               variant='outlined'
-              placeholder='Enter ID'
+              placeholder='Enter ID or name'
             />
           </Grid>
           <Grid item>
             <Button
               variant='contained'
               color='primary'
-              onClick={searchId}
+              onClick={searchFriend}
               m={5}>
                 Search Friend
             </Button>
@@ -79,15 +108,13 @@ export default function Friends() {
         </Grid>
         <Divider />
         {search ?
-        user === '' ?
+        users === [] ?
         <Typography
           variant='h6'
         >
           Id not Found
         </Typography> :
-        <Link href={'/profile/' + id.trim()}>
-          {user.displayName}
-        </Link> :
+        <UserResults users={users}></UserResults>:
         null
         }
       </Box>
