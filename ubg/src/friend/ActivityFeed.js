@@ -47,6 +47,7 @@ function loadData() {
       }
       newActicity.push(activity.uid);
       newActicity.push(activity.displayName);
+      allActivities.unshift(newActicity);
       }
     );
     setActivities(allActivities);

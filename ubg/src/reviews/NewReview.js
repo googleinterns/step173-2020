@@ -32,6 +32,7 @@ export default function NewReview(props) {
     // Clear input fields
     event.target.elements.text.value = '';
     event.target.elements.rating.defaultValue = '0';
+    
   };
 
   return (
