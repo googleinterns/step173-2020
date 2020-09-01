@@ -161,6 +161,12 @@ function UserFriends({userCollection, uid}) {
   const userFriends = useFirestoreDocData(
       userCollection.doc(uid)).friends;
 
+  function compare(a, b) {
+    const nameA = a.displayName.toUpperCase();
+    const nameB = b.displayName.toUpperCase();
+    return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0;
+  }
+
   return (
     <Box m={10}>
       <hr /> <br /> <br />
@@ -176,7 +182,7 @@ function UserFriends({userCollection, uid}) {
         </div> :
         <List width="100%">
           {
-            userFriends.map((friend) => {
+            userFriends.sort(compare).map((friend) => {
               return (
                 <ListItem key={friend}>
                   <Friend friend={friend} userCollection={userCollection} />

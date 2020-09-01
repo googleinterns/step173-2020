@@ -18,17 +18,16 @@ const useStyles = makeStyles((theme) => ({
  */
 export default function AddFriendButton({userCollection}) {
   const user = useUser();
-  const userUid = (user && user.uid) || ' ';
   const classes = useStyles();
   const friendUid = useParams().uid;
   const userFriends = useFirestoreDocData(
-      userCollection.doc(userUid)).friends;
+      userCollection.doc(user.uid)).friends;
   const otherFriends = useFirestoreDocData(
       userCollection.doc(friendUid)).friends;
   const friendRequests = useFirestoreDocData(
       userCollection.doc(friendUid)).requests;
   const [friend, setFriend] = useState(findUser(friendUid, userFriends));
-  const [invite, setInvite] = useState(findUser(userUid, friendRequests));
+  const [invite, setInvite] = useState(findUser(user.uid, friendRequests));
 
   return (
     {user} ?
@@ -36,7 +35,7 @@ export default function AddFriendButton({userCollection}) {
       <Button
         variant='contained'
         color='primary'
-        onClick={() => addFriend(userFriends, otherFriends, userUid, friendUid,
+        onClick={() => addFriend(userFriends, otherFriends, user, friendUid,
             userCollection, friend, setFriend, setInvite, friendRequests)}
         className={classes.friendButton}
         disabled={invite}>
@@ -62,7 +61,7 @@ export default function AddFriendButton({userCollection}) {
  */
 function findUser(uid, list) {
   for (let i = 0; i < list.length; i++) {
-    if (list[i] === uid) {
+    if (list[i].uid === uid) {
       return true;
     }
   }
@@ -78,7 +77,7 @@ function findUser(uid, list) {
  */
 function unfriend(uid, friendUid, friends, userCollection) {
   for (let i = 0; i < friends.length; i++) {
-    if (friends[i] === friendUid) {
+    if (friends[i].uid === friendUid) {
       friends.splice(i, 1);
       if (friends.length === 0) {
         userCollection.doc(uid).update({
@@ -97,7 +96,7 @@ function unfriend(uid, friendUid, friends, userCollection) {
  * Deletes from friends or sends a friend request
  * @param {array} userFriends Array of current user's friends
  * @param {array} otherFriends Array of other user's friends
- * @param {string} userUid User id of current user
+ * @param {string} user Current user object
  * @param {string} friendUid User id of friend
  * @param {object} userCollection Reference to users collection
  * @param {bool} friend If this user is a friend
@@ -105,18 +104,21 @@ function unfriend(uid, friendUid, friends, userCollection) {
  * @param {func} setInvite Sets if friend request has been sent
  * @param {array} friendRequests Array of friend's friend requests
  */
-function addFriend(userFriends, otherFriends, userUid, friendUid,
+function addFriend(userFriends, otherFriends, user, friendUid,
     userCollection, friend, setFriend, setInvite, friendRequests) {
   if (friend) {
     // delete from friends for both users
-    unfriend(userUid, friendUid, userFriends, userCollection);
-    unfriend(friendUid, userUid, otherFriends, userCollection);
+    unfriend(user.uid, friendUid, userFriends, userCollection);
+    unfriend(friendUid, user.uid, otherFriends, userCollection);
     setFriend(false);
     setInvite(false);
     return;
   } else {
     // send a request
-    friendRequests.push(userUid);
+    friendRequests.push({
+      uid: user.uid,
+      displayName: user.displayName,
+    });
     userCollection.doc(friendUid).update({
       requests: Array.from(new Set(friendRequests)),
     });
