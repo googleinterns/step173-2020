@@ -28,58 +28,69 @@ export default function ActivityFeed() {
   const userCollection = useFirestore().collection('users');
 
   /**
- * @return {undefined}
- */
-function loadData() {
- 
-  if (initialize === false && user) {
-    setInitialize(true);
-    const allActivities = [];
-    const ref = userCollection.doc(user.uid);
-    ref.get().then(function(doc) {
-      if (doc.exists) {
-        doc.data().activities.forEach(
-          activity => 
-          {const newActivity = [];
-            const difference = (Date.now() - activity.timestamp) / (1000*60);
-            if (Math.floor(difference / (60*24)) < 4) {
-              if (Math.floor(difference / (60*24)) < 1) {
-                if (Math.floor(difference / 60) < 1) {
-                  newActivity.push(Math.floor(difference) + " minutes ago");
+   * @return {undefined}
+   */
+  function loadData() {
+    if (initialize === false && user) {
+      setInitialize(true);
+      const allActivities = [];
+      const ref = userCollection.doc(user.uid);
+      ref.get().then(function(doc) {
+        if (doc.exists) {
+          doc.data().activities.forEach(
+            activity => 
+            {const newActivity = [];
+              const difference = (Date.now() - activity.timestamp) / (1000*60);
+              if (Math.floor(difference / (60*24)) < 4) {
+                if (Math.floor(difference / (60*24)) < 1) {
+                  if (Math.floor(difference / 60) < 1) {
+                    if (Math.floor(difference) <= 1) {
+                      newActivity.push(Math.floor(difference) + " minute ago");
+                    } else {
+                      newActivity.push(Math.floor(difference) + " minutes ago");
+                    }
+                  } else {
+                    if (Math.floor(difference / 60) <= 1) {
+                      newActivity.push(Math.floor(difference / 60) + " hour ago");
+                    } else {
+                      newActivity.push(Math.floor(difference / 60) + " hours ago");
+                    }
+                  }
                 } else {
-                newActivity.push(Math.floor(difference / 60) + " hours ago");
+                  if (Math.floor(difference / (60*24)) <= 1) {
+                    newActivity.push(Math.floor(difference / (60*24)) + " day ago");
+                  } else {
+                    newActivity.push(Math.floor(difference / (60*24)) + " days ago");
+                  }
                 }
               } else {
-                newActivity.push(Math.floor(difference / (60*24)) + " days ago");
+                ref.update({
+                  activities: firebase.firestore.FieldValue.arrayRemove(activity),
+                });
+                return;
               }
+            if (activity.type === "review") {
+              newActivity.push(" left a review for " + activity.game);
             } else {
-              ref.update({
-                activities: firebase.firestore.FieldValue.arrayRemove(activity),
-              });
-              return;
+              newActivity.push(" added " + activity.game + " to favorites");
             }
-          if (activity.type === "review") {
-            newActivity.push(" left a review for " + activity.game);
-          } else {
-            newActivity.push(" added " + activity.game + " to favorites");
-          }
-          newActivity.push(activity.uid);
-          newActivity.push(activity.displayName);
-          allActivities.unshift(newActivity);
-          }
-        );
-        setActivities(allActivities);
-      }
-    }).catch(function(error) {
-      console.log('Error getting document:', error);
-    });
-    
+            newActivity.push(activity.uid);
+            newActivity.push(activity.displayName);
+            allActivities.unshift(newActivity);
+            }
+          );
+          setActivities(allActivities);
+        }
+      }).catch(function(error) {
+        console.log('Error getting document:', error);
+      });
+      
+    }
   }
-}
-/**
- * Load the activity data
- */
-useEffect(loadData, [initialize]);
+  /**
+   * Load the activity data
+   */
+  useEffect(loadData, [initialize]);
   return (
     // iterate through all activities
     <AuthCheck>

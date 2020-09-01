@@ -33,7 +33,6 @@ export default function Reviews({reviews, profile, reviewsRef=null,
       reviews: firebase.firestore.FieldValue.arrayRemove(review.reviewData),
       activities: firebase.firestore.FieldValue.arrayRemove(activity),
     });
-    // const reviewData
     setInitialize(false);
     setReviewed(false);
   }
