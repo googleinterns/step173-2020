@@ -23,8 +23,10 @@ export default function AddFriendButton({userCollection}) {
   const friendUid = useParams().uid;
   const userFriends = useFirestoreDocData(
       userCollection.doc(userUid)).friends;
+  const otherFriends = useFirestoreDocData(
+      userCollection.doc(friendUid)).friends;
   const friendRequests = useFirestoreDocData(
-      userCollection.doc(friendUid || ' ')).requests;
+      userCollection.doc(friendUid)).requests;
   const [friend, setFriend] = useState(findUser(friendUid, userFriends));
   const [invite, setInvite] = useState(findUser(userUid, friendRequests));
 
@@ -34,7 +36,7 @@ export default function AddFriendButton({userCollection}) {
       <Button
         variant='contained'
         color='primary'
-        onClick={() => addFriend(userFriends, userUid, friendUid,
+        onClick={() => addFriend(userFriends, otherFriends, userUid, friendUid,
             userCollection, friend, setFriend, setInvite, friendRequests)}
         className={classes.friendButton}
         disabled={invite}>
@@ -59,17 +61,42 @@ export default function AddFriendButton({userCollection}) {
  * @return {bool} If user contained in list
  */
 function findUser(uid, list) {
-  list.forEach((otherUid) => {
-    if (otherUid === uid) {
+  for (let i = 0; i < list.length; i++) {
+    if (list[i] === uid) {
       return true;
     }
-  });
+  }
   return false;
+}
+
+/**
+ * Deletes friendUid from uid's friends list
+ * @param {string} uid Current user's uid
+ * @param {string} friendUid Friend's uid
+ * @param {array} friends Array of current user's friends
+ * @param {object} userCollection Reference to users collection
+ */
+function unfriend(uid, friendUid, friends, userCollection) {
+  for (let i = 0; i < friends.length; i++) {
+    if (friends[i] === friendUid) {
+      friends.splice(i, 1);
+      if (friends.length === 0) {
+        userCollection.doc(uid).update({
+          friends: [],
+        });
+      } else {
+        userCollection.doc(uid).update({
+          friends: friends,
+        });
+      }
+    }
+  }
 }
 
 /**
  * Deletes from friends or sends a friend request
  * @param {array} userFriends Array of current user's friends
+ * @param {array} otherFriends Array of other user's friends
  * @param {string} userUid User id of current user
  * @param {string} friendUid User id of friend
  * @param {object} userCollection Reference to users collection
@@ -78,27 +105,15 @@ function findUser(uid, list) {
  * @param {func} setInvite Sets if friend request has been sent
  * @param {array} friendRequests Array of friend's friend requests
  */
-function addFriend(userFriends, userUid, friendUid, userCollection,
-    friend, setFriend, setInvite, friendRequests) {
+function addFriend(userFriends, otherFriends, userUid, friendUid,
+    userCollection, friend, setFriend, setInvite, friendRequests) {
   if (friend) {
-    // delete from friends
-    for (let i = 0; i < userFriends.length; i++) {
-      if (userFriends[i].id === friendUid) {
-        userFriends.splice(i, 1);
-        if (userFriends.length === 0) {
-          userCollection.doc(userUid).update({
-            friends: [],
-          });
-        } else {
-          userCollection.doc(userUid).update({
-            friends: userFriends,
-          });
-        }
-        setFriend(false);
-        setInvite(false);
-        return;
-      }
-    }
+    // delete from friends for both users
+    unfriend(userUid, friendUid, userFriends, userCollection);
+    unfriend(friendUid, userUid, otherFriends, userCollection);
+    setFriend(false);
+    setInvite(false);
+    return;
   } else {
     // send a request
     friendRequests.push(userUid);

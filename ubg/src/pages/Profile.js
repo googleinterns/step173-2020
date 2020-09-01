@@ -13,6 +13,9 @@ import IconButton from '@material-ui/core/IconButton';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import CardContent from '@material-ui/core/CardContent';
 import AddFriendButton from '../profile/AddFriendButton';
+import Friend from '../profile/Friend';
+import ListItem from '@material-ui/core/ListItem';
+import List from '@material-ui/core/List';
 import {useParams, useHistory} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
@@ -43,8 +46,8 @@ export default function Profile() {
   const history = useHistory();
   const [user, setUser] = useState(useUser());
   const classes = useStyles();
-  const userCollection = useFirestore().collection('users');
   const {uid} = useParams();
+  const userCollection = useFirestore().collection('users');
 
   /**
    * Get user with entered Id
@@ -105,6 +108,8 @@ export default function Profile() {
           <div>
             <UserStats userCollection={userCollection} uid={user.uid} />
             <FavoriteGames userCollection={userCollection} uid={user.uid} />
+            <UserFriends userCollection={userCollection}
+              uid={user.uid} />
             <UserReviews userCollection={userCollection} uid={user.uid} />
           </div>
         ) : ''}
@@ -142,6 +147,45 @@ function UserStats({userCollection, uid}) {
         </CardContent>
       </Card>
       <br /> <hr />
+    </Box>
+  );
+}
+
+/**
+ * @param {object} Reference to user collection
+ * @param {string} uid Current user's uid
+ * @return {ReactElement} List of current user's friends
+ */
+function UserFriends({userCollection, uid}) {
+  const classes = useStyles();
+  const userFriends = useFirestoreDocData(
+      userCollection.doc(uid)).friends;
+
+  return (
+    <Box m={10}>
+      <hr /> <br /> <br />
+      <Typography variant='h4' className={classes.fonts}>
+        Friends
+      </Typography>
+      {userFriends.length === 0 ?
+        <div>
+          <br />
+          <Typography variant='body1'>
+            No friends to show
+          </Typography>
+        </div> :
+        <List width="100%">
+          {
+            userFriends.map((friend) => {
+              return (
+                <ListItem key={friend}>
+                  <Friend friend={friend} userCollection={userCollection} />
+                </ListItem>
+              );
+            })
+          }
+        </List>
+      }
     </Box>
   );
 }
@@ -188,6 +232,11 @@ function UserReviews({userCollection, uid}) {
 }
 
 UserStats.propTypes = {
+  userCollection: PropTypes.object,
+  uid: PropTypes.string,
+};
+
+UserFriends.propTypes = {
   userCollection: PropTypes.object,
   uid: PropTypes.string,
 };
