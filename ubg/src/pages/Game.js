@@ -297,7 +297,7 @@ function FavoriteButton({usersCollection, game}) {
   const userGames = useFirestoreDocData(
       usersCollection.doc((user && user.uid) || ' ')).games;
   const userActivities = useFirestoreDocData(
-    usersCollection.doc((user && user.uid) || ' ')).activities;
+      usersCollection.doc((user && user.uid) || ' ')).activities;
   const [favorite, setFavorite] = useState(inFavorites(userGames, game));
 
   return (
@@ -333,11 +333,13 @@ function inFavorites(userGames, game) {
 /**
  * Based on state of favorite, adds or deletes current game from favorites
  * @param {array} userGames Array of current user's favorite games
+ * @param {array} userActivities Array of current user's recent activites
  * @param {object} usersCollection User collection
  * @param {object} game Firestore doc of current game
  * @param {bool} favorite Whether current game is in user's favorites
  * @param {func} setFavorite Sets whether current game is in user's favorites
  * @param {number} uid ID od current user
+ * @param {array} displayName Current user's name
  * @return {void}
  */
 function addFavorite(userGames, userActivities, usersCollection,

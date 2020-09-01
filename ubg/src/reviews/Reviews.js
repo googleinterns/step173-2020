@@ -27,7 +27,7 @@ export default function Reviews({reviews, profile, reviewsRef=null,
       timestamp: review.timestamp,
       displayName: review.name,
       game: review.reviewData.gameName,
-    }
+    };
     reviewsRef.doc(review.reviewId).delete();
     usersDoc.doc(user.uid).update({
       reviews: firebase.firestore.FieldValue.arrayRemove(review.reviewData),

@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
 
 /**
  * Renders users activity feed
- * @return {ReactElement} 
+ * @return {ReactElement}
  */
 export default function ActivityFeed() {
   const user = useUser();
@@ -39,54 +39,60 @@ export default function ActivityFeed() {
       ref.get().then(function(doc) {
         if (doc.exists) {
           doc.data().activities.forEach(
-            activity => 
-            {const newActivity = [];
-              const difference = (Date.now() - activity.timestamp) / (1000*60);
-              if (Math.floor(difference / (60*24)) < 4) {
-                if (Math.floor(difference / (60*24)) < 1) {
-                  if (Math.floor(difference / 60) < 1) {
-                    if (Math.floor(difference) <= 1) {
-                      newActivity.push(Math.floor(difference) + " minute ago");
+              (activity) =>
+              {
+                const newActivity = [];
+                const difference = (Date.now() - activity.timestamp) / (1000*60);
+                if (Math.floor(difference / (60*24)) < 4) {
+                  if (Math.floor(difference / (60*24)) < 1) {
+                    if (Math.floor(difference / 60) < 1) {
+                      if (Math.floor(difference) <= 1) {
+                        newActivity.push(Math.floor(difference) +
+                        ' minute ago');
+                      } else {
+                        newActivity.push(Math.floor(difference) +
+                        ' minutes ago');
+                      }
                     } else {
-                      newActivity.push(Math.floor(difference) + " minutes ago");
+                      if (Math.floor(difference / 60) <= 1) {
+                        newActivity.push(Math.floor(difference / 60) +
+                        ' hour ago');
+                      } else {
+                        newActivity.push(Math.floor(difference / 60) +
+                        ' hours ago');
+                      }
                     }
                   } else {
-                    if (Math.floor(difference / 60) <= 1) {
-                      newActivity.push(Math.floor(difference / 60) + " hour ago");
+                    if (Math.floor(difference / (60*24)) <= 1) {
+                      newActivity.push(Math.floor(difference / (60*24)) +
+                      ' day ago');
                     } else {
-                      newActivity.push(Math.floor(difference / 60) + " hours ago");
+                      newActivity.push(Math.floor(difference / (60*24)) +
+                      ' days ago');
                     }
                   }
                 } else {
-                  if (Math.floor(difference / (60*24)) <= 1) {
-                    newActivity.push(Math.floor(difference / (60*24)) + " day ago");
-                  } else {
-                    newActivity.push(Math.floor(difference / (60*24)) + " days ago");
-                  }
+                  ref.update({
+                    activities: firebase.firestore.FieldValue.arrayRemove(activity),
+                  });
+                  return;
                 }
-              } else {
-                ref.update({
-                  activities: firebase.firestore.FieldValue.arrayRemove(activity),
-                });
-                return;
-              }
-            if (activity.type === "review") {
-              newActivity.push(" left a review for " + activity.game);
-            } else {
-              newActivity.push(" added " + activity.game + " to favorites");
-            }
-            newActivity.push(activity.uid);
-            newActivity.push(activity.displayName);
-            newActivity.push(activity.type);
-            allActivities.unshift(newActivity);
-            }
+                if (activity.type === 'review') {
+                  newActivity.push(' left a review for ' + activity.game);
+                } else {
+                  newActivity.push(' added ' + activity.game + ' to favorites');
+                }
+                newActivity.push(activity.uid);
+                newActivity.push(activity.displayName);
+                newActivity.push(activity.type);
+                allActivities.unshift(newActivity);
+              },
           );
           setActivities(allActivities);
         }
       }).catch(function(error) {
         console.log('Error getting document:', error);
       });
-      
     }
   }
   /**
@@ -98,7 +104,7 @@ export default function ActivityFeed() {
     <AuthCheck>
       <List width="100%">
         {activities.map((activity) =>
-          <ListItem key={activity[2] + activity[1]}  alignItems="flex-start">
+          <ListItem key={activity[2] + activity[1]} alignItems="flex-start">
             <ListItemIcon>
               {activity[4] === 'review' ?
               <ChatBubbleOutlineIcon /> :
