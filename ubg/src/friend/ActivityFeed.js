@@ -7,7 +7,7 @@ import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import Link from '@material-ui/core/Link';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
-import {AuthCheck, useUser, useFirestore, useFirestoreDocData} from 'reactfire';
+import {AuthCheck, useUser, useFirestore} from 'reactfire';
 import * as firebase from 'firebase/app';
 
 const useStyles = makeStyles((theme) => ({
@@ -32,7 +32,7 @@ export default function ActivityFeed() {
  */
 function loadData() {
  
-  if (initialize === false && user) { console.log("asd");
+  if (initialize === false && user) {
     setInitialize(true);
     const allActivities = [];
     const ref = userCollection.doc(user.uid);
