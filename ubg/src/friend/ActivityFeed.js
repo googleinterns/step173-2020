@@ -3,12 +3,11 @@ import {makeStyles} from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import Divider from '@material-ui/core/Divider';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import Link from '@material-ui/core/Link';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
-import {useUser, useFirestore, useFirestoreDocData} from 'reactfire';
+import {AuthCheck, useUser, useFirestore, useFirestoreDocData} from 'reactfire';
 import * as firebase from 'firebase/app';
 
 const useStyles = makeStyles((theme) => ({
@@ -26,48 +25,55 @@ export default function ActivityFeed() {
   const classes = useStyles();
   const [initialize, setInitialize] = useState(false);
   const [activities, setActivities] = useState([]);
-  const ref = useFirestore().collection('users').doc(user.uid);
-  const userActivities = useFirestoreDocData(ref).activities;
+  const userCollection = useFirestore().collection('users');
 
   /**
  * @return {undefined}
  */
 function loadData() {
-  if (initialize === false) {
+ 
+  if (initialize === false && user) { console.log("asd");
     setInitialize(true);
     const allActivities = [];
-    userActivities.forEach(
-      activity => 
-      {const newActivity = [];
-        const difference = (Date.now() - activity.timestamp) / (1000*60);
-        if (Math.floor(difference / (60*24)) < 4) {
-          if (Math.floor(difference / (60*24)) < 1) {
-            if (Math.floor(difference / 60) < 1) {
-              newActivity.push(Math.floor(difference) + " minutes ago");
+    const ref = userCollection.doc(user.uid);
+    ref.get().then(function(doc) {
+      if (doc.exists) {
+        doc.data().activities.forEach(
+          activity => 
+          {const newActivity = [];
+            const difference = (Date.now() - activity.timestamp) / (1000*60);
+            if (Math.floor(difference / (60*24)) < 4) {
+              if (Math.floor(difference / (60*24)) < 1) {
+                if (Math.floor(difference / 60) < 1) {
+                  newActivity.push(Math.floor(difference) + " minutes ago");
+                } else {
+                newActivity.push(Math.floor(difference / 60) + " hours ago");
+                }
+              } else {
+                newActivity.push(Math.floor(difference / (60*24)) + " days ago");
+              }
             } else {
-            newActivity.push(Math.floor(difference / 60) + " hours ago");
+              ref.update({
+                activities: firebase.firestore.FieldValue.arrayRemove(activity),
+              });
+              return;
             }
+          if (activity.type === "review") {
+            newActivity.push(" left a review for " + activity.game);
           } else {
-            newActivity.push(Math.floor(difference / (60*24)) + " days ago");
+            newActivity.push(" added " + activity.game + " to favorites");
           }
-        } else {
-          ref.update({
-            activities: firebase.firestore.FieldValue.arrayRemove(activity),
-          });
-          return;
-        }
-      if (activity.type === "review") {
-        newActivity.push(" left a review for " + activity.game);
-      } else {
-        newActivity.push(" added " + activity.game + " to favorites");
+          newActivity.push(activity.uid);
+          newActivity.push(activity.displayName);
+          allActivities.unshift(newActivity);
+          }
+        );
+        setActivities(allActivities);
       }
-      newActivity.push(activity.uid);
-      newActivity.push(activity.displayName);
-      allActivities.unshift(newActivity);
-      console.log(newActivity);
-      }
-    );
-    setActivities(allActivities);
+    }).catch(function(error) {
+      console.log('Error getting document:', error);
+    });
+    
   }
 }
 /**
@@ -76,7 +82,7 @@ function loadData() {
 useEffect(loadData, [initialize]);
   return (
     // iterate through all activities
-    <div>
+    <AuthCheck>
       <List width="100%">
         {activities.map((activity) =>
         
@@ -87,7 +93,6 @@ useEffect(loadData, [initialize]);
             <ListItemText
               primary={
                 <Typography
-                  // variant='h6'
                   component={'span'}
                   className={classes.fonts}
                 >
@@ -105,10 +110,9 @@ useEffect(loadData, [initialize]);
                 </Typography>
               }
             />
-            
           </ListItem>,
         )}
       </List>
-    </div>
+    </AuthCheck>
   );
 }

@@ -24,7 +24,9 @@ export default function Reviews({reviews, profile, reviewsRef=null,
     reviewsRef.doc(review.reviewId).delete();
     usersDoc.doc(user.uid).update({
       reviews: firebase.firestore.FieldValue.arrayRemove(review.reviewData),
+      // activities: fireba
     });
+    // const reviewData
     setInitialize(false);
     setReviewed(false);
   }
