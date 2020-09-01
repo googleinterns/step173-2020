@@ -39,10 +39,10 @@ export default function ActivityFeed() {
       ref.get().then(function(doc) {
         if (doc.exists) {
           doc.data().activities.forEach(
-              (activity) =>
-              {
+              (activity) => {
                 const newActivity = [];
-                const difference = (Date.now() - activity.timestamp) / (1000*60);
+                const difference =
+                (Date.now() - activity.timestamp) / (1000*60);
                 if (Math.floor(difference / (60*24)) < 4) {
                   if (Math.floor(difference / (60*24)) < 1) {
                     if (Math.floor(difference / 60) < 1) {
@@ -73,7 +73,8 @@ export default function ActivityFeed() {
                   }
                 } else {
                   ref.update({
-                    activities: firebase.firestore.FieldValue.arrayRemove(activity),
+                    activities:
+                    firebase.firestore.FieldValue.arrayRemove(activity),
                   });
                   return;
                 }
