@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
  * @param {object} userCollection Reference to user collection
  * @return {ReactElement} Friend's link to profile page
  */
-export default function Friend({friend, userCollection}) {
+export default function Friend({friend}) {
   return (
     <div>
       <AccountCircleIcon />
@@ -20,6 +20,5 @@ export default function Friend({friend, userCollection}) {
 }
 
 Friend.propTypes = {
-  friend: PropTypes.string,
-  userCollection: PropTypes.object,
+  friend: PropTypes.object,
 };

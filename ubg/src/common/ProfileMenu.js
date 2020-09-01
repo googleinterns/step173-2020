@@ -85,7 +85,11 @@ export default function AuthButtons() {
    * @return {void}
    */
   function toProfile() {
-    history.push(`/profile`);
+    if (user) {
+      history.push(`/profile/` + user.uid);
+    } else {
+      history.push('/');
+    }
   };
 
   return (

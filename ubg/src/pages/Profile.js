@@ -44,7 +44,8 @@ const useStyles = makeStyles((theme) => ({
  */
 export default function Profile() {
   const history = useHistory();
-  const [user, setUser] = useState(useUser());
+  const [user] = useState(useUser());
+  const [currUser, setCurrUser] = useState(useUser());
   const classes = useStyles();
   const {uid} = useParams();
   const userCollection = useFirestore().collection('users');
@@ -54,16 +55,16 @@ export default function Profile() {
    * @return {void}
    */
   function getUser() {
-    if (uid) {
+    if (user) {
       const docRef = userCollection.doc(uid);
       docRef.get().then(function(doc) {
         if (doc.exists) {
           const newUser = doc.data();
           newUser.uid = uid;
-          setUser(newUser);
+          setCurrUser(newUser);
         }
       }).catch(function(error) {
-        setUser(null);
+        setCurrUser(null);
         console.log('Error getting document:', error);
       });
     }
@@ -87,11 +88,12 @@ export default function Profile() {
           <Grid container justify="flex-start" alignItems="stretch" spacing={4}>
             <Grid item>
               <Typography variant='h2' className={classes.fonts}>
-                {user ? user.displayName : 'Sign in to view your profile'}
+                {currUser ? currUser.displayName :
+                  'Sign in to view your profile'}
               </Typography>
             </Grid>
             {
-              uid === undefined ?
+              uid === (user ? user.uid : uid) ?
               null :
               <Grid item className={classes.friendContainer}
                 xs={12} sm={6} xl={2} lg={3} md={4}>
@@ -100,19 +102,17 @@ export default function Profile() {
             }
           </Grid>
           <Typography variant='h6' className={classes.fonts}>
-            {user ? 'user id: ' + user.uid : null}
+            {user ? 'user id: ' + uid : null}
           </Typography>
           <hr />
         </Box>
-        {user ? (
-          <div>
-            <UserStats userCollection={userCollection} uid={user.uid} />
-            <FavoriteGames userCollection={userCollection} uid={user.uid} />
-            <UserFriends userCollection={userCollection}
-              uid={user.uid} />
-            <UserReviews userCollection={userCollection} uid={user.uid} />
-          </div>
-        ) : ''}
+        <div>
+          <UserStats userCollection={userCollection} uid={uid} />
+          <FavoriteGames userCollection={userCollection} uid={uid} />
+          <UserFriends userCollection={userCollection}
+            uid={uid} />
+          <UserReviews userCollection={userCollection} uid={uid} />
+        </div>
       </Box>
     </div>
   );
@@ -161,6 +161,12 @@ function UserFriends({userCollection, uid}) {
   const userFriends = useFirestoreDocData(
       userCollection.doc(uid)).friends;
 
+  /**
+   * Alphabetically order friend names
+   * @param {object} a Friend object
+   * @param {object} b Friend object
+   * @return {number} Ordering of name
+   */
   function compare(a, b) {
     const nameA = a.displayName.toUpperCase();
     const nameB = b.displayName.toUpperCase();
@@ -184,7 +190,7 @@ function UserFriends({userCollection, uid}) {
           {
             userFriends.sort(compare).map((friend) => {
               return (
-                <ListItem key={friend}>
+                <ListItem key={friend.uid}>
                   <Friend friend={friend} userCollection={userCollection} />
                 </ListItem>
               );
