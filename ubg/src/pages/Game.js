@@ -296,6 +296,8 @@ function FavoriteButton({usersCollection, game}) {
   const user = useUser();
   const userGames = useFirestoreDocData(
       usersCollection.doc((user && user.uid) || ' ')).games;
+  const userActivities = useFirestoreDocData(
+    usersCollection.doc((user && user.uid) || ' ')).activities;
   const [favorite, setFavorite] = useState(inFavorites(userGames, game));
 
   return (
@@ -305,7 +307,7 @@ function FavoriteButton({usersCollection, game}) {
         variant='contained'
         color='primary'
         onClick={() => addFavorite(
-            userGames, usersCollection, game, favorite,
+            userGames, userActivities, usersCollection, game, favorite,
             setFavorite, user.uid, user.displayName)}>
         {favorite ? 'Delete from favorites' : 'Add to favorites'}
       </Button>
@@ -338,7 +340,7 @@ function inFavorites(userGames, game) {
  * @param {number} uid ID od current user
  * @return {void}
  */
-function addFavorite(userGames, usersCollection,
+function addFavorite(userGames, userActivities, usersCollection,
     game, favorite, setFavorite, uid, displayName) {
   if (favorite) {
     for (let i = 0; i < userGames.length; i++) {
@@ -354,6 +356,23 @@ function addFavorite(userGames, usersCollection,
           });
         }
         setFavorite(false);
+        break;
+      }
+    }
+    for (let i = 0; i < userActivities.length; i++) {
+      if (userActivities[i].game === game.Name &&
+        userActivities[i].uid === uid &&
+        userActivities[i].type === 'favorite') {
+        userActivities.splice(i, 1);
+        if (userActivities.length === 0) {
+          usersCollection.doc(uid).update({
+            activities: [],
+          });
+        } else {
+          usersCollection.doc(uid).update({
+            activities: userActivities,
+          });
+        }
         return;
       }
     }
