@@ -3,7 +3,8 @@ import {makeStyles} from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import Link from '@material-ui/core/Link';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
@@ -76,6 +77,7 @@ export default function ActivityFeed() {
             }
             newActivity.push(activity.uid);
             newActivity.push(activity.displayName);
+            newActivity.push(activity.type);
             allActivities.unshift(newActivity);
             }
           );
@@ -98,7 +100,9 @@ export default function ActivityFeed() {
         {activities.map((activity) =>
           <ListItem key={activity[2] + activity[1]}  alignItems="flex-start">
             <ListItemIcon>
-              <AddCircleOutlineIcon />
+              {activity[4] === 'review' ?
+              <ChatBubbleOutlineIcon /> :
+              <FavoriteBorderIcon />}
             </ListItemIcon>
             <ListItemText
               primary={
