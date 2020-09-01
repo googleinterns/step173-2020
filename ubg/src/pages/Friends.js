@@ -7,8 +7,9 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-import {useFirestore} from 'reactfire';
+import {useUser, useFirestore, useFirestoreDocData} from 'reactfire';
 import UserResults from '../friend/UserResults';
+import FriendRequests from '../friend/FriendRequests';
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -35,10 +36,12 @@ const checkMatch = (values, name) => {
  */
 export default function Friends() {
   const classes = useStyles();
+  const user = useUser();
   const [value, setValue] = useState('');
   const [search, setSearch] = useState(false);
   const [users, setUsers] = useState([]);
   const ref = useFirestore().collection('users');
+  const friendRequests = useFirestoreDocData(ref.doc(user.uid)).requests;
   /**
    * @return {void}
    */
@@ -79,6 +82,20 @@ export default function Friends() {
         container='true'
         m={10}
       >
+        <Typography variant='h3'>
+          Friend Requests
+        </Typography>
+        <br />
+        {
+          friendRequests.length === 0 ?
+          <Typography variant='body1'>
+            &nbsp;&nbsp;No new friend requests
+          </Typography> :
+          <FriendRequests users={friendRequests} currUser={user}/>
+        }
+        <br />
+        <Divider />
+        <br />
         <Typography
           variant='h3'
         >

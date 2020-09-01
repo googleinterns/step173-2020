@@ -20,7 +20,7 @@ export default function UserResults({users}) {
           <ListItem key={user.id}>
             <AccountCircleIcon />
             <Link href={'/profile/' + user.id}>
-              {user.displayName}
+              &nbsp;{user.displayName}
             </Link>
             <Divider />
           </ListItem>,
