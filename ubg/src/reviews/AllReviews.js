@@ -24,8 +24,16 @@ function AllReviews({gameId}) {
       .collection('reviews');
   const usersCollection = useFirestore().collection('users');
   const handleAddReview = (review) => {
+    const newActivity = {
+      type: 'review',
+      uid: review.userId,
+      timestamp: review.timestamp,
+      displayName: review.name,
+      game: review.gameName,
+    };
     usersCollection.doc(user.uid).update({
       reviews: firebase.firestore.FieldValue.arrayUnion(review),
+      activities: firebase.firestore.FieldValue.arrayUnion(newActivity),
     });
     reviewsRef.add(review).then(function(docRef) {
       const copy = {...review};

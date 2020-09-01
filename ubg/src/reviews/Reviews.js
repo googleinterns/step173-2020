@@ -21,9 +21,17 @@ export default function Reviews({reviews, profile, reviewsRef=null,
    * delete comment
    */
   function deleteComment(review) {
+    const activity = {
+      type: 'review',
+      uid: review.userId,
+      timestamp: review.timestamp,
+      displayName: review.name,
+      game: review.reviewData.gameName,
+    };
     reviewsRef.doc(review.reviewId).delete();
     usersDoc.doc(user.uid).update({
       reviews: firebase.firestore.FieldValue.arrayRemove(review.reviewData),
+      activities: firebase.firestore.FieldValue.arrayRemove(activity),
     });
     setInitialize(false);
     setReviewed(false);
