@@ -305,7 +305,8 @@ function FavoriteButton({usersCollection, game}) {
         variant='contained'
         color='primary'
         onClick={() => addFavorite(
-            userGames, usersCollection, game, favorite, setFavorite, user.uid)}>
+            userGames, usersCollection, game, favorite,
+            setFavorite, user.uid, user.displayName)}>
         {favorite ? 'Delete from favorites' : 'Add to favorites'}
       </Button>
     ) : null
@@ -338,7 +339,7 @@ function inFavorites(userGames, game) {
  * @return {void}
  */
 function addFavorite(userGames, usersCollection,
-    game, favorite, setFavorite, uid) {
+    game, favorite, setFavorite, uid, displayName) {
   if (favorite) {
     for (let i = 0; i < userGames.length; i++) {
       if (userGames[i].id === game.id) {
@@ -357,6 +358,13 @@ function addFavorite(userGames, usersCollection,
       }
     }
   } else {
+    const newActivity = {
+      type: 'favorite',
+      uid: uid,
+      timestamp: Date.now(),
+      displayName: displayName,
+      game: game.Name,
+    };
     userGames.push({
       id: game.id,
       image: game.image,
@@ -372,6 +380,7 @@ function addFavorite(userGames, usersCollection,
     });
     usersCollection.doc(uid).update({
       games: firebase.firestore.FieldValue.arrayUnion(...userGames),
+      activities: firebase.firestore.FieldValue.arrayUnion(newActivity),
     });
     setFavorite(true);
   }

@@ -85,8 +85,7 @@ useEffect(loadData, [initialize]);
     <AuthCheck>
       <List width="100%">
         {activities.map((activity) =>
-        
-          <ListItem key={activity[2] + activity[0]}  alignItems="flex-start">
+          <ListItem key={activity[2] + activity[1]}  alignItems="flex-start">
             <ListItemIcon>
               <AddCircleOutlineIcon />
             </ListItemIcon>
