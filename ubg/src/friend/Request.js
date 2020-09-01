@@ -17,8 +17,7 @@ import * as firebase from 'firebase/app';
 export default function Request({user, userCollection, currUser}) {
   const currUserRef = userCollection.doc(currUser.uid);
   const currUserData = useFirestoreDocData(currUserRef);
-  const userRef = userCollection.doc(user);
-  const userData = useFirestoreDocData(userRef);
+  const userRef = userCollection.doc(user.uid);
 
   /**
    * Add as friend to one another and delete request
@@ -30,7 +29,10 @@ export default function Request({user, userCollection, currUser}) {
     });
     // add to requester's friends
     userRef.update({
-      friends: firebase.firestore.FieldValue.arrayUnion(currUser.uid),
+      friends: firebase.firestore.FieldValue.arrayUnion({
+        uid: currUser.uid,
+        displayName: currUser.displayName,
+      }),
     });
     declineRequest();
   }
@@ -41,7 +43,7 @@ export default function Request({user, userCollection, currUser}) {
   function declineRequest() {
     // delete from requests field
     for (let i = 0; i < currUserData.requests.length; i++) {
-      if (currUserData.requests[i] === user) {
+      if (currUserData.requests[i].uid === user.uid) {
         currUserData.requests.splice(i, 1);
         if (currUserData.requests.length === 0) {
           userCollection.doc(currUser.uid).update({
@@ -62,8 +64,8 @@ export default function Request({user, userCollection, currUser}) {
       <Grid container spacing={3}>
         <Grid item>
           <AccountCircleIcon />
-          <Link href={'/profile/' + userRef.id}>
-            &nbsp;{userData.displayName}
+          <Link href={'/profile/' + user.uid}>
+            &nbsp;{user.displayName}
           </Link>
         </Grid>
         <Grid item>
@@ -90,7 +92,7 @@ export default function Request({user, userCollection, currUser}) {
 }
 
 Request.propTypes = {
-  user: PropTypes.string,
+  user: PropTypes.object,
   userCollection: PropTypes.object,
   currUser: PropTypes.object,
 };

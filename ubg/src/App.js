@@ -52,9 +52,6 @@ function App() {
               <Route exact path="/search/:query">
                 <Search />
               </Route>
-              <Route exact path="/profile">
-                <Profile />
-              </Route>
               <Route exact path="/profile/:uid">
                 <Profile />
               </Route>
