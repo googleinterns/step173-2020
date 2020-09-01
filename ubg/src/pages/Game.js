@@ -296,6 +296,8 @@ function FavoriteButton({usersCollection, game}) {
   const user = useUser();
   const userGames = useFirestoreDocData(
       usersCollection.doc((user && user.uid) || ' ')).games;
+  const userActivities = useFirestoreDocData(
+      usersCollection.doc((user && user.uid) || ' ')).activities;
   const [favorite, setFavorite] = useState(inFavorites(userGames, game));
 
   return (
@@ -305,7 +307,8 @@ function FavoriteButton({usersCollection, game}) {
         variant='contained'
         color='primary'
         onClick={() => addFavorite(
-            userGames, usersCollection, game, favorite, setFavorite, user.uid)}>
+            userGames, userActivities, usersCollection, game, favorite,
+            setFavorite, user.uid, user.displayName)}>
         {favorite ? 'Delete from favorites' : 'Add to favorites'}
       </Button>
     ) : null
@@ -330,15 +333,17 @@ function inFavorites(userGames, game) {
 /**
  * Based on state of favorite, adds or deletes current game from favorites
  * @param {array} userGames Array of current user's favorite games
+ * @param {array} userActivities Array of current user's recent activites
  * @param {object} usersCollection User collection
  * @param {object} game Firestore doc of current game
  * @param {bool} favorite Whether current game is in user's favorites
  * @param {func} setFavorite Sets whether current game is in user's favorites
  * @param {number} uid ID od current user
+ * @param {array} displayName Current user's name
  * @return {void}
  */
-function addFavorite(userGames, usersCollection,
-    game, favorite, setFavorite, uid) {
+function addFavorite(userGames, userActivities, usersCollection,
+    game, favorite, setFavorite, uid, displayName) {
   if (favorite) {
     for (let i = 0; i < userGames.length; i++) {
       if (userGames[i].id === game.id) {
@@ -353,10 +358,34 @@ function addFavorite(userGames, usersCollection,
           });
         }
         setFavorite(false);
+        break;
+      }
+    }
+    for (let i = 0; i < userActivities.length; i++) {
+      if (userActivities[i].game === game.Name &&
+        userActivities[i].uid === uid &&
+        userActivities[i].type === 'favorite') {
+        userActivities.splice(i, 1);
+        if (userActivities.length === 0) {
+          usersCollection.doc(uid).update({
+            activities: [],
+          });
+        } else {
+          usersCollection.doc(uid).update({
+            activities: userActivities,
+          });
+        }
         return;
       }
     }
   } else {
+    const newActivity = {
+      type: 'favorite',
+      uid: uid,
+      timestamp: Date.now(),
+      displayName: displayName,
+      game: game.Name,
+    };
     userGames.push({
       id: game.id,
       image: game.image,
@@ -372,6 +401,7 @@ function addFavorite(userGames, usersCollection,
     });
     usersCollection.doc(uid).update({
       games: firebase.firestore.FieldValue.arrayUnion(...userGames),
+      activities: firebase.firestore.FieldValue.arrayUnion(newActivity),
     });
     setFavorite(true);
   }
