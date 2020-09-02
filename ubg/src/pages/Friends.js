@@ -15,6 +15,7 @@ import {
 } from 'reactfire';
 import UserResults from '../friend/UserResults';
 import FriendRequests from '../friend/FriendRequests';
+import ActivityFeed from '../friend/ActivityFeed';
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -102,6 +103,12 @@ export default function Friends() {
           }
         >
           <Typography variant='h3'>
+            Activity Feed
+          </Typography>
+          <ActivityFeed></ActivityFeed>
+          <Divider />
+          <br />
+          <Typography variant='h3'>
             Friend Requests
           </Typography>
           <br />
@@ -153,6 +160,7 @@ export default function Friends() {
           <UserResults users={users}></UserResults>:
           null
           }
+          
         </AuthCheck>
       </Box>
     </div>
