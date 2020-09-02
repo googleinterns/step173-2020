@@ -118,6 +118,7 @@ function addFriend(userFriends, otherFriends, user, friendUid,
     friendRequests.push({
       uid: user.uid,
       displayName: user.displayName,
+      email: user.email,
     });
     userCollection.doc(friendUid).update({
       requests: Array.from(new Set(friendRequests)),

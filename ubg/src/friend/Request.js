@@ -32,6 +32,7 @@ export default function Request({user, userCollection, currUser}) {
       friends: firebase.firestore.FieldValue.arrayUnion({
         uid: currUser.uid,
         displayName: currUser.displayName,
+        email: currUser.email,
       }),
     });
     declineRequest();

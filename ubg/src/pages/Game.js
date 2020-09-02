@@ -275,6 +275,7 @@ function Description(
                     gameId={gameId}
                     createRoomLink={createRoomLink}
                     deleteRoom={deleteRoom}
+                    usersCollection={usersCollection}
                   />
                 </Grid>
               </Grid>

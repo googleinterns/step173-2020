@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {useUser, useFirestoreDocData} from 'reactfire';
 import {makeStyles} from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -9,6 +10,7 @@ import Chip from '@material-ui/core/Chip';
 import Paper from '@material-ui/core/Paper';
 import ApiCalendar from 'react-google-calendar-api';
 import DateFnsUtils from '@date-io/date-fns';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import PropTypes from 'prop-types';
 
@@ -36,10 +38,12 @@ const useStyles = makeStyles((theme) => ({
  * @param {string} gameId game id
  * @param {func} createRoomLink Creates game room
  * @param {func} deleteRoom delete room from database
+ * @param {object} usersCollection reference to users collection
  * @return {ReactElement} Add game event button
  */
 export default function CreateEventButton(
-    {gameName, gameId, createRoomLink, deleteRoom}) {
+    {gameName, gameId, createRoomLink, deleteRoom, usersCollection}) {
+  let friendEmail = '';
   const classes = useStyles();
   const moment = require('moment-timezone');
   const timeZone = moment.tz.guess();
@@ -49,8 +53,10 @@ export default function CreateEventButton(
   const [endTime, setEndTime] = useState(new Date());
   const [description, setDescription] = useState('');
   const [roomId, setRoomId] = useState('');
-  const [email, setEmail] = React.useState('');
-  const [emails, setEmails] = React.useState([]);
+  const [email, setEmail] = useState('');
+  const [emails, setEmails] = useState([]);
+  const userFriends = useFirestoreDocData(
+      usersCollection.doc(useUser().uid)).friends;
 
   const handleClickOpen = async () => {
     setOpen(true);
@@ -111,8 +117,19 @@ export default function CreateEventButton(
     setEmails([]);
   };
   const handleAddEmail = () => {
-    setEmails([...emails, {'email': email}]);
+    let e;
+    for (e of emails) {
+      if (e.email === email || e.email === friendEmail) {
+        return;
+      }
+    }
+    if (friendEmail !== '') {
+      setEmails([...emails, {'email': friendEmail}]);
+    } else {
+      setEmails([...emails, {'email': email}]);
+    }
     setEmail('');
+    friendEmail = '';
   };
 
   const handleDelete = (e) => () => {
@@ -124,18 +141,19 @@ export default function CreateEventButton(
    * @param {string} email email to verify
    * @return {boolean} whether email is valid
    */
-  function isValidEmail(email) {
+  function isValidEmail() {
     if (email !== '' &&
     /[\w\d-]+@[\w\d-]+\.[\w\d-]+/.test(email)) {
-      let e;
-      for (e of emails) {
-        if (e.email === email) {
-          return false;
+      return true;
+    } else {
+      for (let i = 0; i < userFriends.length; i++) {
+        if (email === userFriends[i].displayName) {
+          friendEmail = userFriends[i].email;
+          return true;
         }
       }
-      return true;
+      return false;
     }
-    return false;
   }
 
   return (
@@ -181,18 +199,22 @@ export default function CreateEventButton(
             onChange={(e) => setDescription(e.target.value)}
             fullWidth
           />
-          <TextField
-            margin="dense"
-            label="Add Attendees Email and press Enter"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+          <Autocomplete
+            options={userFriends}
+            getOptionLabel={(option) => option.displayName}
+            noOptionsText='No friends to show'
+            renderInput={(params) => <TextField {...params}
+              label="Add friends or emails and press enter" />}
+            onInputChange={(event, value) => {
+              setEmail(value);
+            }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && isValidEmail(email)) {
+              if (e.key === 'Enter' && isValidEmail()) {
                 handleAddEmail(e);
               }
             }}
-            fullWidth
           />
+          <br />
           <Paper component="ul" className={classes.emails}>
             {emails.map((e, index) => {
               return (
@@ -225,4 +247,5 @@ CreateEventButton.propTypes = {
   gameId: PropTypes.string,
   createRoomLink: PropTypes.func,
   deleteRoom: PropTypes.func,
+  usersCollection: PropTypes.object,
 };
