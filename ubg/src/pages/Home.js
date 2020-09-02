@@ -5,7 +5,6 @@ import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import {useFirestore} from 'reactfire';
 import GameCategory from '../home/GameCategory';
-import ActivityFeed from '../friend/ActivityFeed';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -107,7 +106,6 @@ export default function Home() {
           Welcome to UltimateBoardGame!
         </Typography>
       </Box>
-      <ActivityFeed></ActivityFeed>
       <GameCategory category={'Top Rated'} games={topRated}/>
       <GameCategory category={'For Beginners'} games={beginner}/>
       <GameCategory category={'Fantasy'} games={fantasy}/>

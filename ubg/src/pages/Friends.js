@@ -15,6 +15,7 @@ import {
 } from 'reactfire';
 import UserResults from '../friend/UserResults';
 import FriendRequests from '../friend/FriendRequests';
+import ActivityFeed from '../friend/ActivityFeed';
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -51,6 +52,7 @@ export default function Friends() {
   const ref = useFirestore().collection('users');
   const friendRequests = useFirestoreDocData(
       ref.doc((user && user.uid) || ' ')).requests;
+
   /**
    * @return {void}
    */
@@ -102,6 +104,12 @@ export default function Friends() {
           }
         >
           <Typography variant='h3'>
+            Activity Feed
+          </Typography>
+          <ActivityFeed></ActivityFeed>
+          <Divider />
+          <br />
+          <Typography variant='h3'>
             Friend Requests
           </Typography>
           <br />
@@ -110,7 +118,7 @@ export default function Friends() {
             <Typography variant='body1'>
               &nbsp;&nbsp;No new friend requests
             </Typography> :
-            <FriendRequests users={friendRequests} currUser={user}/>
+            <FriendRequests/>
           }
           <br />
           <Divider />
