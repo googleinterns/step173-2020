@@ -52,6 +52,7 @@ export default function Friends() {
   const ref = useFirestore().collection('users');
   const friendRequests = useFirestoreDocData(
       ref.doc((user && user.uid) || ' ')).requests;
+  // console.log(friendRequests);
   /**
    * @return {void}
    */
@@ -117,7 +118,7 @@ export default function Friends() {
             <Typography variant='body1'>
               &nbsp;&nbsp;No new friend requests
             </Typography> :
-            <FriendRequests users={friendRequests} currUser={user}/>
+            <FriendRequests/>
           }
           <br />
           <Divider />
