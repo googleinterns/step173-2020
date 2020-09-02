@@ -325,6 +325,9 @@ function FavoriteButton({usersCollection, game}) {
  * @return {bool} whether game is in favorite games
  */
 function inFavorites(userGames, game) {
+  if (userGames === undefined) {
+    return false;
+  }
   for (let i = 0; i < userGames.length; i++) {
     if (userGames[i].id === game.id) {
       return true;

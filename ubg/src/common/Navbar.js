@@ -64,11 +64,11 @@ export default function Navbar() {
             </Typography>
           </Button>
         </div>
-        <Button color="inherit" onClick={friends}>
-          Friends
-        </Button>
         <Button color="inherit" onClick={about}>
           About
+        </Button>
+        <Button color="inherit" onClick={friends}>
+          Friends
         </Button>
         <Button color="inherit" onClick={searchGames}>
           Search Games
