@@ -24,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
 export default function ActivityFeed() {
   const user = useUser();
   const classes = useStyles();
-  const [initialize, setInitialize] = useState(false);
   const [activities, setActivities] = useState([]);
   const userCollection = useFirestore().collection('users');
 
@@ -32,8 +31,7 @@ export default function ActivityFeed() {
    * @return {undefined}
    */
   function loadData() {
-    if (initialize === false && user) {
-      setInitialize(true);
+    if (user) {
       const allActivities = [];
       const ref = userCollection.doc(user.uid);
       ref.get().then(function(doc) {
@@ -99,7 +97,7 @@ export default function ActivityFeed() {
   /**
    * Load the activity data
    */
-  useEffect(loadData, [initialize]);
+  useEffect(loadData, [user]);
   return (
     // iterate through all activities
     <AuthCheck>
