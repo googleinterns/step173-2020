@@ -5,7 +5,6 @@ import {
   useUser,
   useFirestoreDocData,
 } from 'reactfire';
-// import {useUser, useFirestoreDocData, useFirestore} from 'reactfire';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
@@ -51,7 +50,6 @@ const useStyles = makeStyles((theme) => ({
 export default function Profile() {
   const history = useHistory();
   const user = useUser();
-  // const [user] = useState(useUser());
   const [currUser, setCurrUser] = useState(useUser());
   const classes = useStyles();
   const {uid} = useParams();
