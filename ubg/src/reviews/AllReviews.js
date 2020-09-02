@@ -28,7 +28,7 @@ function AllReviews({gameId}) {
       .collection('reviews');
   const usersCollection = useFirestore().collection('users');
   const userFriends = useFirestoreDocData(
-    usersCollection.doc((user && user.uid) || ' ')).friends;
+      usersCollection.doc((user && user.uid) || ' ')).friends;
   const handleAddReview = (review) => {
     const newActivity = {
       type: 'review',
@@ -51,11 +51,11 @@ function AllReviews({gameId}) {
       setReviewed(true);
     });
     userFriends.forEach(
-      (friend) => {
-        usersCollection.doc(friend.uid).update({
-          activities: firebase.firestore.FieldValue.arrayUnion(newActivity),
-        });
-      }
+        (friend) => {
+          usersCollection.doc(friend.uid).update({
+            activities: firebase.firestore.FieldValue.arrayUnion(newActivity),
+          });
+        },
     );
   };
 

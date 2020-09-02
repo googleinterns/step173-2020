@@ -34,11 +34,11 @@ export default function Reviews({reviews, profile, reviewsRef=null,
       activities: firebase.firestore.FieldValue.arrayRemove(activity),
     });
     userFriends.forEach(
-      (friend) => {
-        usersDoc.doc(friend.uid).update({
-          activities: firebase.firestore.FieldValue.arrayRemove(activity),
-        });
-      }
+        (friend) => {
+          usersDoc.doc(friend.uid).update({
+            activities: firebase.firestore.FieldValue.arrayRemove(activity),
+          });
+        },
     );
     setInitialize(false);
     setReviewed(false);
@@ -83,4 +83,5 @@ Reviews.propTypes = {
   usersDoc: PropTypes.object,
   setInitialize: PropTypes.func,
   setReviewed: PropTypes.func,
+  userFriends: PropTypes.array,
 };

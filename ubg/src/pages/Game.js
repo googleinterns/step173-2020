@@ -336,6 +336,7 @@ function inFavorites(userGames, game) {
  * Based on state of favorite, adds or deletes current game from favorites
  * @param {array} userGames Array of current user's favorite games
  * @param {array} userActivities Array of current user's recent activites
+ * @param {array} userFriends Array of current user's friends
  * @param {object} usersCollection User collection
  * @param {object} game Firestore doc of current game
  * @param {bool} favorite Whether current game is in user's favorites
@@ -433,11 +434,11 @@ function addFavorite(userGames, userActivities, userFriends, usersCollection,
       activities: firebase.firestore.FieldValue.arrayUnion(newActivity),
     });
     userFriends.forEach(
-      (friend) => {
-        usersCollection.doc(friend.uid).update({
-          activities: firebase.firestore.FieldValue.arrayUnion(newActivity),
-        });
-      }
+        (friend) => {
+          usersCollection.doc(friend.uid).update({
+            activities: firebase.firestore.FieldValue.arrayUnion(newActivity),
+          });
+        },
     );
     setFavorite(true);
   }
