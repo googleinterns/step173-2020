@@ -65,6 +65,7 @@ export default function AuthButtons() {
           email: currUser.email,
           friends: [],
           requests: [],
+          activities: [],
         });
       }
     }).catch(function(error) {
