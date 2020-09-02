@@ -55,8 +55,9 @@ export default function CreateEventButton(
   const [roomId, setRoomId] = useState('');
   const [email, setEmail] = useState('');
   const [emails, setEmails] = useState([]);
+  const user = useUser();
   const userFriends = useFirestoreDocData(
-      usersCollection.doc(useUser().uid)).friends;
+      usersCollection.doc(user ? user.uid : ' ')).friends;
 
   const handleClickOpen = async () => {
     setOpen(true);
