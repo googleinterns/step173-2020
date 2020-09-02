@@ -1,5 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import {useUser, useFirestoreDocData, useFirestore} from 'reactfire';
+import {
+  useFirestore,
+  AuthCheck,
+  useUser,
+  useFirestoreDocData,
+} from 'reactfire';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
@@ -44,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
  */
 export default function Profile() {
   const history = useHistory();
-  const [user] = useState(useUser());
+  const user = useUser();
   const [currUser, setCurrUser] = useState(useUser());
   const classes = useStyles();
   const {uid} = useParams();
@@ -69,7 +74,7 @@ export default function Profile() {
       });
     }
   }
-  useEffect(getUser, [uid]);
+  useEffect(getUser, [user, uid]);
 
   return (
     <div>
@@ -88,8 +93,8 @@ export default function Profile() {
           <Grid container justify="flex-start" alignItems="stretch" spacing={4}>
             <Grid item>
               <Typography variant='h2' className={classes.fonts}>
-                {currUser ? currUser.displayName :
-                  'Sign in to view your profile'}
+                {user && currUser ? currUser.displayName :
+                  'Sign in to view profiles'}
               </Typography>
             </Grid>
             {
@@ -106,13 +111,15 @@ export default function Profile() {
           </Typography>
           <hr />
         </Box>
-        <div>
-          <UserStats userCollection={userCollection} uid={uid} />
-          <FavoriteGames userCollection={userCollection} uid={uid} />
-          <UserFriends userCollection={userCollection}
-            uid={uid} />
-          <UserReviews userCollection={userCollection} uid={uid} />
-        </div>
+        <AuthCheck>
+          <div>
+            <UserStats userCollection={userCollection} uid={uid} />
+            <FavoriteGames userCollection={userCollection} uid={uid} />
+            <UserFriends userCollection={userCollection}
+              uid={uid} />
+            <UserReviews userCollection={userCollection} uid={uid} />
+          </div>
+        </AuthCheck>
       </Box>
     </div>
   );
