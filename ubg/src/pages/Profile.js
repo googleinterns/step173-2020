@@ -110,14 +110,16 @@ export default function Profile() {
             {user ? 'user id: ' + uid : null}
           </Typography>
           <hr />
-        </Box><AuthCheck>
-        <div>
-          <UserStats userCollection={userCollection} uid={uid} />
-          <FavoriteGames userCollection={userCollection} uid={uid} />
-          <UserFriends userCollection={userCollection}
-            uid={uid} />
-          <UserReviews userCollection={userCollection} uid={uid} />
-        </div></AuthCheck>
+        </Box>
+        <AuthCheck>
+          <div>
+            <UserStats userCollection={userCollection} uid={uid} />
+            <FavoriteGames userCollection={userCollection} uid={uid} />
+            <UserFriends userCollection={userCollection}
+              uid={uid} />
+            <UserReviews userCollection={userCollection} uid={uid} />
+          </div>
+        </AuthCheck>
       </Box>
     </div>
   );
