@@ -2,9 +2,13 @@ import React, {useState, useEffect} from 'react';
 import Box from '@material-ui/core/Box';
 import Reviews from './Reviews';
 import Typography from '@material-ui/core/Typography';
-import {useFirestore} from 'reactfire';
+import {
+  useFirestore,
+  AuthCheck,
+  useUser,
+  useFirestoreDocData,
+} from 'reactfire';
 import NewReview from './NewReview';
-import {AuthCheck, useUser} from 'reactfire';
 import PropTypes from 'prop-types';
 import * as firebase from 'firebase/app';
 
@@ -23,6 +27,8 @@ function AllReviews({gameId}) {
       .doc(gameId)
       .collection('reviews');
   const usersCollection = useFirestore().collection('users');
+  const userFriends = useFirestoreDocData(
+    usersCollection.doc((user && user.uid) || ' ')).friends;
   const handleAddReview = (review) => {
     const newActivity = {
       type: 'review',
@@ -44,6 +50,13 @@ function AllReviews({gameId}) {
       setReviews(tempReviews);
       setReviewed(true);
     });
+    userFriends.forEach(
+      (friend) => {
+        usersCollection.doc(friend.uid).update({
+          activities: firebase.firestore.FieldValue.arrayUnion(newActivity),
+        });
+      }
+    );
   };
 
   /**
@@ -113,6 +126,7 @@ function AllReviews({gameId}) {
           usersDoc={usersCollection}
           setInitialize={setInitialize}
           setReviewed={setReviewed}
+          userFriends={userFriends}
         />
       </Box>
     </div>
