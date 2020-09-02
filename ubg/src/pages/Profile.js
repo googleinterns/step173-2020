@@ -181,7 +181,7 @@ function UserFriends({userCollection, uid}) {
   }
 
   return (
-    <Box m={10}>
+    <Box mt={10} ml={10} mr={10}>
       <hr /> <br /> <br />
       <Typography variant='h4' className={classes.fonts}>
         Friends
@@ -230,7 +230,7 @@ function UserReviews({userCollection, uid}) {
 
   return (
     <div>
-      <Box m={10}>
+      <Box ml={10} mr={10} mt={5}>
         <hr /> <br /> <br />
         <Typography variant='h4' className={classes.fonts}>
           Reviews
