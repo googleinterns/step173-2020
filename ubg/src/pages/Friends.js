@@ -7,13 +7,21 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-import {useUser, useFirestore, useFirestoreDocData} from 'reactfire';
+import {
+  useFirestore,
+  AuthCheck,
+  useUser,
+  useFirestoreDocData,
+} from 'reactfire';
 import UserResults from '../friend/UserResults';
 import FriendRequests from '../friend/FriendRequests';
 
 const useStyles = makeStyles((theme) => ({
   grid: {
     margin: '1em',
+  },
+  fonts: {
+    fontWeight: 'bold',
   },
 }));
 
@@ -41,7 +49,8 @@ export default function Friends() {
   const [search, setSearch] = useState(false);
   const [users, setUsers] = useState([]);
   const ref = useFirestore().collection('users');
-  const friendRequests = useFirestoreDocData(ref.doc(user.uid)).requests;
+  const friendRequests = useFirestoreDocData(
+      ref.doc((user && user.uid) || ' ')).requests;
   /**
    * @return {void}
    */
@@ -82,58 +91,69 @@ export default function Friends() {
         container='true'
         m={10}
       >
-        <Typography variant='h3'>
-          Friend Requests
-        </Typography>
-        <br />
-        {
-          friendRequests.length === 0 ?
-          <Typography variant='body1'>
-            &nbsp;&nbsp;No new friend requests
+        <AuthCheck
+          fallback={
+            <div>
+              <br />
+              <Typography variant='h2' className={classes.fonts}>
+                Please sign in to view this page.
+              </Typography>
+            </div>
+          }
+        >
+          <Typography variant='h3'>
+            Friend Requests
+          </Typography>
+          <br />
+          {
+            friendRequests && friendRequests.length === 0 ?
+            <Typography variant='body1'>
+              &nbsp;&nbsp;No new friend requests
+            </Typography> :
+            <FriendRequests users={friendRequests} currUser={user}/>
+          }
+          <br />
+          <Divider />
+          <br />
+          <Typography
+            variant='h3'
+          >
+            Find Friends
+          </Typography>
+          <Grid container spacing={3} className={classes.grid}>
+            <Grid item>
+              <TextField
+                value={value}
+                onChange={(e) => {
+                  setValue(e.target.value);
+                }}
+                type='text'
+                variant='outlined'
+                placeholder='Enter ID or name'
+              />
+            </Grid>
+            <Grid item>
+              <Button
+                variant='contained'
+                color='primary'
+                onClick={searchFriend}
+                m={5}>
+                  Search Friend
+              </Button>
+            </Grid>
+          </Grid>
+          <Divider />
+          {search ?
+          users.length === 0 ?
+          <Typography
+            variant='h6'
+          >
+            User not Found
           </Typography> :
-          <FriendRequests users={friendRequests} currUser={user}/>
-        }
-        <br />
-        <Divider />
-        <br />
-        <Typography
-          variant='h3'
-        >
-          Find Friends
-        </Typography>
-        <Grid container spacing={3} className={classes.grid}>
-          <Grid item>
-            <TextField
-              value={value}
-              onChange={(e) => {
-                setValue(e.target.value);
-              }}
-              type='text'
-              variant='outlined'
-              placeholder='Enter ID or name'
-            />
-          </Grid>
-          <Grid item>
-            <Button
-              variant='contained'
-              color='primary'
-              onClick={searchFriend}
-              m={5}>
-                Search Friend
-            </Button>
-          </Grid>
-        </Grid>
-        <Divider />
-        {search ?
-        users.length === 0 ?
-        <Typography
-          variant='h6'
-        >
-          User not Found
-        </Typography> :
-        <UserResults users={users}></UserResults>:
-        null
-        }
+          <UserResults users={users}></UserResults>:
+          null
+          }
+        </AuthCheck>
       </Box>
     </div>
   );
