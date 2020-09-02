@@ -14,7 +14,7 @@ import {useUser} from 'reactfire';
  * @return {ReactElement} List with ListItems of reviews
  */
 export default function Reviews({reviews, profile, reviewsRef=null,
-  usersDoc=null, setInitialize=null, setReviewed=null}) {
+  usersDoc=null, setInitialize=null, setReviewed=null, userFriends=null}) {
   const user = useUser();
   /**
    * @param {object} review
@@ -33,6 +33,13 @@ export default function Reviews({reviews, profile, reviewsRef=null,
       reviews: firebase.firestore.FieldValue.arrayRemove(review.reviewData),
       activities: firebase.firestore.FieldValue.arrayRemove(activity),
     });
+    userFriends.forEach(
+        (friend) => {
+          usersDoc.doc(friend.uid).update({
+            activities: firebase.firestore.FieldValue.arrayRemove(activity),
+          });
+        },
+    );
     setInitialize(false);
     setReviewed(false);
   }
@@ -76,4 +83,5 @@ Reviews.propTypes = {
   usersDoc: PropTypes.object,
   setInitialize: PropTypes.func,
   setReviewed: PropTypes.func,
+  userFriends: PropTypes.array,
 };

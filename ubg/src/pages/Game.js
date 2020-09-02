@@ -299,6 +299,8 @@ function FavoriteButton({usersCollection, game}) {
       usersCollection.doc((user && user.uid) || ' ')).games;
   const userActivities = useFirestoreDocData(
       usersCollection.doc((user && user.uid) || ' ')).activities;
+  const userFriends = useFirestoreDocData(
+      usersCollection.doc((user && user.uid) || ' ')).friends;
   const [favorite, setFavorite] = useState(inFavorites(userGames, game));
 
   return (
@@ -308,8 +310,8 @@ function FavoriteButton({usersCollection, game}) {
         variant='contained'
         color='primary'
         onClick={() => addFavorite(
-            userGames, userActivities, usersCollection, game, favorite,
-            setFavorite, user.uid, user.displayName)}>
+            userGames, userActivities, userFriends, usersCollection, game,
+            favorite, setFavorite, user.uid, user.displayName)}>
         {favorite ? 'Delete from favorites' : 'Add to favorites'}
       </Button>
     ) : null
@@ -335,6 +337,7 @@ function inFavorites(userGames, game) {
  * Based on state of favorite, adds or deletes current game from favorites
  * @param {array} userGames Array of current user's favorite games
  * @param {array} userActivities Array of current user's recent activites
+ * @param {array} userFriends Array of current user's friends
  * @param {object} usersCollection User collection
  * @param {object} game Firestore doc of current game
  * @param {bool} favorite Whether current game is in user's favorites
@@ -343,7 +346,7 @@ function inFavorites(userGames, game) {
  * @param {array} displayName Current user's name
  * @return {void}
  */
-function addFavorite(userGames, userActivities, usersCollection,
+function addFavorite(userGames, userActivities, userFriends, usersCollection,
     game, favorite, setFavorite, uid, displayName) {
   if (favorite) {
     for (let i = 0; i < userGames.length; i++) {
@@ -361,6 +364,33 @@ function addFavorite(userGames, userActivities, usersCollection,
         setFavorite(false);
         break;
       }
+    }
+    for (let i = 0; i < userFriends.length; i++) {
+      const ref = usersCollection.doc(userFriends[i].uid);
+      ref.get().then(function(doc) {
+        if (doc.exists) {
+          const activities = doc.data().activities;
+          for (let i = 0; i < doc.data().activities.length; i++) {
+            if (activities[i].game === game.Name &&
+              activities[i].uid === uid &&
+              activities[i].type === 'favorite') {
+              activities.splice(i, 1);
+              if (activities.length === 0) {
+                ref.update({
+                  activities: [],
+                });
+              } else {
+                ref.update({
+                  activities: activities,
+                });
+              }
+              return;
+            }
+          }
+        }
+      }).catch(function(error) {
+        console.log('Error getting document:', error);
+      });
     }
     for (let i = 0; i < userActivities.length; i++) {
       if (userActivities[i].game === game.Name &&
@@ -404,6 +434,13 @@ function addFavorite(userGames, userActivities, usersCollection,
       games: firebase.firestore.FieldValue.arrayUnion(...userGames),
       activities: firebase.firestore.FieldValue.arrayUnion(newActivity),
     });
+    userFriends.forEach(
+        (friend) => {
+          usersCollection.doc(friend.uid).update({
+            activities: firebase.firestore.FieldValue.arrayUnion(newActivity),
+          });
+        },
+    );
     setFavorite(true);
   }
 }
