@@ -52,7 +52,7 @@ export default function Friends() {
   const ref = useFirestore().collection('users');
   const friendRequests = useFirestoreDocData(
       ref.doc((user && user.uid) || ' ')).requests;
-  // console.log(friendRequests);
+
   /**
    * @return {void}
    */
