@@ -202,7 +202,7 @@ export default function CreateEventButton(
           />
           <Autocomplete
             options={userFriends}
-            getOptionLabel={(option) => option.displayName}
+            getOptionLabel={(option) => option.displayName + ' (' + option.email + ')'}
             noOptionsText='No friends to show'
             renderInput={(params) => <TextField {...params}
               label="Add friends or emails and press enter" />}
