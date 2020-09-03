@@ -93,6 +93,9 @@ function MafiaDay({mafiaKill, doctorSave, usersData, usersCollection,
             case 4:
               deathText += 'They were a doctor.';
               break;
+            case 5:
+              deathText += 'They were a hunter.';
+              break;
             default:
               deathText = 'No one was killed last night.';
           }
