@@ -53,7 +53,7 @@ export default function CreateEventButton(
   const [endTime, setEndTime] = useState(new Date());
   const [description, setDescription] = useState('');
   const [roomId, setRoomId] = useState('');
-  const [email, setEmail] = useState('');
+  let [email, setEmail] = useState('');
   const [emails, setEmails] = useState([]);
   const user = useUser();
   const userFriends = useFirestoreDocData(
@@ -117,6 +117,7 @@ export default function CreateEventButton(
     setEmail('');
     setEmails([]);
   };
+
   const handleAddEmail = () => {
     let e;
     for (e of emails) {
@@ -143,6 +144,11 @@ export default function CreateEventButton(
    * @return {boolean} whether email is valid
    */
   function isValidEmail() {
+    email = email.split(' ');
+    if (email.length > 1) {
+      email.pop();
+    }
+    email = email.join(' ');
     if (email !== '' &&
     /[\w\d-]+@[\w\d-]+\.[\w\d-]+/.test(email)) {
       return true;
