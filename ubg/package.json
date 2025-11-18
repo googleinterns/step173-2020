@@ -38,7 +38,7 @@
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-react": "^7.20.3",
     "firebase-functions-test": "^0.2.1",
-    "mocha": "^8.0.1",
+    "mocha": "^8.4.0",
     "prettier": "^2.0.5"
   },
   "scripts": {
