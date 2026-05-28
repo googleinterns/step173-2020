@@ -14,7 +14,7 @@
     "classnames": "^2.2.6",
     "date-fns": "^2.15.0",
     "dayjs": "^1.8.33",
-    "firebase": "^7.16.1",
+    "firebase": "^12.13.0",
     "moment-timezone": "^0.5.31",
     "pretty": "^2.0.0",
     "prop-types": "^15.7.2",
